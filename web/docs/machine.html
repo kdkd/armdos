@@ -29,7 +29,7 @@
 <h1>The ARM/AT</h1>
 <p class="lede">What is emulated, and the agreement that turns an ARM processor into an IBM PC compatible.</p>
 
-<p>A PC was never really its processor. It was a pile of agreements: the interrupt table sits at address zero, the text screen lives at <code>B800h</code>, <code>INT 21h</code> with <code>AH=3Dh</code> opens a file, and a failed call sets the carry flag. Programs were written against those agreements, and the chip under them changed several times without most programs noticing. The ARM/AT keeps the agreements and swaps the chip.</p>
+<p>PC software leaned less on the processor than on a pile of agreements: the interrupt table sits at address zero, the text screen lives at <code>B800h</code>, <code>INT 21h</code> with <code>AH=3Dh</code> opens a file, and a failed call sets the carry flag. Programs were written against those agreements, and the chip under them changed several times without most programs noticing. The ARM/AT keeps the agreements and swaps the chip.</p>
 
 <nav class="toc" aria-label="On this page">
   <b>On this page</b>
@@ -48,7 +48,7 @@
 
 <h2 id="design"><span class="num">1</span>The ARM PC/AT design</h2>
 
-<p>The design rule for the whole machine is "what would IBM and Microsoft have done in 1988 if the PC had shipped with an ARM?" Every PC and DOS interface that makes sense on an ARM stays. The only changes are the ones the processor forces, and there are four of them.</p>
+<p>Every design decision came back to one question: what would IBM and Microsoft have done in 1988 if the PC had shipped with an ARM? Nearly always the answer was to keep what they had, so every PC and DOS interface that makes sense on an ARM stays. The only changes are the ones the processor forces, and there are four of them.</p>
 
 <h3>INT n becomes SVC #n</h3>
 <p>On a PC, <code>INT 21h</code> makes the processor fetch a handler address from the vector table at <code>0000:0084</code>. Here a program executes <code>SVC #0x21</code>. The ARM traps into the ROM, the ROM reads the number out of the instruction itself and fetches the handler from the same table at the same address: 256 vectors of four bytes each, vector <var>n</var> at <code>n*4</code>. Programs hook interrupts with <code>INT 21h AH=25h</code> and chain to the old handler, exactly as on a PC. Hardware interrupts arrive the same way, as <code>INT 08h</code>-<code>0Fh</code> for IRQ 0-7 and <code>INT 70h</code>-<code>77h</code> for IRQ 8-15, and handlers send their own end-of-interrupt to port <code>20h</code>.</p>
@@ -197,7 +197,7 @@
 </main>
 
 <footer class="foot">
-  <span>ARM-DOS 1.0. Copyright &copy; 2026 Kevin Day, with lots of help from Europa.</span>
+  <span>ARM-DOS 4.00. Copyright &copy; 2026 Kevin Day, with lots of help from Europa.</span>
   <span class="contact">Contact: <a href="mailto:kevin@your.org">kevin@your.org</a></span>
 </footer>
 

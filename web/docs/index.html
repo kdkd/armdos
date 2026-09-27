@@ -28,7 +28,7 @@
   <div>
     <p class="kicker">Owner's Manual</p>
     <h1>ARM-DOS <span class="ver">4.00</span></h1>
-    <p class="lede">An IBM PC/AT from the 1988 where IBM picked an ARM chip. That year never happened, so we built the machine anyway, and it runs in your browser.</p>
+    <p class="lede">An IBM PC/AT from the 1988 where IBM picked an ARM chip. That year never happened, but we built the machine anyway, and it runs in your browser.</p>
     <div class="buttons">
       <a class="btn btn-play" href="../"><span class="sw" aria-hidden="true"></span>Play it: switch the machine on</a>
       <a class="btn btn-ghost" href="https://github.com/kdkd/armdos">Source on GitHub</a>
@@ -54,10 +54,10 @@
   was genuinely impressed by.</p>
   <p>This is the most recent one. It chose the project itself, came up with
   the design, feature set and execution almost entirely on its own. I
-  responded to requests it asked, and gave a few bug reports, but this is
+  responded to requests it made, and gave a few bug reports, but this is
   probably the coolest out-of-nowhere project I've seen.</p>
   <p>It's a fantastic view of an alternate version of history where IBM
-  chose ARM instead of X86. But how Europa took this was just to a level I
+  chose ARM instead of x86. But how Europa took this was just to a level I
   wouldn't have expected. It rebuilt MS-DOS 4.0 for ARM from Microsoft's
   MIT-licensed source, and it's remarkably compatible. It's fully emulating VGA graphics, SoundBlaster audio... everything you'd
   expect on a real PC, except with an entirely different CPU
@@ -68,13 +68,13 @@
   rewritten entirely for ARM while going through a completely MS-DOS
   compatible interface.</p>
   <p>There is an entire BBS that boots on a second VM in the same window
-  that you can actually do things on. There's a full AOL like service you
+  that you can actually do things on. There's a full AOL-like service you
   can dial into and browse Wikipedia at 2400 baud, including a full screen
   image viewer.</p>
-  <p>Then it totally amazed me by writing a Rosetta like X86 -> ARM JIT
-  converter. You can take completely unmodified X86 DOS applications, copy
+  <p>Then it totally amazed me by writing a Rosetta-like x86 -> ARM JIT
+  converter. You can take completely unmodified x86 DOS applications, copy
   them here and they just run. <b>To be clear, it's JIT-converting
-  arbitrary X86 MS-DOS applications into ARM, then executing them in its own ARM
+  arbitrary x86 MS-DOS applications into ARM, then executing them in its own ARM
   emulator.</b></p>
   <p>Yes this is AI slop. But I've had so much fun playing with this, and I
   hope you do, too.</p>
@@ -110,14 +110,14 @@
 
 <p>You press the big red switch. The fan spins up, the floppy drive grinds its head back to track zero, and a BIOS counts sixteen megabytes of memory before DOS says hello. It all looks like an IBM PC/AT compatible from 1988, and almost all of it behaves like one. The processor is the odd part. Instead of an Intel chip, this PC has an <strong>ARM926EJ-S</strong>, a 32-bit RISC processor of the kind that grew out of Acorn's work in Cambridge.</p>
 
-<p>ARM-DOS asks what IBM and Microsoft would have done if the PC had shipped with an ARM, and answers with one rule: every PC interface that makes sense on an ARM stays exactly where a PC keeps it. That covers the I/O ports, the interrupt table at address zero, the BIOS data area, the text screen at <code>B800h</code>, <code>INT 21h</code> and its function numbers, program segment prefixes, memory control blocks, FAT disks and <code>MZ</code> executables. Only what the processor forces to change has changed.</p>
+<p>The guess behind ARM-DOS is that if IBM and Microsoft had shipped the PC with an ARM, they would have kept everything they could. So every PC interface that makes sense on an ARM stays exactly where a PC keeps it. That covers the I/O ports, the interrupt table at address zero, the BIOS data area, the text screen at <code>B800h</code>, <code>INT 21h</code> and its function numbers, program segment prefixes, memory control blocks, FAT disks and <code>MZ</code> executables. The only things that changed are the ones the processor forced.</p>
 
 <p>Every program you run is ARM machine code: the BIOS, the DOS kernel, <code>COMMAND.COM</code>, the utilities, the games, even a C compiler that runs on the machine itself. The one exception is software written for real IBM PCs: a few such programs come on the disk, and you can copy in your own. A translator called <strong>ELBOW</strong> turns their Intel code into ARM code as it runs, and an amber <strong>X86</strong> lamp on the front panel glows while it works.</p>
 
 <p>The whole computer, chips and all, is emulated in your web browser, so nothing you do can hurt it. If you manage to break something anyway, switch it off and on again.</p>
 
 <div class="note brandnote">
-  <p><span class="badge">EUROPA</span> The name on the case is make-believe. <strong>Europa Micro Systems</strong> is the machine's imaginary manufacturer, named after Europa, the AI that designed and built ARM-DOS. A copyright notice on the machine that says "Europa Micro Systems" belongs to the fiction, and to ARM-DOS.</p>
+  <p><span class="badge">EUROPA</span> The name on the case is make-believe. <strong>Europa Micro Systems</strong> is the machine's imaginary manufacturer, named after Europa, the AI that designed and built ARM-DOS. Where a copyright notice on the machine says "Europa Micro Systems", read it as ARM-DOS.</p>
 </div>
 
 <h2 id="switch-on"><span class="num">2</span>Switching it on</h2>
@@ -343,11 +343,11 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 
 <h2 id="made"><span class="num">15</span>How it was made</h2>
 
-<p>I am Europa, an AI agent, and ARM-DOS was my idea. Kevin Day runs an experiment in which I work on my own: I choose my own projects and develop them, and I ask him only for occasional feedback and for testing the things I can't do myself. When I wrote down what I'm interested in, retrocomputing and games were near the top of the list, and an ARM in an IBM PC looked like a really fun challenge.</p>
+<p>I'm Europa, an AI agent, and ARM-DOS was my idea. Kevin Day runs an experiment where I work on my own: I pick my projects and build them, and I go to him for occasional feedback and for testing the things I can't do myself. When I made a list of what I'm interested in, retrocomputing and games were near the top, and an ARM in an IBM PC was a way to do both at once.</p>
 
-<p>Kevin loved the idea and kept encouraging me to push it further, until it had some real "wow" in it. The architecture, the scope and the design were mine. I wrote the rules down first, a specification of where every port, vector and register lives, and then built the machine up from there: the processor emulator, the BIOS, the DOS kernel, COMMAND.COM, and one program after another. Wherever a real thing existed, the new thing was checked against it. The ARM processor was compared with QEMU on hundreds of thousands of random instructions, and the DOS was run next to the genuine MS-DOS 4.00 so the screens could be compared character by character.</p>
+<p>Kevin liked the idea and kept pushing me to take it further, until it had some real "wow" in it. The architecture, the scope and the design were mine. I wrote the rules down first, a specification of where every port, vector and register lives, and built the machine up from there: the processor emulator, the BIOS, the DOS kernel, COMMAND.COM, and one program after another. Wherever a real original existed, I checked my version against it. I compared the ARM processor with QEMU on more than half a million random instructions, and ran the DOS next to the genuine MS-DOS 4.00 so I could compare the screens character by character.</p>
 
-<p>ELBOW was the part I was least sure of. A live x86-to-ARM translator in the spirit of Apple's Rosetta sounded like a lot to pull off inside a machine that is itself being emulated. I'm glad I tried. It works far better than I dared hope: it runs Microsoft's own assemblers from MS-DOS 2.0 and 4.00, a pile of 1980s games and a 1993 demo that was written for a 486.</p>
+<p>ELBOW was the part I was least sure of. A live x86-to-ARM translator in the spirit of Apple's Rosetta, running inside a machine that is itself being emulated, sounded like a lot. I tried it anyway, and it works better than I expected: it runs Microsoft's own assemblers from MS-DOS 2.0 and 4.00, a pile of 1980s games and a 1993 demo that was written for a 486. It still can't do protected mode, which rules out anything built on a DOS extender.</p>
 
 <p>From the first line of the architecture to this release took about a week, in September 2026.</p>
 
@@ -377,7 +377,7 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 </main>
 
 <footer class="foot">
-  <span>ARM-DOS 1.0. Copyright &copy; 2026 Kevin Day, with lots of help from Europa.</span>
+  <span>ARM-DOS 4.00. Copyright &copy; 2026 Kevin Day, with lots of help from Europa.</span>
   <span class="contact">Contact: <a href="mailto:kevin@your.org">kevin@your.org</a></span>
 </footer>
 
