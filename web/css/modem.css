@@ -1,11 +1,13 @@
-/* The modem's front panel under the system unit (web/js/modem-panel.js, docs/MODEM.md):
-   a Hayes Smartmodem-style box - dark case, brushed aluminium face, red lamps - plus the
-   phone list card, the Host Link prompt and the BBS sysop view. Sizes in cqw (the .rig). */
+/* The modem (web/js/modem-panel.js, docs/MODEM.md): a Hayes Smartmodem-style box - dark case,
+   brushed aluminium face, red lamps - sitting on the system unit with the monitor on top of it;
+   the phone list card taped to the unit's front; the Host Link prompt and the BBS sysop view
+   under the system unit (.modem-extras). Sizes in cqw (the .rig). */
 
-.modem { width: 100cqw; margin: 1.6cqw auto 0; position: relative; display: grid; grid-template-columns: 1fr auto; gap: 1.4cqw 2cqw; align-items: center; }
+/* (the monitor, z-index 3, sits on the modem's dark lid; the modem's feet stand on the case top) */
+.modem { width: 100cqw; margin: .3cqw auto -.9cqw; position: relative; z-index: 2; display: flex; justify-content: center; }
 .modem-box {
   position: relative; display: flex; align-items: center; gap: 2.2cqw;
-  margin-left: 3cqw; padding: 1.1cqw 1.8cqw 1.1cqw 2cqw; border-radius: .5cqw .5cqw .7cqw .7cqw;
+  padding: 1.1cqw 1.8cqw 1.1cqw 2cqw; border-radius: .5cqw .5cqw .7cqw .7cqw;
   background:
     repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px),
     linear-gradient(180deg, #b9bcc0, #9ea2a7 45%, #8b8f94);
@@ -48,25 +50,38 @@
 .mbtn[aria-pressed="true"] { background: linear-gradient(180deg, #9fa3a7, #c3c6ca); box-shadow: inset 0 .15cqw .3cqw rgba(0,0,0,.35); }
 .mbtn.go { color: #fff; background: linear-gradient(180deg, #d5812b, #a95d17); border-color: #6b3a0c; }
 
-/* an index card taped next to it */
+/* an index card taped to the front of the system unit, under ARM/AT RISC PERSONAL COMPUTER,
+   over most of the vents */
+.badge-area { position: relative; }
 .phone-card {
-  display: flex; flex-direction: column; gap: .2cqw; margin-right: 2cqw; padding: .9cqw 1.3cqw 1cqw; white-space: nowrap;
-  transform: rotate(2.2deg); background: repeating-linear-gradient(180deg, #fbf7ea 0 1.45cqw, #c9d8ea 1.45cqw calc(1.45cqw + 1px)), #fbf7ea;
-  color: #2a2a3a; font: 400 1.05cqw/1.4 var(--mono); box-shadow: 0 .6cqw 1.2cqw rgba(0,0,0,.4);
+  position: absolute; left: -.6cqw; bottom: -.4cqw; z-index: 2;
+  display: flex; flex-direction: column; gap: .1cqw; padding: .7cqw 1cqw .8cqw; white-space: nowrap;
+  transform: rotate(-2.5deg); background: repeating-linear-gradient(180deg, #fbf7ea 0 1.35cqw, #c9d8ea 1.35cqw calc(1.35cqw + 1px)), #fbf7ea;
+  color: #2a2a3a; font: 400 .92cqw/1.4 var(--mono); box-shadow: 0 .5cqw 1cqw rgba(0,0,0,.35);
   border-top: .35cqw solid #d9534f;
+}
+.phone-card::before {   /* a strip of tape */
+  content: ""; position: absolute; left: 32%; right: 32%; top: -.9cqw; height: 1.3cqw;
+  background: rgba(255,255,255,.4); transform: rotate(3deg); box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
 .phone-card b { font: 700 .85cqw/1.6 var(--sans); letter-spacing: .15em; color: #9b2c28; }
 .phone-card em { font-style: normal; font-weight: 600; color: #1d3f86; }
 .phone-card small { font: italic 400 .9cqw/1.4 var(--serif); color: #595a66; }
 
+.modem-extras { width: 100cqw; margin: 0 auto; display: grid; }
+/* the copy of the phone list card for a unit too narrow for its badge area (armdos.css: the case reflows) */
+.phone-card.spare { display: none; }
+@container (max-width: 560px) {
+  .phone-card.spare { display: flex; position: relative; left: auto; bottom: auto; justify-self: center; margin: 3cqw 0 1cqw; transform: rotate(1deg); }
+}
 .mprompt {
-  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center;
+  margin-top: 1.6cqw; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center;
   padding: 10px 14px; border-radius: 0; background: var(--room-2); color: var(--ink); font: 15px/1.45 var(--serif);
   box-shadow: inset 0 0 0 1px var(--rule);
 }
 .mprompt .mbtn { font-size: 13px; padding: 6px 10px; }
 
-.sysop { grid-column: 1 / -1; justify-self: center; width: min(100%, 560px); padding: 10px 12px 12px; border-radius: 4px; background: #0e1011; box-shadow: 0 10px 24px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05); }
+.sysop { margin-top: 1.6cqw; justify-self: center; width: min(100%, 560px); padding: 10px 12px 12px; border-radius: 4px; background: #0e1011; box-shadow: 0 10px 24px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05); }
 .sysop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; font: 16px/16px var(--pc); color: var(--c-lgray); }
 .sysop-head b { font-weight: 400; color: var(--c-white); }
 .sysop-screen { background: #000; border-radius: 6px; padding: 8px; box-shadow: inset 0 0 18px rgba(0,0,0,.9); }
@@ -74,14 +89,13 @@
 .sysop-state { margin: 8px 2px 0; font: italic 14px/1.4 var(--serif); color: var(--ink-2); }
 
 @media (max-width: 640px) {
-  .modem { grid-template-columns: 1fr; }
   .modem-box { margin: 0 auto; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 10px; }
   .modem-brand b { font-size: 14px; } .modem-brand span { font-size: 8px; }
   .modem-lamps { gap: 8px; } .modem-lamps label { font-size: 8px; gap: 4px; } .mlamp { width: 9px; height: 9px; }
   .modem-line { font-size: 11px; min-width: 0; }
   .mbtn { font-size: 10px; padding: 6px 8px; }
-  .phone-card { margin: 0 auto; font-size: 12px; transform: rotate(1deg); }
-  .phone-card b { font-size: 9px; } .phone-card small { font-size: 11px; }
+  .phone-card.spare { font-size: 12px; }
+  .phone-card.spare b { font-size: 9px; } .phone-card.spare small { font-size: 11px; }
 }
 
 /* the speed switch: a four-position slide switch set into the aluminium face */

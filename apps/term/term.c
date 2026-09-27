@@ -1011,7 +1011,7 @@ static void title(void)
     title_rule((char)0xC8, (char)0xBC);
     vt_puts(&vt, "\033[0m\r\n");
     vt_puts(&vt, "  Press \033[1mAlt-D\033[0m for the dialing directory, \033[1mAlt-Z\033[0m for help.\r\n\r\n");
-    vt_puts(&vt, "  The speed switch on the modem (below the PC) makes it anything from a\r\n"
+    vt_puts(&vt, "  The speed switch on the modem (under the monitor) makes it anything from a\r\n"
                  "  2400 bps modem to a 56K one. Set it before you dial.\r\n\r\n");
 }
 

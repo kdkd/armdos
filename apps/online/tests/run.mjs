@@ -47,7 +47,7 @@ function selected() {
 check(await run(30000, () => has(pc, 'C:\\>')), 'boots to C:\\> (MOUSE loaded)');
 pc.type('ONLINE\r');
 check(await run(10000, () => has(pc, 'Screen Name:') && has(pc, 'Access number 555-0199')), 'ONLINE: the sign-on screen');
-check(has(pc, 'Set the speed switch on the modem (below the PC) first: 2400 bps to 56K.'), 'ONLINE: the note about the modem\'s speed switch');
+check(has(pc, 'Set the speed switch on the modem (under the monitor) first: 2400 bps to 56K.'), 'ONLINE: the note about the modem\'s speed switch');
 check(has(pc, 'Dialing') && has(pc, 'Connecting') && has(pc, 'Verifying password'), 'sign-on: the three steps');
 await shot('signon');
 

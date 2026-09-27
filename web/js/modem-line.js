@@ -7,7 +7,7 @@
 //   const line = new ModemLine({ sound, rom: () => state.rom, images: () => state.images });
 //   new Machine({ ..., ...line.machineOptions() })
 //   line.frame(state.powered ? state.machine : null)          // every animation frame
-//   line.mount($('case'))                                    // the panel goes under the case
+//   line.mount({ monitor: $('monitor'), unit: $('case') })  // the modem under the monitor, on the case
 
 import { PhoneExchange, PortEndpoint } from '../emu/phone.js';
 import { HostLink } from '../emu/hostlink.js';
@@ -43,7 +43,7 @@ export class ModemLine {
     this.linesTimer = setInterval(() => this.lines.tick(performance.now()), 20);
     this.setupOnline();
   }
-  mount(after) { this.panel.mount(after); }
+  mount(where) { this.panel.mount(where); }
   /** The card's speed jumper (web/js/openbox.js): the same as the panel's switch. */
   setSpeed(v) { this.speed = v; prefs.set('modemSpeed', v); this.panel.setSpeed(v); this.machine?.modem.setSwitch(v); }
   /** Is the modem card in the machine? Without it the panel stays dark. */

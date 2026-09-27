@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Round 5: full-screen mouse capture, the POST floppy seek sound, the visitor's own ISO as
-drive D:, and the new title text.
+drive E:, and the new title text.
 
 usage: python3 web/tests/test_round5.py [--shots DIR]   (needs xorriso)
 """
@@ -82,17 +82,17 @@ def main():
             check('leaving full screen releases the mouse', wait_for(pg, "!document.fullscreenElement && !document.pointerLockElement", 5))
             check('bar hidden outside full screen', pg.evaluate("getComputedStyle(document.getElementById('fsBar')).display === 'none'"))
 
-            # ---- your own ISO as D:
+            # ---- your own ISO as E: (the CD-ROM, after the hard disks C: and D:)
             pg.set_input_files('#cdIsoFile', notiso)
             check('a non-ISO file is refused with a friendly message', wait_for(pg, "document.getElementById('cdStatus').textContent.includes(\"isn't an ISO 9660\")", 5), pg.inner_text('#cdStatus'))
             pg.set_input_files('#cdIsoFile', iso)
             check('ISO goes into the drive', wait_for(pg, "armdos.machine.cdrom.disc && armdos.machine.cdrom.disc.title.includes('mydisc.iso') && !armdos.machine.cdrom.trayOpen", 8), pg.inner_text('#cdStatus'))
             check('status names the disc and its volume', wait_for(pg, "document.getElementById('cdStatus').textContent.includes('MYDISC')", 6), pg.inner_text('#cdStatus'))
-            pg.evaluate("armdos.machine.typeText('DIR D:\\r')")
-            check('DOS lists the ISO on D:', wait_for(pg, f"{SCREEN}.includes('README') && {SCREEN}.includes('DOCS')", 30), pg.evaluate(SCREEN)[-500:])
-            pg.evaluate("armdos.machine.typeText('TYPE D:\\\\README.TXT\\r')")
+            pg.evaluate("armdos.machine.typeText('DIR E:\\r')")
+            check('DOS lists the ISO on E:', wait_for(pg, f"{SCREEN}.includes('README') && {SCREEN}.includes('DOCS')", 30), pg.evaluate(SCREEN)[-500:])
+            pg.evaluate("armdos.machine.typeText('TYPE E:\\\\README.TXT\\r')")
             check('DOS reads a file from the ISO', wait_for(pg, f"{SCREEN}.includes('Hello from a visitor ISO!')", 20), pg.evaluate(SCREEN)[-300:])
-            pg.evaluate("armdos.machine.typeText('COPY D:\\\\DOCS\\\\BIG.BIN NUL\\r')")
+            pg.evaluate("armdos.machine.typeText('COPY E:\\\\DOCS\\\\BIG.BIN NUL\\r')")
             check('a 3 MB file streams from the local file', wait_for(pg, f"/1 File\\(s\\) copied/i.test({SCREEN})", 60), pg.evaluate(SCREEN)[-200:])
             check('the ISO is read lazily (blocks, not the whole file)', pg.evaluate("(() => { for (const s of armdos.cd ? armdos.cd.sources.values() : []) if (s.img) return s.img.blocks.size; return -1; })()") != 0)
             pg.evaluate("window.scrollTo(0, 0)")

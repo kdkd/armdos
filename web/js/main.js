@@ -56,7 +56,7 @@ const mhz = new SevenSeg($('mhzDisplay'));
 const printer = new Printer(sound);
 // COM2 modem: phone line, front panel, BBS worker, Host Link (web/js/modem-line.js)
 const line = new ModemLine({ sound, rom: () => state.rom, images: () => state.images });
-line.mount($('case'));
+line.mount({ monitor: $('monitor'), unit: $('case') });
 state.line = line;
 // the CD-ROM drive in the case and the disc box (web/js/cdrom.js)
 const cd = new CdRom({ sound, machine: () => state.machine });

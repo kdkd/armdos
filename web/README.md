@@ -370,8 +370,10 @@ maps, labels, the busiest list every 8th frame).
 (`line.machineOptions()`, `line.frame()`, `line.mount($('case'))`, `line.powerOff()`).
 `js/modem-audio.js` synthesises the speaker (dial tone, DTMF, pulse clicks, ringback, busy,
 2100 Hz answer tone, V.22bis / V.32bis-style training generated as real DPSK/QAM carriers),
-`js/modem-panel.js` + `css/modem.css` draw the Smartmodem-style lamp panel, phone list, Host Link
-prompt and BBS sysop view. `js/modem-bbs-worker.js` runs the ARM Pit BBS (build/bbs.img, staged
+`js/modem-panel.js` + `css/modem.css` draw the Smartmodem-style modem (between the monitor and
+the system unit: the monitor stands on it), the phone list card (taped to the unit's front, in its
+badge area; where a narrow unit has none, a copy lies under it), the Host Link prompt and the BBS
+sysop view (under the unit). `js/modem-bbs-worker.js` runs the ARM Pit BBS (build/bbs.img, staged
 as `images.bbs` when it exists) in a Web Worker, booted on the first call to 555-1989. The Host
 Link (555-0100, `emu/hostlink.mjs`) uses the browser file picker and downloads.
 `tests/test_modem.py` checks lamps, the sound sequence, Host Link, hang-up and the BBS worker.

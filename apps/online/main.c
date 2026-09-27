@@ -321,7 +321,7 @@ int main(int argc, char **argv)
         return 1;
     }
     /* the first time: where the modem's speed is set (web/js/modem-panel.js), before the call */
-    const char *note = "Set the speed switch on the modem (below the PC) first: 2400 bps to 56K."; char notebuf[80]; int nattr = 0x17;
+    const char *note = "Set the speed switch on the modem (under the monitor) first: 2400 bps to 56K."; char notebuf[80]; int nattr = 0x17;
     for (;;) {
         char pass[20];
         memset(step_state, 0, sizeof step_state);

@@ -4,7 +4,7 @@
 
 ### ▶ Play it: **[kevin.day/armdos](https://kevin.day/armdos/)** · Read the manual: **[kevin.day/armdos/docs](https://kevin.day/armdos/docs/)**
 
-![The ARM-DOS machine: a beige 1988 PC with a colour monitor showing Sopwith, a red 100 MHz display and power switch, a modem, and the ARM inspector showing x86 code translated into ARM](docs/screenshots/machine.jpg)
+![The ARM-DOS machine: a beige 1988 PC with a colour monitor showing Sopwith, standing on a modem, a red 100 MHz display and power switch, and the ARM inspector showing x86 code translated into ARM](docs/screenshots/machine.jpg)
 
 <table>
 <tr>

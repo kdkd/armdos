@@ -35,10 +35,12 @@ def wait_for(page, js, timeout=15):
 HEAT = "((c, a, b) => { const h = armdos.memmap.heat[c]; let s = 0; for (let i = a; i < b; i++) s += h[i]; return s; })"
 
 def stage():
-    imgs = [p for p in glob.glob(os.path.join(ROOT, 'build', 'doom-test', '*', 'timedemo.img'))]
+    # (apps/doom/tests/run.mjs writes build/doom-test/timedemo.img)
+    find = lambda: glob.glob(os.path.join(ROOT, 'build', 'doom-test', 'timedemo.img')) + glob.glob(os.path.join(ROOT, 'build', 'doom-test', '*', 'timedemo.img'))
+    imgs = find()
     if not imgs:
         subprocess.run(['node', os.path.join(ROOT, 'apps/doom/tests/run.mjs'), 'timedemo'], cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
-        imgs = glob.glob(os.path.join(ROOT, 'build', 'doom-test', '*', 'timedemo.img'))
+        imgs = find()
     os.makedirs(OUT, exist_ok=True)
     shutil.copy(os.path.join(ROOT, 'build', 'rom.bin'), OUT)
     shutil.copy(imgs[0], os.path.join(OUT, 'hd.img'))

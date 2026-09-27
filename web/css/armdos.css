@@ -89,10 +89,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 /* ------------------------------------------------------------------ layout */
 .desk { max-width: 1480px; margin: 18px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: start; }
 .rig { container-type: inline-size; width: 100%; max-width: 900px; margin: 0 auto; position: relative; }
-@media (max-width: 1180px) { .desk { grid-template-columns: 1fr; } }
+@media (max-width: 1180px) { .desk { grid-template-columns: minmax(0, 1fr); } }   /* (minmax: the inspector's long lines must not widen the column past the screen) */
 
 /* ------------------------------------------------------------------ monitor */
-.monitor { width: 82cqw; margin: 0 auto; position: relative; z-index: 2; }
+.monitor { width: 82cqw; margin: 0 auto; position: relative; z-index: 3; }
 .monitor .shell {
   position: relative;
   border-radius: 2.2cqw 2.2cqw 1.4cqw 1.4cqw;
@@ -702,6 +702,7 @@ label.mini:has(input:focus-visible) { outline: 2px solid var(--accent); }
   .keys-open .rig > .toolbar { order: 3; }
   .keys-open .rig > .case { order: 4; }
   .keys-open .rig > .modem { order: 5; }
+  .keys-open .rig > .modem-extras { order: 6; }
 }
 
 /* ------------------------------------------------------------------ the app layout (home-screen app, ?app, phones in landscape) */
@@ -712,7 +713,8 @@ html.app body {
   background: #0d0c0a; min-height: 0;
 }
 html.app .masthead, html.app .peripherals, html.app .about, html.app .credits, html.app .case, html.app .toolbar, html.app .postit,
-html.app .monitor .chin, html.app .kbd-hint .kbd-text, html.app .rig > .modem { display: none !important; }
+html.app .monitor .chin, html.app .kbd-hint .kbd-text, html.app .rig > .modem, html.app .rig > .modem-extras,
+html.app .phone-card { display: none !important; }
 html.app .desk { display: block; margin: 0; max-width: none; height: 100%; }
 html.app .rig { max-width: none; height: 100%; display: flex; flex-direction: column; container-type: normal; }
 html.app .appbar {

@@ -71,7 +71,11 @@ def main():
                 page.route('**/images.json', lambda r: r.fulfill(status=200, content_type='application/json', body=json.dumps(images)))
             page.goto(url)
             page.wait_for_selector('#modemPanel')
-            check('modem panel under the case', page.evaluate("document.getElementById('case').nextElementSibling.id === 'modemPanel'"))
+            check('the modem sits between the monitor and the case', page.evaluate("document.getElementById('monitor').nextElementSibling.id === 'modemPanel' && document.getElementById('modemPanel').nextElementSibling.id === 'case'"))
+            check('its phone list card is on the front of the case, under the name, clear of the drive bays', page.evaluate("""(() => {
+                const c = document.querySelector('#case .badge-area .phone-card').getBoundingClientRect(), m = document.querySelector('#case .model').getBoundingClientRect(),
+                      b = document.querySelector('#case .bays').getBoundingClientRect(), u = document.getElementById('case').getBoundingClientRect();
+                return c.top >= m.bottom - 4 && c.right <= b.left + 4 && c.left >= u.left && c.bottom <= u.bottom; })()"""))
             check('eight lamps HS AA CD OH RD SD TR MR', page.evaluate("[...document.querySelectorAll('.modem-lamps label span')].map(s => s.textContent).join(' ')") == 'HS AA CD OH RD SD TR MR')
             check('line window says NO POWER', page.evaluate(LINE) == 'NO POWER')
             check('phone list card', '555-1989' in page.evaluate("document.querySelector('.phone-card').textContent"))

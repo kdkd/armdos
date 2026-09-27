@@ -1,6 +1,8 @@
 // The modem's front panel (docs/MODEM.md): a Hayes Smartmodem-style strip of lamps
-// (HS AA CD OH RD SD TR MR) with a little line window, placed under the system unit, plus the
-// phone list card, the Host Link prompt and the BBS sysop view. Pure DOM; ModemLine drives it.
+// (HS AA CD OH RD SD TR MR) with a little line window. The modem sits on the system unit with
+// the monitor on top of it; the phone list card is taped to the front of the system unit, under
+// its name; the Host Link prompt and the BBS sysop view go under the system unit. Pure DOM;
+// ModemLine drives it.
 
 import { el } from './util.js';
 
@@ -48,18 +50,27 @@ export class ModemPanel {
         el('div', { class: 'modem-lamps', role: 'group', 'aria-label': 'Modem lamps' }, ...lampEls),
         el('div', { class: 'modem-line', 'aria-live': 'polite' }, this.lineEl),
         this.speedEl,
-        this.sysopBtn),
-      el('div', { class: 'phone-card', 'aria-label': 'Phone list' },
-        el('b', { text: 'PHONE LIST' }),
-        el('span', {}, 'ARM Pit BBS ', el('em', { text: '555-1989' })),
-        el('span', {}, 'Host Link ', el('em', { text: '555-0100' })),
-        el('span', {}, 'ARM-DOS Online ', el('em', { text: '555-0199' })),
-        el('small', { text: 'modem on COM2 · ATDT' })),
-      this.prompt, this.sysop);
+        this.sysopBtn));
+    this.card = el('div', { class: 'phone-card', 'aria-label': 'Phone list' },
+      el('b', { text: 'PHONE LIST' }),
+      el('span', {}, 'ARM Pit BBS ', el('em', { text: '555-1989' })),
+      el('span', {}, 'Host Link ', el('em', { text: '555-0100' })),
+      el('span', {}, 'ARM-DOS Online ', el('em', { text: '555-0199' })),
+      el('small', { text: 'modem on COM2 · ATDT' }));
+    this.extras = el('div', { class: 'modem-extras', id: 'modemExtras' }, this.prompt, this.sysop);
     this.ctx2d = this.canvas.getContext('2d');
     this.imgData = null;
   }
-  mount(after) { after.insertAdjacentElement('afterend', this.root); }
+  /** The modem between the monitor and the system unit, its card on the unit's front, the rest under the unit. */
+  mount({ monitor, unit }) {
+    monitor.insertAdjacentElement('afterend', this.root);
+    unit.querySelector('.badge-area').append(this.card);
+    // (a narrow unit has no badge area: there, a copy of the card lies under it)
+    const spare = this.card.cloneNode(true);
+    spare.classList.add('spare');
+    this.extras.prepend(spare);
+    unit.insertAdjacentElement('afterend', this.extras);
+  }
 
   setSpeed(v) {
     this.speedEl.dataset.speed = String(v);
