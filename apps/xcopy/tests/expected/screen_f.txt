@@ -1,0 +1,25 @@
+00 |[9]                                                                             
+01 |Cannot perform a cyclic copy                                                    
+02 |        0 File(s) copied                                                        
+03 |[10]                                                                            
+04 |Cannot XCOPY from a reserved device                                             
+05 |        0 File(s) copied                                                        
+06 |[12]                                                                            
+07 |Invalid path                                                                    
+08 |        0 File(s) copied                                                        
+09 |[13]                                                                            
+10 |Reading source file(s)...                                                       
+11 |\S\A.TXT                                                                        
+12 |File cannot be copied onto itself                                               
+13 |        0 File(s) copied                                                        
+14 |[14]                                                                            
+15 |Invalid number of parameters                                                    
+16 |        0 File(s) copied                                                        
+17 |[15]                                                                            
+18 |Invalid switch - /Z:3                                                           
+19 |        0 File(s) copied                                                        
+20 |[16]                                                                            
+21 |File not found - A                                                              
+22 |        0 File(s) copied                                                        
+23 |C:\>                                                                            
+24 |                                                                                

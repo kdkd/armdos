@@ -1,0 +1,4 @@
+{
+  "comment": "ARMCD.SYS, ARMCDEX.EXE and CDPLAY.EXE reach C:\\DOS through the build/*.SYS/*.EXE rules; this adds CDPLAY's disc database (made by make cdrom-disc)",
+  "files": [ { "src": "build/cdrom/sampler93/CDPLAY.INI", "dst": "DOS\\", "optional": true } ]
+}

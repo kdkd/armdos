@@ -1,0 +1,11 @@
+{
+  "dirs": ["GAMES", "GAMES\\QUAKE", "GAMES\\QUAKE\\ID1"],
+  "files": [
+    { "src": "build/QUAKE.EXE", "dst": "GAMES\\QUAKE\\" },
+    { "src": "3rdparty/quake/SLICNSE.TXT", "dst": "GAMES\\QUAKE\\", "date": "1996-09-26 12:07:22" },
+    { "src": "3rdparty/quake/LICINFO.TXT", "dst": "GAMES\\QUAKE\\", "date": "1996-09-26 12:07:22" },
+    { "src": "3rdparty/quake/QUAKE106.ZIP", "dst": "GAMES\\QUAKE\\", "date": "1996-10-01 14:30:00" },
+    { "src": "3rdparty/quake/ID1/PAK0.PAK", "dst": "GAMES\\QUAKE\\ID1\\", "date": "1996-10-01 14:25:58" }
+  ],
+  "excludeFromDos": ["QUAKE.EXE"]
+}

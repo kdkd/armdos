@@ -1,0 +1,22 @@
+
+C:\T>date 1-2-89
+
+C:\T>date
+Current date is Mon 01-02-1989
+Enter new date (mm-dd-yy):
+
+C:\T>date 2-30-89
+
+Invalid date
+Enter new date (mm-dd-yy):
+
+C:\T>time 1:2:3.4
+
+C:\T>time 13:45
+
+C:\T>time 25
+
+Invalid time
+Enter new time:
+
+C:\T>

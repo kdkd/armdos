@@ -1,0 +1,20 @@
+
+C:\T>callfail
+before
+Label not found
+pauser
+before
+Press any key to continue . . .
+^C
+
+Terminate batch job (Y/N)?y
+Batch file missing
+waiter
+before
+waiting
+^C
+
+Terminate batch job (Y/N)?y
+Batch file missing
+
+C:\T>

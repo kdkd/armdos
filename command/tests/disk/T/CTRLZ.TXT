@@ -1,0 +1,2 @@
+Text before the end of file mark
+and after it

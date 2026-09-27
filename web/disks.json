@@ -1,0 +1,45 @@
+{
+ "comment": "The disk box on the page. file: image path relative to the project root (staged gzipped by web/tools/build-site.mjs; a missing file shows as an empty sleeve). colour: the diskette's plastic; label: the paper label's colour stripe. writeProtected: the tab is open. Order = order in the box.",
+ "disks": [
+  {
+   "id": "startup",
+   "label": "ARM-DOS 4.00",
+   "sub": "Startup",
+   "file": "build/floppy-boot.img",
+   "description": "The system diskette, with DOS on it like a setup disk. Boot from it; FORMAT C: /S and then INSTALL leave you a fresh, empty ARM-DOS on the hard disk (Reset C: to factory brings the original back).",
+   "colour": "#2b2d33",
+   "stripe": "#c0392b",
+   "writeProtected": false
+  },
+  {
+   "id": "blank",
+   "label": "Blank",
+   "sub": "Formatted 1.44 MB",
+   "file": "build/floppy-blank.img",
+   "description": "An empty, formatted diskette. Copy something onto it, then take it home with Download.",
+   "colour": "#3a5f8a",
+   "stripe": "#e9e4d4",
+   "writeProtected": false
+  },
+  {
+   "id": "games",
+   "label": "Games",
+   "sub": "coming soon",
+   "file": "build/floppy-games.img",
+   "description": "Diversions for a slow afternoon.",
+   "colour": "#8a2f2a",
+   "stripe": "#f1c40f",
+   "writeProtected": true
+  },
+  {
+   "id": "utils",
+   "label": "Utilities",
+   "sub": "coming soon",
+   "file": "build/floppy-utils.img",
+   "description": "Handy tools.",
+   "colour": "#2f6b45",
+   "stripe": "#ecf0f1",
+   "writeProtected": true
+  }
+ ]
+}

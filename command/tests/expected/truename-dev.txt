@@ -1,0 +1,14 @@
+
+C:\T>truename nul
+
+C:/NUL
+
+C:\T>truename con
+
+C:/CON
+
+C:\T>truename prn
+
+C:/PRN
+
+C:\T>

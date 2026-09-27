@@ -1,0 +1,25 @@
+C:\T>uname
+ARM-DOS
+
+C:\T>uname -a
+ARM-DOS ARMAT 4.00 4.00-1988.06.17 armv5tel ARM926EJ-S ARM/AT ARM-DOS
+
+C:\T>uname -snrm
+ARM-DOS ARMAT 4.00 armv5tel
+
+C:\T>uname --kernel-release -o
+4.00 ARM-DOS
+
+C:\T>uname -x
+uname: invalid option -- 'x'
+Try 'uname --help' for more information.
+
+C:\T>uname --foo
+uname: unrecognized option '--foo'
+Try 'uname --help' for more information.
+
+C:\T>uname bar
+uname: extra operand 'bar'
+Try 'uname --help' for more information.
+
+C:\T>

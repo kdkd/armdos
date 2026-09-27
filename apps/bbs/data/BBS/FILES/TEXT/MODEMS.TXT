@@ -1,0 +1,23 @@
+              HAYES AT COMMANDS - THE SHORT VERSION
+              (for 2400 baud modems, from The ARM Pit)
+
+  AT        attention - the modem answers OK
+  ATZ       reset the modem to its stored settings
+  AT&F      factory settings
+  ATDT555-1989   dial (tone)          ATDP  dial (pulse)
+  ATA       answer an incoming call
+  ATH0      hang up                   ATH1  pick up (busy out the line)
+  ATO       back online after +++
+  +++       (wait a second before and after) escape to command mode
+  ATE0/E1   command echo off/on
+  ATV0/V1   numeric/verbal result codes
+  ATQ0/Q1   result codes on/off
+  ATM0/M1/M2  speaker off / on while dialling / always on
+  ATL0-3    speaker volume
+  ATS0=n    answer on the n-th ring (0 = never answer)
+  ATS2=n    escape character (default 43, '+')
+  AT&C1     DCD follows the carrier (so programs know you're online)
+  AT&D2     hang up when the computer drops DTR
+
+  RESULT CODES:  0 OK  1 CONNECT  2 RING  3 NO CARRIER  4 ERROR
+                 6 NO DIALTONE  7 BUSY  8 NO ANSWER  10 CONNECT 2400

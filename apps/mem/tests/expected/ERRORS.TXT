@@ -1,0 +1,25 @@
+Invalid switch -  /X
+Too many parameters -  X
+Too many parameters - /DEBUG
+Too many parameters - X
+Parameter format not correct -  /DEBUG:5
+Invalid switch -  /PROGRAM=5
+Too many parameters -  ,
+Invalid switch -  /
+Too many parameters - ,
+Too many parameters - /Program
+Too many parameters -  "
+
+
+
+
+
+
+
+
+
+
+
+
+
+

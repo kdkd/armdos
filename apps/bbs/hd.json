@@ -1,0 +1,4 @@
+{
+  "comment": "BBS.EXE and DRAGON.EXE belong on the BBS machine's disk (build/bbs.img, apps/bbs/bbs.json), not in the visitor's C:\\DOS",
+  "excludeFromDos": ["BBS.EXE", "DRAGON.EXE"]
+}

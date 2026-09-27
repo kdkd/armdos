@@ -1,0 +1,52 @@
+End of input file
+*sline 1
+      10: line 10 of the forty-line test file
+*s
+      11: line 11 of the forty-line test file
+*1,#sforty
+       1: line 01 of the forty-line test file
+*?1,5sline
+Entry error
+*n
+Entry error
+*n
+Entry error
+*y
+Entry error
+*?sline 3
+      30: line 30 of the forty-line test file
+O.K.? 
+
+O.K.? n
+      31: line 31 of the forty-line test file
+O.K.? 
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*n
+Entry error
+*snothing
+Not found
+*s
+Not found
+*35sline 3
+      35: line 35 of the forty-line test file
+*q
+Abort edit (Y/N)? 
+
+Abort edit (Y/N)? y

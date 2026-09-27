@@ -1,0 +1,11 @@
+***** \T\L1.TXT
+Hello World
+foo  bar
+
+line4   x
+***** \T\L2.TXT
+hello world
+foo bar
+line4   x
+*****
+

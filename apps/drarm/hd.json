@@ -1,0 +1,5 @@
+{
+  "files": [
+    { "src": "apps/drarm/data/ADVICE.TXT", "dst": "DOS\\ADVICE.TXT" }
+  ]
+}

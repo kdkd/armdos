@@ -1,0 +1,12 @@
+
+C:\T>noeol
+last line has no newline
+
+C:\T>callret z
+in callee z
+after call errorlevel check
+seven
+C:\T>forcall
+in callee a
+forcall done
+C:\T>

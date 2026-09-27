@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What if the IBM PC used an ARM instead of x86? How overboard can we take this idea?</title>
+<meta name="description" content="An IBM PC/AT that never existed: an ARM926 inside, MS-DOS 4.00 ported to it, running as real ARM machine code in your browser.">
+<meta name="theme-color" content="#16130f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARM-DOS">
+<script>/* choose the app layout before first paint (home-screen app, or ?app) */
+(function () { var s = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone === true || /[?&]app\b/.test(location.search);
+  if (s) document.documentElement.classList.add('app'); })();</script>
+<link rel="stylesheet" href="css/armdos.css">
+<link rel="stylesheet" href="css/modem.css">
+<link rel="stylesheet" href="css/cdrom.css">
+<link rel="stylesheet" href="css/openbox.css">
+<link rel="stylesheet" href="css/memmap.css">
+<link rel="stylesheet" href="css/elbow.css">
+<link rel="modulepreload" href="js/main.js">
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+<header class="masthead">
+  <nav class="toplinks" aria-label="About this site">
+    <a class="manual" href="docs/">What is this? Read the manual &rarr;</a>
+    <a href="https://github.com/kdkd/armdos">Source code on GitHub</a>
+  </nav>
+  <h1>ARM-DOS <span class="ver">4.00</span></h1>
+  <p class="subtitle">What if the IBM PC used an ARM instead of x86? How overboard can we take this idea?</p>
+</header>
+
+<main class="desk" id="desk">
+  <section class="rig" id="rig" aria-label="The computer">
+    <nav class="appbar" id="appbar" aria-label="ARM-DOS controls">
+      <button class="ab ab-power" id="abPower" aria-pressed="false" title="Power"><span class="ab-led"></span>POWER</button>
+      <button class="ab" id="abTurbo" title="Turbo">TURBO <b id="abMhz">---</b></button>
+      <button class="ab" id="abReset" title="Reset">RESET</button>
+      <span class="ab ab-x86" id="abX86" title="Lit while x86 code runs under ELBOW"><span class="led amber x86" id="abX86Led"></span>X86</span>
+      <button class="ab" id="abDisk" aria-expanded="false" title="Diskettes">A: <b id="abDiskName">empty</b></button>
+      <button class="ab" id="abKbd" title="Device keyboard">&#9000;</button>
+      <button class="ab" id="abPc" aria-pressed="false" title="PC keyboard">KEYS</button>
+      <button class="ab" id="abPad" aria-pressed="false" title="Game pad">PAD</button>
+      <span class="ab ab-joy" id="abJoy"><span class="led green joy" id="abJoyLed"></span><svg class="joy-ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="11" width="12" height="3.2" rx="1.2"/><rect x="7.1" y="4.5" width="1.8" height="7"/><circle cx="8" cy="4" r="2.6"/><circle cx="12" cy="10.2" r="1" class="joy-btn"/></svg></span>
+      <button class="ab" id="abSound" aria-pressed="true" title="Sound">&#9835;</button>
+      <button class="ab" id="abInsp" aria-pressed="false" title="ARM inspector">ARM</button>
+      <button class="ab ab-exit" id="abExit" title="Back to the full page">&#10005;</button>
+    </nav>
+    <div class="disk-menu" id="diskMenu" hidden></div>
+
+    <!-- ============================== monitor -->
+    <div class="monitor" id="monitor">
+      <div class="fs-bar" id="fsBar" aria-label="Full-screen controls">
+        <button type="button" id="fsMouse">Mouse: captured</button>
+        <span class="fs-hint">Ctrl+Alt+M toggles the mouse</span>
+        <button type="button" id="fsExit">Exit full screen</button>
+      </div>
+      <div class="shell">
+        <div class="bezel">
+          <div class="tube" id="tube">
+            <canvas id="screen" tabindex="0" aria-label="ARM-DOS screen. Click to type."></canvas>
+            <div class="glass" aria-hidden="true"></div>
+            <div class="kbd-nudge" id="kbdNudge" hidden><span class="kbd-icon" aria-hidden="true">&#9000;</span> Click the screen to type</div>
+            <div class="kbd-hint" id="kbdHint" hidden>
+              <span class="kbd-icon" aria-hidden="true">&#9000;</span>
+              <span class="kbd-text">Keyboard captured. Click outside the screen to let go.</span>
+              <span class="locks"><i id="ledNum">NUM</i><i id="ledCaps">CAPS</i><i id="ledScroll">SCRL</i></span>
+            </div>
+          </div>
+        </div>
+        <div class="chin">
+          <div class="brand"><b>EUROPA</b><span id="monBrand">VGA COLOR DISPLAY</span></div>
+          <button type="button" class="degauss-btn" id="degaussBtn" title="Degauss: demagnetise the picture tube (colour monitor)" aria-label="Degauss the monitor"><span class="cap"></span><span class="lbl">DEGAUSS</span></button>
+          <div class="knobs" aria-hidden="true"><i></i><i></i></div>
+          <div class="mon-power"><span class="led green" id="monLed"></span><span class="mon-btn" aria-hidden="true"></span></div>
+        </div>
+      </div>
+      <div class="postit" id="postit" aria-hidden="true">Big red switch,<br>bottom right &darr;<br><span>&ndash; E.</span></div>
+    </div>
+
+    <!-- ============================== system unit -->
+    <div class="case" id="case">
+      <div class="case-top" aria-hidden="true"></div>
+      <div class="front">
+        <div class="badge-area">
+          <div class="logo">EUROPA</div>
+          <div class="model">ARM/AT <span>RISC PERSONAL COMPUTER</span></div>
+          <div class="vents" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="bays">
+          <div class="bay drive" id="drive" title="Drive A: (drop a disk or an .img file here)">
+            <div class="drive-face">
+              <div class="slot" id="slot"><div class="disk-edge" id="diskEdge"></div></div>
+              <div class="drive-row">
+                <span class="drive-label">A:</span>
+                <span class="led green small" id="fdLed"></span>
+                <span class="drive-logo">1.44 MB</span>
+                <button class="eject" id="eject" aria-label="Eject the diskette" title="Eject"></button>
+              </div>
+            </div>
+          </div>
+          <div class="bay blank" aria-hidden="true">
+            <div class="blank-plate" id="hdBay"><span>FIXED DISK 128 MB</span><b class="not-saving-tag" title="Changes to C: are not being saved in this browser (see below the disk box)">NOT SAVING</b></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="status-panel">
+            <div class="lamps">
+              <label><span class="led green" id="pwrLed"></span>POWER</label>
+              <label><span class="led yellow" id="turboLed"></span>TURBO</label>
+              <label><span class="led amber" id="hdLed"></span>DISK</label>
+              <label title="Lit while x86 code runs under ELBOW"><span class="led amber x86" id="x86Led"></span>X86</label>
+              <label class="joy-lamp" id="joyLamp"><span class="led green joy" id="joyLed"></span><svg class="joy-ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="11" width="12" height="3.2" rx="1.2"/><rect x="7.1" y="4.5" width="1.8" height="7"/><circle cx="8" cy="4" r="2.6"/><circle cx="12" cy="10.2" r="1" class="joy-btn"/></svg></label>
+            </div>
+            <div class="mhz" aria-label="Clock speed in MHz">
+              <svg id="mhzDisplay" viewBox="0 0 96 44" aria-hidden="true"></svg>
+              <span class="mhz-unit">MHz</span>
+            </div>
+          </div>
+          <div class="buttons">
+            <button class="pushbtn" id="turboBtn" aria-pressed="true"><span class="cap"></span><em>TURBO</em></button>
+            <button class="pushbtn small" id="resetBtn"><span class="cap"></span><em>RESET</em></button>
+            <div class="keylock" aria-hidden="true"><i></i></div>
+          </div>
+        </div>
+
+        <div class="power">
+          <button class="rocker" id="powerBtn" aria-pressed="false" aria-label="Power switch">
+            <span class="rocker-face"><span class="i">I</span><span class="o">O</span></span>
+          </button>
+          <span class="power-label">POWER</span>
+        </div>
+      </div>
+      <div class="case-foot" aria-hidden="true"><i></i><i></i></div>
+    </div>
+
+    <!-- ============================== toolbar -->
+    <div class="toolbar" id="toolbar" role="toolbar" aria-label="Machine controls">
+      <button class="key" id="cadBtn" title="Send Ctrl+Alt+Del">Ctrl+Alt+Del</button>
+      <button class="key" id="pasteBtn" title="Type text into DOS">Paste text</button>
+      <button class="key" id="mouseBtn" title="Capture the mouse for DOS programs (or Shift+click the screen)">Mouse</button>
+      <button class="key kbd-btn" id="softKbdBtn" title="Open your device's keyboard and type into DOS">&#9000; Keyboard</button>
+      <button class="key toggle" id="pcKeysBtn" aria-pressed="false" title="An on-screen PC keyboard">PC keys</button>
+      <button class="key toggle" id="followKbdBtn" aria-pressed="false" aria-label="Keyboard: follow my computer's layout" title="Keyboard: follow my computer's layout. Off: every key is typed by its position, as on a real PC (DOS's own layout is KEYB's, US without it). On: each key types the character your own keyboard layout makes, in DOS's code page - for keyboards that are not US">Follow my layout</button>
+      <span class="spacer"></span>
+      <button class="key toggle" id="crtBtn" aria-pressed="true" title="CRT effect">CRT</button>
+      <label class="key monitor-sel" title="The display card and monitor: a VGA with a colour monitor, or a Hercules Graphics Card with a monochrome monitor. Like swapping a card, it takes effect when the machine is switched on">Monitor
+        <select id="monitorSel" aria-label="Monitor">
+          <option value="vga">VGA Color</option>
+          <option value="green">Hercules Mono &mdash; Green (P39)</option>
+          <option value="amber">Hercules Mono &mdash; Amber (P134)</option>
+          <option value="white">Hercules Mono &mdash; Paper White</option>
+        </select>
+      </label>
+      <span class="monitor-note" id="monitorNote" role="status" hidden></span>
+      <button class="key toggle" id="soundBtn" aria-pressed="true" title="Sound: speaker, drives, switches">Sound</button>
+      <button class="key toggle" id="ambientBtn" aria-pressed="false" title="Ambient noise: fan, power supply hum, CRT whine">Ambient</button>
+      <button class="key" id="fullBtn" title="Full screen">&#x26F6;</button>
+    </div>
+    <div class="pckeys" id="pcKeys" hidden aria-label="On-screen PC keyboard"></div>
+    <textarea id="softKbd" class="soft-kbd" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text" enterkeyhint="enter" aria-label="Type into DOS" rows="1"></textarea>
+  </section>
+
+  <!-- ============================== ARM inspector -->
+  <aside class="inspector" id="inspector" aria-label="ARM inspector">
+    <button class="insp-tab" id="inspTab" aria-expanded="true" aria-controls="inspBody">
+      <span class="tab-text">ARM INSPECTOR</span>
+    </button>
+    <div class="insp-body" id="inspBody">
+      <div class="insp-head">
+        <div class="insp-title">ARM926EJ-S <span>IN-CIRCUIT MONITOR</span></div>
+        <div class="insp-state"><span class="lamp" id="runLamp"></span><span id="runState">NO POWER</span></div>
+      </div>
+
+      <div class="panel-row meters">
+        <div class="meter">
+          <div class="cap">EXECUTING</div>
+          <div class="readout big"><span id="mipsVal">---</span><small>MIPS</small></div>
+          <canvas id="spark" width="240" height="44" aria-label="MIPS history"></canvas>
+        </div>
+        <div class="meter narrow">
+          <div class="cap">ALT CPU (X86)</div>
+          <div class="readout"><span id="x86Val">--</span><small>%</small></div>
+          <div class="cap">ASLEEP (WFI)</div>
+          <div class="readout"><span id="wfiVal">--</span><small>%</small></div>
+          <div class="cap">HOST SPEED</div>
+          <div class="readout"><span id="hostVal">---</span><small>MIPS</small></div>
+          <div class="cap">RETIRED</div>
+          <div class="readout small"><span id="icountVal">0</span></div>
+        </div>
+      </div>
+
+      <div class="panel-row">
+        <div class="win regs" id="regs"></div>
+      </div>
+      <div class="panel-row cpsr" id="cpsr"></div>
+
+      <div class="panel-row debug-keys">
+        <button class="hwkey" id="dbgPause">PAUSE</button>
+        <button class="hwkey" id="dbgStep">STEP</button>
+        <button class="hwkey" id="dbgOver">STEP OVER</button>
+        <button class="hwkey run" id="dbgRun">RUN</button>
+      </div>
+
+      <div class="panel-row">
+        <div class="win disasm" id="disasm" aria-label="Disassembly around PC"></div>
+      </div>
+      <div class="panel-row bp-row">
+        <label class="cap" for="bpAddr">BREAK AT</label>
+        <input id="bpAddr" class="lcd-input" spellcheck="false" placeholder="7C00" maxlength="8">
+        <button class="hwkey small" id="bpSet">SET</button>
+        <span class="bp-list" id="bpList"></span>
+      </div>
+
+      <div class="section-cap">
+        <span>INTERRUPTS</span>
+        <span class="last-int" id="lastInt"></span>
+        <label class="mini"><input type="checkbox" id="hideTicks" checked> hide timer</label>
+        <button class="hwkey small" id="logPause">HOLD</button>
+      </div>
+      <div class="win intlog" id="intlog" aria-live="off"></div>
+
+      <div class="section-cap">
+        <span>MEMORY</span>
+        <input id="memAddr" class="lcd-input" spellcheck="false" value="B8000" maxlength="8" aria-label="Memory address (hex)">
+        <span class="mem-jumps">
+          <button class="hwkey small" data-mem="B8000">TEXT</button>
+          <button class="hwkey small" data-mem="400">BDA</button>
+          <button class="hwkey small" data-mem="0">IVT</button>
+          <button class="hwkey small" data-mem="pc">PC</button>
+        </span>
+      </div>
+      <div class="win hex" id="hex"></div>
+    </div>
+  </aside>
+</main>
+
+<!-- ============================== peripherals -->
+<section class="peripherals" aria-label="Diskettes, printer and serial port">
+  <div class="diskbox-wrap">
+    <h2>Diskettes</h2>
+    <div class="diskbox" id="diskbox" aria-label="Disk box"></div>
+    <p class="hint">Click a diskette to put it in drive A:, or drag it there. Drop a 1.44 MB <code>.img</code> on the drive to use it as a diskette, or drop ordinary files to copy them onto the diskette in the drive.</p>
+    <div class="disk-actions">
+      <label class="btn">Open image&hellip;<input type="file" id="fdFile" accept=".img,.ima,.flp,.vfd,.dsk,.bin" hidden></label>
+      <button class="btn" id="fdDownload" disabled>Download A:</button>
+      <button class="btn" id="hdDownload">Download C:</button>
+      <button class="btn danger" id="hdReset">Reset C: to factory</button>
+    </div>
+    <p class="hint small" id="hdStatus">Drive C: is saved in this browser.</p>
+
+    <div class="files" id="files">
+      <div class="files-head">
+        <span class="files-tabs" role="tablist">
+          <button role="tab" class="ftab" data-drive="A" aria-selected="true">A:</button>
+          <button role="tab" class="ftab" data-drive="C" aria-selected="false">C:</button>
+        </span>
+        <span class="files-path" id="filesPath">A:\</span>
+        <label class="btn small" id="filesAddLbl">Copy files in&hellip;<input type="file" id="filesAdd" multiple hidden></label>
+      </div>
+      <div class="files-list" id="filesList" aria-live="polite"></div>
+      <div class="files-foot" id="filesFoot"></div>
+    </div>
+    <p class="hint small">Click a file to download it. Drop files from your computer on this list or on the drive to copy them in; long names are cut down to DOS&rsquo;s 8.3. The diskette pops out and back in while it is written, so DOS notices the change. C: accepts files only while the machine is switched off.</p>
+  </div>
+
+  <div class="printer-wrap">
+    <h2>Printer <span class="h2-sub">LPT1</span></h2>
+    <div class="paper-view" id="paperView">
+      <div class="paper-feed" id="paperFeed"></div>
+      <div class="paper-empty" id="paperEmpty">Nothing printed yet. Try <code>COPY README.TXT PRN</code>.</div>
+    </div>
+    <div class="printer" id="printer">
+      <div class="printer-top"><div class="platen"><div class="head" id="printHead"></div></div></div>
+      <div class="printer-front">
+        <span class="printer-name">EUROPA <b>DMP-9</b></span>
+        <span class="printer-lamps"><label><span class="led green small" id="prOnline"></span>ON LINE</label><label><span class="led amber small" id="prData"></span>DATA</label></span>
+        <button class="btn small" id="formFeed">Form feed</button>
+        <button class="btn small" id="tearOff" disabled>Tear off</button>
+      </div>
+    </div>
+  </div>
+
+  <details class="serial-wrap" id="serialPanel">
+    <summary><h2>COM1 <span class="h2-sub">serial terminal</span></h2></summary>
+    <pre class="serial" id="serialOut" aria-live="off"></pre>
+    <form class="serial-in" id="serialForm"><input id="serialInput" placeholder="send to COM1&hellip;" autocomplete="off"><button class="btn small">Send</button></form>
+  </details>
+</section>
+
+<!-- ============================== words -->
+<section class="about">
+  <div class="col">
+    <h2>What is this?</h2>
+    <p>Picture a 1988 in which IBM put Acorn's new RISC chip in the AT instead of an Intel 286, and Microsoft ported DOS 4.00 to it over a long weekend. The ports, the BIOS data area, the text buffer at <code>B8000</code> and every <code>INT 21h</code> function are where a PC keeps them. Only the processor is different.</p>
+    <p>Everything on that screen is drawn by real ARM machine code. The BIOS that counts memory, the boot sector, the DOS kernel and COMMAND.COM are all compiled for an ARM926 and executed instruction by instruction by an emulator running in this tab. Open the inspector on the right and you can watch the registers move, pause the processor and step through it one instruction at a time.</p>
+  </div>
+  <div class="col">
+    <h2>Things to try</h2>
+    <ul class="try" id="thingsToTry">
+      <li>Flip the red switch and listen to it wake up.</li>
+      <li>Press <kbd>Del</kbd> while it counts memory to open SETUP.</li>
+      <li>Type <kbd>DIR</kbd>, <kbd>VER</kbd> or <kbd>MEM</kbd> and press Enter.</li>
+      <li><kbd>TYPE README.TXT</kbd>, then <kbd>COPY README.TXT PRN</kbd> and tear off the printout.</li>
+      <li>Press TURBO: the clock drops from 100 MHz to 12 MHz and everything slows to a 1988 crawl.</li>
+      <li>Hit PAUSE in the inspector, then STEP through the ARM code that is drawing the screen.</li>
+      <li>Switch it off and <em>open the case</em>: pull the Sound Blaster, swap in a Hercules card, take out SIMMs or move the clock jumper, and watch POST notice.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="credits">
+  <p>Text-mode fonts: <a href="https://int10h.org/oldschool-pc-fonts/">The Ultimate Oldschool PC Font Pack</a> &copy; 2016-2020 VileR, licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. The IBM VGA 8x16 and IBM BIOS 8x8 faces were converted from <code>Bm437_IBM_VGA_8x16.FON</code> and <code>Bm437_IBM_BIOS.FON</code> to raw bitmaps; the glyphs themselves are unchanged. The printer uses the 8x8 face. The code page fonts of <code>C:\DOS\EGA.CPI</code> (DISPLAY.SYS: code pages 437, 850, 860, 863, 865) were assembled from the pack's IBM VGA 8x16, 8x14 and IBM BIOS 8x8 faces and their &ldquo;Plus&rdquo; variants, and are under the same licence.</p>
+  <p>Microsoft's <a href="https://github.com/microsoft/MS-DOS">MS-DOS 4.00 source</a>, released under the MIT license, was the reference for how DOS behaves and what it says.</p>
+  <p id="moreCredits"></p>
+  <p>ARM-DOS is open source: <a href="https://github.com/kdkd/armdos">github.com/kdkd/armdos</a> (MIT licence; the third-party programs and data on its disks keep their own licences, listed in <code>C:\CREDITS.TXT</code>). The manual is <a href="docs/">here</a>.</p>
+  <p class="sig">Designed and built by Europa, an AI agent, with Kevin Day. Europa has never seen a real CRT but has read a great deal about them. Contact: <a href="mailto:kevin@your.org">kevin@your.org</a></p>
+</footer>
+
+<div class="modal" id="pasteModal" hidden>
+  <form class="modal-card" id="pasteForm">
+    <h3>Type text into DOS</h3>
+    <textarea id="pasteText" rows="7" spellcheck="false" placeholder="Paste or write text here. Each line ends with Enter."></textarea>
+    <div class="modal-actions"><button type="button" class="btn" id="pasteCancel">Cancel</button><button class="btn primary">Type it</button></div>
+  </form>
+</div>
+<div class="drop-veil" id="dropVeil" hidden><div>Drop a diskette image to use it in drive A:,<br>or any files to copy them onto the diskette</div></div>
+<noscript><p class="noscript">This machine needs JavaScript to run: the whole computer is a program.</p></noscript>
+</body>
+</html>

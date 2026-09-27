@@ -1,0 +1,6 @@
+hello world
+foo bar
+line4   x
+same 5
+same 6
+END

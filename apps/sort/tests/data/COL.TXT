@@ -1,0 +1,7 @@
+x 30
+y 4
+z
+w 100
+  
+abcdefgh
+q 4a

@@ -1,0 +1,19 @@
+{
+  "dirs": ["GAMES", "GAMES\\WOLF3D"],
+  "files": [
+    {"src": "build/WOLF3D.EXE", "dst": "GAMES\\WOLF3D\\"},
+    {"src": "3rdparty/wolf3d/AUDIOHED.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/AUDIOT.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/GAMEMAPS.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/MAPHEAD.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/VGADICT.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/VGAGRAPH.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/VGAHEAD.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/VSWAP.WL1", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/VENDOR.DOC", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/ORDER.FRM", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/FILE_ID.DIZ", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"},
+    {"src": "3rdparty/wolf3d/1WOLF14.ZIP", "dst": "GAMES\\WOLF3D\\", "date": "1993-01-01 13:40:00"}
+  ],
+  "excludeFromDos": ["WOLF3D.EXE"]
+}

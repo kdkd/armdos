@@ -1,0 +1,25 @@
+1
+
+C:\T>echo 2
+2
+
+C:\T>for %a in (a*.txt b*.txt) do type %a
+
+C:\T>type A.TXT
+This is file A.
+It has two lines.
+
+C:\T>type B.TXT
+File B, line one
+line two
+line three
+
+C:\T>for %a in (x) echo bad
+Syntax error
+
+C:\T>for %a in (y) do for %b in (z) do echo nested
+
+C:\T>for %b in (z) do echo nested
+FOR cannot be nested
+
+C:\T>

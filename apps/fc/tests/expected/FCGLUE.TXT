@@ -1,0 +1,15 @@
+***** \WORK\A.TXT
+    1:  The quick brown fox
+    2:  jumps over the lazy dog.
+    3:  Line three
+***** \WORK\B.TXT
+    1:  The quick brown fox
+    2:  jumps over the lazy cat.
+    3:  Line three
+*****
+
+***** \WORK\A.TXT
+***** \WORK\B.TXT
+    4:  Line four
+*****
+

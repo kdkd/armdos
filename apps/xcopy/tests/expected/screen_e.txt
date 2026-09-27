@@ -1,0 +1,25 @@
+00 |        0 File(s) copied                                                        
+01 |[2]                                                                             
+02 |File not found - NOFILE.TXT                                                     
+03 |        0 File(s) copied                                                        
+04 |[3]                                                                             
+05 |Invalid switch - /Q                                                             
+06 |        0 File(s) copied                                                        
+07 |[4]                                                                             
+08 |Invalid date                                                                    
+09 |        0 File(s) copied                                                        
+10 |[5]                                                                             
+11 |Invalid number of parameters - c                                                
+12 |        0 File(s) copied                                                        
+13 |[6]                                                                             
+14 |Invalid switch - /S                                                             
+15 |        0 File(s) copied                                                        
+16 |[7]                                                                             
+17 |Invalid drive specification                                                     
+18 |        0 File(s) copied                                                        
+19 |[8]                                                                             
+20 |Reading source file(s)...                                                       
+21 |\S\A.TXT                                                                        
+22 |File cannot be copied onto itself                                               
+23 |        0 File(s) copied                                                        
+24 |C:\>                                                                            

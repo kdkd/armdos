@@ -1,0 +1,18 @@
+***** \T\A1.TXT
+abcdefg
+aaaaaaa
+***** \T\A2.TXT
+abcdefg
+aaaaaab
+aaaaaaa
+*****
+
+***** \T\A1.TXT
+aaaaaaa
+aaaaaaa
+abcdefg
+***** \T\A2.TXT
+aaaaaaa
+abcdefg
+*****
+

@@ -1,0 +1,2 @@
+  A          C:\AT\SUB\..\F2.DAT
+  A          C:\AT\SUB\..\F1.TXT

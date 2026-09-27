@@ -1,0 +1,11 @@
+Does X25 specify a file name
+or directory name on the target
+(F = file, D = directory)?d
+Reading source file(s)...
+\S\A.TXT
+\S\OLD.TXT
+\S\D1\B.TXT
+\S\D1\NEW.TXT
+\S\D1\A.TXT
+\S\D1\D2\C.TXT
+        6 File(s) copied

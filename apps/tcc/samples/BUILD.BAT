@@ -1,0 +1,8 @@
+@ECHO OFF
+REM BUILD.BAT - compile all the samples with the Tiny C Compiler
+TCC HELLO.C
+TCC MODE13.C
+TCC TUNE.C
+TCC ASMDEMO.C
+TCC MANDEL.C
+ECHO Done. Run HELLO, MODE13, TUNE, ASMDEMO or MANDEL.

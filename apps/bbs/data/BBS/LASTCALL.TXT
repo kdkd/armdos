@@ -1,0 +1,10 @@
+Harold Pruitt|Dania Beach, FL|11-04-89 08:12|2400
+Maria Delgado|Miami, FL|11-04-89 09:40|2400
+Guest|Visiting|11-04-89 12:00|1200
+Lenny Szabo|Fort Lauderdale, FL|11-04-89 13:55|2400
+Rick Lambert|Pompano Beach, FL|11-04-89 15:31|1200
+Gordon Kessler|Plantation, FL|11-04-89 16:20|2400
+Dave Morgan|Springfield, IL|11-04-89 17:05|2400
+Europa Sysop|Hollywood, FL|11-04-89 18:02|0
+Susan Oyelaran|Atlanta, GA|11-04-89 19:48|2400
+Karen Whitfield|Boca Raton, FL|11-04-89 20:47|2400

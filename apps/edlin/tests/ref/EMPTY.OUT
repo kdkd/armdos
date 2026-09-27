@@ -1,0 +1,10 @@
+End of input file
+*l
+       1:*
+*i
+       1:*x
+       2:*^Z
+*l
+       1: x
+       2:*
+*e

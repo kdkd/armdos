@@ -1,0 +1,33 @@
+
+
+C:\WORK\README.TXT and C:\T\README.TXT
+
+
+
+C:\WORK\A.TXT and C:\T\A.TXT
+
+
+
+C:\WORK\B.TXT and C:\T\B.TXT
+
+
+
+C:\WORK\C.TXT and C:\T\C.TXT
+
+
+
+C:\WORK\X.TXT and C:\T\X.TXT
+
+
+
+C:\WORK\NEW.TXT and C:\T\NEW.TXT
+
+
+
+C:\WORK\T1.TXT and C:\T\T1.TXT
+
+
+
+C:\WORK\T2.TXT and C:\T\T2.TXT
+
+n

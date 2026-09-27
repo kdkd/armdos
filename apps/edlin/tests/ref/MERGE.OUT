@@ -1,0 +1,28 @@
+End of input file
+*3tB.TXT
+*l
+       1: main 1
+       2: main 2
+       3:*merged 1
+       4: merged 2
+       5: merged 3
+       6: main 3
+       7: main 4
+       8: main 5
+*tB.TXT
+*l
+       1: main 1
+       2: main 2
+       3:*merged 1
+       4: merged 2
+       5: merged 3
+       6: merged 1
+       7: merged 2
+       8: merged 3
+       9: main 3
+      10: main 4
+      11: main 5
+*tnofile.txt
+*tq:x.txt
+Invalid drive or file name
+*e

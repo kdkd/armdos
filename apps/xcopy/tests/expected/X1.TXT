@@ -1,0 +1,4 @@
+Reading source file(s)...
+\S\A.TXT
+\S\OLD.TXT
+        2 File(s) copied

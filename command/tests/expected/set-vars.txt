@@ -1,0 +1,25 @@
+C>set foo=bar
+
+C>set Mixed Case=Some Value
+
+C>set
+COMSPEC=C:\COMMAND.COM
+PATH=
+FOO=bar
+MIXED CASE=Some Value
+
+C>set foo=
+
+C>set mixed case=
+
+C>set =x
+Syntax error
+
+C>set a=b=c
+Syntax error
+
+C>set
+COMSPEC=C:\COMMAND.COM
+PATH=
+
+C>

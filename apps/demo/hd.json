@@ -1,0 +1,8 @@
+{
+  "dirs": ["DEMO"],
+  "files": [
+    { "src": "build/DEMO.EXE", "dst": "DEMO\\" },
+    { "src": "apps/demo/DEMO.NFO", "dst": "DEMO\\" }
+  ],
+  "excludeFromDos": ["DEMO.EXE"]
+}

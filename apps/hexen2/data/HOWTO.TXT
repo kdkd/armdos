@@ -1,0 +1,19 @@
+ HEXEN II needs its game data: the file PAK0.PAK from the Hexen II demo.
+ ARM-DOS may not include it (Activision's licence for the demo forbids
+ passing it on), but you can fetch the demo yourself, free:
+
+  1. On your own computer, download the Hexen II demo version 1.11 of
+     November 1997, H2DEMO.EXE (15,334,912 bytes), e.g. from
+       https://www.gamers.org/pub/games/hexen2/official/demo/h2demo.exe
+  2. Open it as a ZIP archive - with 7-Zip on Windows ("Open archive"),
+     or "unzip h2demo.exe" on a Mac or Linux - and take out
+       Install\Hexen2\data1\pak0.pak          (27,750,257 bytes)
+  3. Put it into C:\GAMES\HEXEN2\DATA1 on the ARM PC:
+     - quickest: switch the ARM PC off, open C: in the Files panel below
+       the disk box, click GAMES, HEXEN2, DATA1, then "Copy files in..."
+       and choose pak0.pak; switch the ARM PC on again;
+     - or by modem: type GETPAK (about six hours at 14,400 bps).
+     It is too big for a diskette.
+  4. Type INSTALL again to check it, then HEXEN2 to play.
+
+ README.TXT in C:\GAMES\HEXEN2 tells the whole story (TYPE README.TXT | MORE).

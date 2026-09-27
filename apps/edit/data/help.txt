@@ -1,0 +1,292 @@
+# EDIT.HLP source (UTF-8; tools/mkhlp.mjs makes the code page 437 file).
+# ".topic Name" starts a topic; ◄Name► is a cross reference. Lines starting
+# with '#' are comments. Keep lines within 76 columns.
+.topic Survival Guide
+                              Survival Guide
+
+  Using the ARM-DOS Editor:
+
+  ■ To activate the ARM-DOS Editor menu bar, press Alt.
+  ■ To activate menus and commands, press the highlighted letter.
+  ■ To move between menus and commands, use the direction keys.
+  ■ To get help on a selected menu, command, or dialog box, press F1.
+  ■ To exit Help, press Esc.
+
+  Browsing the ARM-DOS Editor Help system:
+
+  ■ To select one of the following topics, press the Tab key or the
+    first letter of the topic. Then press the Enter key to see the topic.
+
+       ◄Getting Started►     Using menus, commands, and dialog boxes
+       ◄Keyboard►            Editing keys and shortcut keys
+
+  ■ For information about using Help, see ◄Using Help►.
+.topic Getting Started
+                              Getting Started
+
+  The ARM-DOS Editor is a full-screen text editor for ASCII files:
+  batch files, CONFIG.SYS, AUTOEXEC.BAT, notes and program sources.
+
+  Choose one of the following topics:
+
+       ◄Using Menus and Commands►
+       ◄Using Dialog Boxes►
+       ◄Using the Mouse►
+       ◄Command Line►
+       ◄Using Help►
+
+  See also: ◄Survival Guide►, ◄Keyboard►
+.topic Keyboard
+                                  Keyboard
+
+  Choose one of the following topics:
+
+       ◄Cursor Movement Keys►
+       ◄Selecting Text►
+       ◄Editing Keys►
+       ◄Shortcut Keys►
+
+  See also: ◄Survival Guide►, ◄Getting Started►
+.topic Using Menus and Commands
+                         Using Menus and Commands
+
+  ■ Press Alt to activate the menu bar, then press the highlighted
+    letter of a menu to open it. Or press Alt together with the letter:
+    Alt+F opens the File menu.
+  ■ Use the Left and Right arrow keys to move between menus, the Up and
+    Down arrow keys to move between commands.
+  ■ Press Enter, or the highlighted letter, to carry out a command.
+  ■ A command followed by three dots (...) opens a dialog box.
+  ■ Commands shown dimmed are not available right now; for example Cut
+    and Copy when no text is selected.
+  ■ Press Esc to close a menu without choosing a command.
+  ■ With a mouse, click a menu name, then click a command.
+
+  The menus: ◄File Menu►, ◄Edit Menu►, ◄Search Menu►, ◄Options Menu►,
+  ◄Help Menu►
+.topic Using Dialog Boxes
+                            Using Dialog Boxes
+
+  ■ Press Tab to move to the next field, Shift+Tab to the previous one.
+  ■ Type text in a text box; the arrow keys, Home and End move within it.
+  ■ Press the Spacebar to turn a check box ([X]) on or off.
+  ■ Use the arrow keys to choose an option button ((•)).
+  ■ Press Enter to carry out the command of the button whose brackets
+    are highlighted (< OK >); press Esc to cancel the dialog box.
+  ■ Alt plus a highlighted letter moves to that field.
+  ■ Press F1, or choose < Help >, for help on the dialog box.
+.topic Using the Mouse
+                              Using the Mouse
+
+  When a mouse driver (MOUSE.COM) is loaded:
+
+  ■ Click a menu name to open it, then click a command.
+  ■ Click in the text to move the cursor there. Drag to select text.
+    Double-click selects a word.
+  ■ Click the arrows of a scroll bar to scroll one line or column, the
+    shaded area to scroll a page; drag the box to scroll anywhere.
+  ■ In a dialog box, click a field to move to it, click a button to
+    choose it.
+  ■ In Help, double-click a ◄Keyboard►-style cross reference to see it.
+.topic Command Line
+                               Command Line
+
+  EDIT [[drive:][path]filename] [/B] [/G] [/H] [/NOHI]
+
+    [drive:][path]filename  The file to edit. If it does not exist,
+                            the Editor starts a new file of that name.
+    /B                      Use a monochrome monitor with a color card.
+    /G                      Fastest screen update on a CGA (accepted).
+    /H                      Show as many lines as the hardware can (50).
+    /NOHI                   For monitors without high intensity.
+
+  Files are saved with CR LF line endings. A file whose lines end in LF
+  alone (or CR alone) is converted when it is loaded.
+.topic Using Help
+                                Using Help
+
+  ■ Press F1 for help on the menu, command or dialog box you are using.
+  ■ In a Help window:
+       Tab, Shift+Tab    Move to the next / previous cross reference
+                         (shown in bright text, between arrows)
+       Enter             Show the topic of the cross reference
+       Alt+F1            Go back to the previous topic
+       Ctrl+F1           Show the next topic in the Help file
+       F6                Switch between Help and your document
+       Esc               Close the Help window
+  ■ The Help file, EDIT.HLP, is looked for in the directory set with
+    Options / Help Path, in the directory of EDIT.EXE and along the PATH.
+
+  See also: ◄Survival Guide►
+.topic Cursor Movement Keys
+                           Cursor Movement Keys
+
+  Character left / right            Left / Right  (or Ctrl+S / Ctrl+D)
+  Word left / right                 Ctrl+Left / Ctrl+Right  (Ctrl+A/F)
+  Line up / down                    Up / Down  (or Ctrl+E / Ctrl+X)
+  Beginning / end of line           Home / End
+  Page up / down                    PgUp / PgDn  (or Ctrl+R / Ctrl+C)
+  Beginning / end of file           Ctrl+Home / Ctrl+End
+  Scroll up / down one line         Ctrl+W / Ctrl+Z
+
+  See also: ◄Selecting Text►, ◄Editing Keys►
+.topic Selecting Text
+                              Selecting Text
+
+  Hold Shift down while moving the cursor to select text:
+
+  Character left / right            Shift+Left / Shift+Right
+  Word left / right                 Shift+Ctrl+Left / Shift+Ctrl+Right
+  Line up / down                    Shift+Up / Shift+Down
+  Screen up / down                  Shift+PgUp / Shift+PgDn
+  To beginning / end of file        Shift+Ctrl+Home / Shift+Ctrl+End
+
+  With a mouse, drag across the text.
+
+  See also: ◄Editing Keys►, ◄Edit Menu►
+.topic Editing Keys
+                               Editing Keys
+
+  Insert / overwrite mode           Ins  (or Ctrl+V)
+  Delete character / selection      Del  (or Ctrl+G)
+  Delete character to the left      Backspace  (or Ctrl+H)
+  Delete to end of word             Ctrl+T
+  Delete the current line           Ctrl+Y
+  Delete to end of line             Ctrl+Q, Y
+  Insert a line break               Enter  (or Ctrl+M)
+  Insert a control character        Ctrl+P, then the Ctrl+key
+  Cut selected text                 Shift+Del
+  Copy selected text                Ctrl+Ins
+  Paste                             Shift+Ins
+
+  New lines are indented like the line above.
+
+  See also: ◄Shortcut Keys►
+.topic Shortcut Keys
+                               Shortcut Keys
+
+  Help                              F1
+  Help: Survival Guide              Shift+F1
+  Repeat Last Find                  F3
+  Switch Help / document window     F6
+  Find                              Ctrl+Q, F
+  Change                            Ctrl+Q, A
+  Cut / Copy / Paste                Shift+Del / Ctrl+Ins / Shift+Ins
+  Clear                             Del
+  Activate the menu bar             Alt (press and release)
+
+  See also: ◄Keyboard►
+.topic File Menu
+                                 File Menu
+
+  New          Removes the current file from memory and starts a new,
+               untitled one.
+  Open...      Loads a file (see ◄Open Dialog►).
+  Save         Saves the current file. An untitled file is given a name
+               first (see ◄Save As Dialog►).
+  Save As...   Saves the current file under a name you type.
+  Print...     Prints the file or the selected text (◄Print Dialog►).
+  Exit         Leaves the Editor.
+
+  If the loaded file has changes that are not saved, New, Open and Exit
+  ask "Loaded file is not saved. Save it now?".
+.topic Edit Menu
+                                 Edit Menu
+
+  Cut          Deletes the selected text and copies it to the buffer
+               (clipboard).                                  Shift+Del
+  Copy         Copies the selected text to the buffer.       Ctrl+Ins
+  Paste        Inserts the buffer at the cursor (replacing any selected
+               text).                                        Shift+Ins
+  Clear        Deletes the selected text without copying it.       Del
+
+  See also: ◄Selecting Text►
+.topic Search Menu
+                                Search Menu
+
+  Find...             Finds text (see ◄Find Dialog►).
+  Repeat Last Find    Finds the next occurrence of the text of the last
+                      Find or Change.                               F3
+  Change...           Finds text and changes it to other text (see
+                      ◄Change Dialog►).
+
+  A search starts at the cursor and continues from the beginning of the
+  file when it reaches the end.
+.topic Options Menu
+                               Options Menu
+
+  Display...      Changes the colors of the text, scroll bars on or off,
+                  and the tab stops (see ◄Display Dialog►).
+  Help Path...    Tells the Editor where to find EDIT.HLP (see
+                  ◄Help Path Dialog►).
+.topic Help Menu
+                                 Help Menu
+
+  Getting Started    Using the Editor: menus, dialog boxes, the mouse,
+                     the command line (see ◄Getting Started►).
+  Keyboard           The editing and shortcut keys (see ◄Keyboard►).
+  About...           The version of the ARM-DOS Editor.
+.topic Find Dialog
+                                Find Dialog
+
+  Find What               The text to look for. It starts out as the
+                          selected text, or the word at the cursor.
+  Match Upper/Lowercase   Find only text with the same capitalization.
+  Whole Word              Find the text only as a whole word, not as
+                          part of a longer word.
+
+  The search starts at the cursor. Press F3 to find the next occurrence.
+.topic Change Dialog
+                               Change Dialog
+
+  Find What               The text to look for.
+  Change To               The text to put in its place.
+  Match Upper/Lowercase   Change only text with the same capitalization.
+  Whole Word              Change only whole words.
+
+  < Find and Verify >     Stops at each occurrence and asks: Change,
+                          Skip, or Cancel.
+  < Change All >          Changes every occurrence without asking.
+
+  When it is done, the Editor says "Change complete".
+.topic Open Dialog
+                                Open Dialog
+
+  File Name     Type the name of the file to load, or a wildcard such as
+                *.BAT to list other files. You can include a drive and a
+                directory (C:\DOS\*.TXT).
+  Files         The files of the current directory that match. Move to
+                one to put its name in File Name; press Enter or
+                double-click to load it.
+  Dirs/Drives   The subdirectories (.. is the parent) and the drives
+                ([-A-], [-C-]). Press Enter or double-click to change to
+                one.
+.topic Save As Dialog
+                              Save As Dialog
+
+  File Name     The name to save the file under. It is saved in the
+                directory shown below the name, unless you type a path.
+  Dirs/Drives   Change to another directory or drive first (Enter or
+                double-click).
+
+  If a file of that name exists, the Editor asks before replacing it.
+.topic Print Dialog
+                               Print Dialog
+
+  Selected Text Only    Prints only the selected text (available when
+                        text is selected).
+  Complete Document     Prints the whole file.
+
+  The text is sent to the printer (PRN), followed by a form feed.
+.topic Display Dialog
+                              Display Dialog
+
+  Colors            Choose "1 Normal Text" or "2 Highlighted Text"
+                    (selected text), then its Foreground and Background
+                    colors. The sample shows the result.
+  Scroll Bars       Show or hide the scroll bars of the document.
+  Tab Stops         The number of columns between tab stops (1-99).
+.topic Help Path Dialog
+                             Help Path Dialog
+
+  Type the directory that contains EDIT.HLP, for example C:\DOS.

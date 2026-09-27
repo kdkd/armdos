@@ -1,0 +1,114 @@
+/* The modem's front panel under the system unit (web/js/modem-panel.js, docs/MODEM.md):
+   a Hayes Smartmodem-style box - dark case, brushed aluminium face, red lamps - plus the
+   phone list card, the Host Link prompt and the BBS sysop view. Sizes in cqw (the .rig). */
+
+.modem { width: 100cqw; margin: 1.6cqw auto 0; position: relative; display: grid; grid-template-columns: 1fr auto; gap: 1.4cqw 2cqw; align-items: center; }
+.modem-box {
+  position: relative; display: flex; align-items: center; gap: 2.2cqw;
+  margin-left: 3cqw; padding: 1.1cqw 1.8cqw 1.1cqw 2cqw; border-radius: .5cqw .5cqw .7cqw .7cqw;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, #b9bcc0, #9ea2a7 45%, #8b8f94);
+  box-shadow:
+    0 -.5cqw 0 #1d1d1f, 0 -.55cqw 0 #3a3a3d,             /* the dark case lid behind the face */
+    inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.25),
+    0 1.2cqw 1.8cqw rgba(0,0,0,.45);
+}
+.modem-box::after {   /* rubber feet */
+  content: ""; position: absolute; left: 2cqw; right: 2cqw; bottom: -.55cqw; height: .55cqw;
+  background: radial-gradient(closest-side, #111 60%, transparent) 0 0 / 5cqw 100% repeat-x;
+  opacity: .8; pointer-events: none;
+}
+.modem-brand { display: flex; flex-direction: column; line-height: 1; color: #1b1c1e; min-width: 9cqw; }
+.modem-brand b { font: 700 1.55cqw/1 var(--sans); letter-spacing: .08em; }
+.modem-brand span { font: 600 .82cqw/1.2 var(--sans); letter-spacing: .2em; color: #34363a; margin-top: .35cqw; }
+.modem-lamps { display: flex; gap: 1.15cqw; }
+.modem-lamps label { display: flex; flex-direction: column; align-items: center; gap: .45cqw; font: 600 .8cqw/1 var(--sans); letter-spacing: .06em; color: #202124; cursor: default; }
+.mlamp {
+  width: 1.05cqw; height: 1.05cqw; border-radius: 50%; display: block;
+  background: radial-gradient(circle at 35% 30%, #7a2b26, #3b1311 70%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.4);
+  transition: background .05s, box-shadow .05s;
+}
+.mlamp.on {
+  background: radial-gradient(circle at 35% 30%, #ffd6c8, #ff4a36 38%, #c01d12 75%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.3), 0 0 .6cqw rgba(255,60,40,.85), 0 0 1.6cqw rgba(255,40,20,.35);
+}
+.modem-line {
+  min-width: 15cqw; padding: .45cqw .9cqw; border-radius: .3cqw;
+  background: linear-gradient(180deg, #0c130e, #111a13); box-shadow: inset 0 0 0 1px #050806, inset 0 .2cqw .5cqw rgba(0,0,0,.8);
+  font: 600 1.05cqw/1.2 var(--mono); letter-spacing: .08em; color: #ff5a3c; text-shadow: 0 0 .4cqw rgba(255,80,50,.7);
+  white-space: nowrap;
+}
+.mbtn {
+  font: 600 .85cqw/1 var(--sans); letter-spacing: .1em; padding: .55cqw .8cqw; border-radius: .3cqw; cursor: pointer;
+  color: #1b1c1e; background: linear-gradient(180deg, #d9dbde, #b3b6ba); border: 1px solid #6d7074;
+  box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 .15cqw 0 #5e6165;
+}
+.mbtn[aria-pressed="true"] { background: linear-gradient(180deg, #9fa3a7, #c3c6ca); box-shadow: inset 0 .15cqw .3cqw rgba(0,0,0,.35); }
+.mbtn.go { color: #fff; background: linear-gradient(180deg, #d5812b, #a95d17); border-color: #6b3a0c; }
+
+/* an index card taped next to it */
+.phone-card {
+  display: flex; flex-direction: column; gap: .2cqw; margin-right: 2cqw; padding: .9cqw 1.3cqw 1cqw; white-space: nowrap;
+  transform: rotate(2.2deg); background: repeating-linear-gradient(180deg, #fbf7ea 0 1.45cqw, #c9d8ea 1.45cqw calc(1.45cqw + 1px)), #fbf7ea;
+  color: #2a2a3a; font: 400 1.05cqw/1.4 var(--mono); box-shadow: 0 .6cqw 1.2cqw rgba(0,0,0,.4);
+  border-top: .35cqw solid #d9534f;
+}
+.phone-card b { font: 700 .85cqw/1.6 var(--sans); letter-spacing: .15em; color: #9b2c28; }
+.phone-card em { font-style: normal; font-weight: 600; color: #1d3f86; }
+.phone-card small { font: italic 400 .9cqw/1.4 var(--serif); color: #595a66; }
+
+.mprompt {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center;
+  padding: 10px 14px; border-radius: 8px; background: #2b2620; color: var(--ink); font: 15px/1.4 var(--serif);
+  box-shadow: inset 0 0 0 1px rgba(232,161,58,.35);
+}
+.mprompt .mbtn { font-size: 13px; padding: 6px 10px; }
+
+.sysop { grid-column: 1 / -1; justify-self: center; width: min(100%, 560px); padding: 10px 12px 12px; border-radius: 10px; background: #1b1916; box-shadow: 0 10px 24px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.05); }
+.sysop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; font: 600 11px/1 var(--sans); letter-spacing: .14em; color: var(--ink-3); }
+.sysop-head b { color: var(--accent); }
+.sysop-screen { background: #000; border-radius: 6px; padding: 8px; box-shadow: inset 0 0 18px rgba(0,0,0,.9); }
+.sysop-screen canvas { display: block; width: 100%; height: auto; aspect-ratio: 9 / 5; image-rendering: auto; }
+.sysop-state { margin: 8px 2px 0; font: italic 14px/1.4 var(--serif); color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .modem { grid-template-columns: 1fr; }
+  .modem-box { margin: 0 auto; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 10px; }
+  .modem-brand b { font-size: 14px; } .modem-brand span { font-size: 8px; }
+  .modem-lamps { gap: 8px; } .modem-lamps label { font-size: 8px; gap: 4px; } .mlamp { width: 9px; height: 9px; }
+  .modem-line { font-size: 11px; min-width: 0; }
+  .mbtn { font-size: 10px; padding: 6px 8px; }
+  .phone-card { margin: 0 auto; font-size: 12px; transform: rotate(1deg); }
+  .phone-card b { font-size: 9px; } .phone-card small { font-size: 11px; }
+}
+
+/* the speed switch: a four-position slide switch set into the aluminium face */
+.mspeed { display: flex; flex-direction: column; align-items: stretch; gap: .35cqw; width: 12cqw; }
+.mspeed-track {
+  position: relative; height: 1.1cqw; border-radius: .25cqw; margin: 0 12.5%;
+  background: linear-gradient(180deg, #1a1b1d, #2c2d30); box-shadow: inset 0 .12cqw .25cqw rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.45);
+}
+.mspeed-knob {
+  position: absolute; top: -.18cqw; width: 1.9cqw; height: 1.46cqw; border-radius: .2cqw; margin-left: -.95cqw;
+  background: repeating-linear-gradient(90deg, #e9eaec 0 .18cqw, #b9bbbf .18cqw .36cqw), #d6d8db;
+  box-shadow: 0 .15cqw .3cqw rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.35); transition: left .12s cubic-bezier(.3,1.6,.6,1);
+  left: 0;
+}
+.mspeed[data-speed="14400"] .mspeed-knob { left: 33.33%; }
+.mspeed[data-speed="33600"] .mspeed-knob { left: 66.67%; }
+.mspeed[data-speed="56000"] .mspeed-knob { left: 100%; }
+.mspeed-labels { display: flex; justify-content: space-between; }
+.mspeed-labels label { position: relative; width: 25%; text-align: center; font: 700 .72cqw/1 var(--sans); letter-spacing: .04em; color: #202124; cursor: pointer; }
+.mspeed-labels input { position: absolute; inset: -1.6cqw 0 0 0; margin: 0; opacity: 0; cursor: pointer; }
+.mspeed-labels input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mspeed-labels input:checked + span { color: #b0241a; }
+@media (max-width: 640px) {
+  .mspeed { width: 150px; gap: 5px; }
+  .mspeed-track { height: 10px; margin: 0 12.5%; } .mspeed-knob { width: 18px; height: 14px; margin-left: -9px; top: -2px; }
+  .mspeed-labels label { font-size: 9px; } .mspeed-labels input { inset: -16px 0 0 0; }
+}
+/* no modem card in the machine (web/js/openbox.js) */
+.modem.absent .modem-box { filter: saturate(.4) brightness(.8); }
+.modem.absent .mspeed { opacity: .45; pointer-events: none; }

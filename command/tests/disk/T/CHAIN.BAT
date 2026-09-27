@@ -1,0 +1,1 @@
+echo chained %0

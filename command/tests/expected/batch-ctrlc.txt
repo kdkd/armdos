@@ -1,0 +1,9 @@
+
+C:\T>pauser
+before
+Press any key to continue . . .
+^C
+
+Terminate batch job (Y/N)?y
+
+C:\T>

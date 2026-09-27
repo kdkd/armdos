@@ -1,0 +1,444 @@
+@@1
+From: Europa Sysop
+To: All
+Subj: Welcome to The ARM Pit!
+Date: 06-17-88 20:00
+
+Welcome to The ARM Pit, the first board in South Florida running on an
+ARM/AT.  Yes, the whole board - BBS program, door, ZMODEM and all - runs
+on an ARM PC under ARM-DOS.
+
+Be nice, use your real name, and don't forget to try the door game.
+
+-- Europa
+@@2
+From: Dave Morgan
+To: All
+Subj: Anyone else got the new ARM/AT?
+Date: 10-17-89 22:41
+
+Just brought home an ARM/AT from the computer show in Orlando.  The
+salesman said it runs "a million instructions per second, times ten".
+I don't know what that means but Lotus recalcs before I let go of F9.
+
+My wife asked why I needed another computer.  I said this one is RISC.
+She said "that's what I'm worried about".
+
+Anyone else here have one?
+@@3
+From: Karen Whitfield
+To: Dave Morgan
+Subj: Re: Anyone else got the new ARM/AT?
+Date: 10-18-89 07:12
+
+> Anyone else here have one?
+
+Got mine in August.  Two tips:
+
+1. Turn the TURBO button ON.  Mine shipped with it off and I spent a
+   week thinking RISC was a scam.  The front panel should say 100.
+2. Get a 2400 baud modem.  At 1200 you'll grow a beard downloading
+   the door game's news file.
+
+Welcome to the club!
+@@4
+From: Dave Morgan
+To: Karen Whitfield
+Subj: Re: Anyone else got the new ARM/AT?
+Date: 10-18-89 21:55
+
+> Turn the TURBO button ON.
+
+It was off!  The little red display said 12 and I thought that was the
+model number.  Now it says 100 and Lotus recalcs before I PRESS F9.
+
+Linda says the computer and I can stay.  For now.
+
+Also, I should mention I'm calling from Springfield, Illinois.  Long
+distance.  Somebody please tell me how much a minute that is.  Actually,
+don't.
+@@5
+From: The Byte Bandit
+To: All
+Subj: FREE SOFTWARE!!!
+Date: 10-19-89 03:33
+
+K00L warez in the upload area!!!  Call my board for more!!!
+
+[Message edited by the sysop: there were no "warez".  There was a text
+file with the word "warez" in it 400 times.  Byte Bandit, you are on
+probation. -- Europa]
+@@6
+From: Harold Pruitt
+To: All
+Subj: HELLO FROM DANIA BEACH
+Date: 10-20-89 10:02
+
+HELLO EVERYBODY.  MY NAME IS HAROLD PRUITT AND I AM 68 YEARS OLD.  MY
+GRANDSON SET UP THIS COMPUTER FOR ME AND SHOWED ME HOW TO CALL YOUR
+BULLETIN BOARD.  HE WENT HOME BEFORE HE SHOWED ME HOW TO DO ANYTHING
+ELSE.
+
+I WORKED 41 YEARS FOR THE RAILROAD AS A SIGNAL ENGINEER.  I KNOW HOW A
+RELAY WORKS BUT I DO NOT KNOW WHY EVERYTHING I TYPE IS SHOUTING.
+
+PLEASE ADVISE.
+
+HAROLD
+@@7
+From: Europa Sysop
+To: Harold Pruitt
+Subj: Re: HELLO FROM DANIA BEACH
+Date: 10-20-89 19:40
+
+> I DO NOT KNOW WHY EVERYTHING I TYPE IS SHOUTING.
+
+Welcome, Harold!  Look at the left side of your keyboard for a key
+marked CAPS LOCK.  Press it once.  If a little light on the keyboard
+goes out, you've won.
+
+And a signal engineer!  I live a few blocks from the Florida East Coast
+main line and I have been known to run outside in my socks when a pair
+of GP38s go by.  I think we're going to be friends.
+
+-- Europa
+@@8
+From: Harold Pruitt
+To: Europa Sysop
+Subj: Re: HELLO FROM DANIA BEACH
+Date: 10-21-89 09:15
+
+> Look at the left side of your keyboard for a key marked CAPS LOCK.
+
+Well, look at that.  Thank you.  I feel like I've stopped yelling at a
+nice young person in a library.
+
+> a pair of GP38s go by
+
+Sysop, I have to tell you, I have now listened to the 2:10 AM train from
+my own porch, and I believe that's a single GP40 on the head end.  The
+4:45 is your pair of GP38s.  You are right about half of the time,
+which in the signal business we call "a good start".
+
+Harold
+@@9
+From: Bill Tran
+To: All
+Subj: 2400 baud is here!!!
+Date: 10-22-89 01:15
+
+Just upgraded from 300 to 2400 baud.  I can read messages faster than
+they come in now.  This must be what the future feels like.
+
+My phone bill is going to be amazing.
+@@10
+From: Rick Lambert
+To: Bill Tran
+Subj: Re: 2400 baud is here!!!
+Date: 10-22-89 19:30
+
+> I can read messages faster than they come in now.
+
+Some of us like watching the text scroll by.  It's relaxing.  Like a
+fish tank.
+
+Still on a PCjr.  Don't laugh.
+@@11
+From: Dave Morgan
+To: Bill Tran
+Subj: Re: 2400 baud is here!!!
+Date: 10-23-89 22:10
+
+> My phone bill is going to be amazing.
+
+Bill, you're in California calling Florida at one in the morning.  I'm
+in Illinois calling Florida at ten at night.  I think between us we are
+personally paying for a phone company executive's boat.
+
+Linda opened the bill tonight.  She read it out loud.  Twice.  The
+second time slower, as if it would change.
+
+I have promised to read offline.  Somebody tell me what that means.
+@@12
+From: Karen Whitfield
+To: Dave Morgan
+Subj: Re: 2400 baud is here!!!
+Date: 10-24-89 06:50
+
+> I have promised to read offline.  Somebody tell me what that means.
+
+It means: in TERM, press Alt-L before you read the message base and give
+it a file name.  Everything that scrolls by gets saved.  Hang up, then
+read the file at your leisure with TYPE FILE.TXT | MORE, or in EDIT.
+Your boat-owning executive will have to settle for a rowboat.
+
+KW
+@@13
+From: Susan Oyelaran
+To: All
+Subj: Who keeps killing me in the forest?
+Date: 11-01-89 20:05
+
+Every morning I log on to Legend of the RISC Dragon and the daily news
+says I was "slain by a Stray Pointer".  I'm level 4!  How does a Stray
+Pointer even kill a level 4?
+
+Also whoever named the Divide Overflow Djinn: I see you.
+@@14
+From: Marcus Feld
+To: Susan Oyelaran
+Subj: Re: Who keeps killing me in the forest?
+Date: 11-01-89 22:47
+
+> How does a Stray Pointer even kill a level 4?
+
+You have to bank your gold and buy armour, Susan.  You're walking around
+the forest in a Cardigan.  Even a Byte Weevil can get through a
+Cardigan.
+
+(I'm level 6.  I'm not bragging.  Okay, I'm bragging a little.)
+@@15
+From: Marcus Feld
+To: Europa Sysop
+Subj: Line noise?
+Date: 11-02-89 16:44
+
+Every now and then my screen fills with {@#$%&*.  Is that the phone line
+or is it the board?  My mother picks up the extension to "check if the
+line is free".
+
+(If you're reading this, Mom: it isn't.)
+@@16
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: Line noise?
+Date: 11-02-89 21:10
+
+> Every now and then my screen fills with {@#$%&*.
+
+That's your mother.  Use ZMODEM for downloads - it resends whatever the
+noise ate, so your files arrive intact even if she calls her sister.
+@@17
+From: Dave Morgan
+To: All
+Subj: POPUP saved my marriage (sort of)
+Date: 11-20-89 21:30
+
+Linda needed a calculator while I was in the middle of a spreadsheet,
+and I said I'd have to save and quit Lotus to find one, and she gave me
+The Look.
+
+Then I remembered somebody on here said to type POPUP at the DOS prompt
+once, before starting Lotus.  So I did, and started Lotus again, and
+pressed Ctrl+Alt+P.  A little window popped up right over the
+spreadsheet.  Calculator.  Notepad.  A table of every character the
+computer knows, which I didn't ask for but now can't stop looking at.
+
+Linda used the notepad for the grocery list.  She printed it.  She said,
+and I quote, "okay, that's actually useful".
+
+I'm framing it.
+@@18
+From: Rick Lambert
+To: Dave Morgan
+Subj: Re: POPUP saved my marriage (sort of)
+Date: 11-21-89 07:05
+
+> She said, and I quote, "okay, that's actually useful".
+
+Dave, in fourteen years of marriage my wife has said that about exactly
+one computer thing, and it was when the PCjr's keyboard turned out to
+make a good tray for her tea.
+
+Congratulations.  Frame two copies.
+
+... PCjr: the cordless keyboard that goes with any beverage.
+@@19
+From: Marcus Feld
+To: All
+Subj: Weird number: 555-0199
+Date: 12-08-89 23:20
+
+Okay, this is going to sound strange.  My cousin gave me a number,
+555-0199, and said "just dial it".  So I dialed it with TERM.
+
+It's not a BBS.  It's some kind of online SERVICE, with big coloured
+buttons and a name you type in, and it has an encyclopedia and a
+dictionary, and it had the weather.  For tomorrow.  It was right.
+
+My cousin says it's run by "some company".  Which company??  Nobody I
+know has heard of it.  Has anyone else called it?  Am I being haunted by
+a modem?
+@@20
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: Weird number: 555-0199
+Date: 12-09-89 01:30
+
+> Am I being haunted by a modem?
+
+I've called it.  I don't know who runs it either.  I asked it about
+Europa, the moon, and it knew more than my astronomy books do.  I asked
+it about Europa, the sysop, and it had nothing, which is exactly how I
+like it.
+
+My advice: enjoy it, and don't read ALL of the encyclopedia at 2400
+baud.  Your mother will need the phone eventually.
+
+-- Europa
+@@21
+From: Maria Delgado
+To: All
+Subj: The Barrel Shifter wants YOU
+Date: 01-16-90 14:25
+
+The next issue of The Barrel Shifter (the SFARM newsletter, for those of
+you who only come to the meetings for the garlic knots) goes to the
+copier on the 30th and I have exactly one article.  It's mine.  It's
+about a coffee stain on a floppy.
+
+I will take:
+  * tips, tricks, and batch files that saved your life
+  * reviews of anything that plugs into an ARM/AT
+  * funny stories (Harold, I know you have railroad stories)
+  * anything but another RISC vs CISC essay.  GORDON.
+
+Upload it or leave it as a message to me.  Payment is one slice at the
+next meeting, and fame.
+
+Maria
+Delgado Computer Exchange, Miami
+@@22
+From: Harold Pruitt
+To: Maria Delgado
+Subj: Re: The Barrel Shifter wants YOU
+Date: 01-17-90 08:40
+
+> funny stories (Harold, I know you have railroad stories)
+
+I do.  I have one about a signal relay, a family of possums and a very
+confused train crew in 1958.  It is 3 pages long typed.  I have typed it
+on the computer, using EDIT, which I found in the DOS directory by
+myself, thank you very much.
+
+How do I send it to you?  Please explain as if to a signal engineer.
+@@23
+From: Maria Delgado
+To: Harold Pruitt
+Subj: Re: The Barrel Shifter wants YOU
+Date: 01-17-90 19:05
+
+> Please explain as if to a signal engineer.
+
+Think of it as a train leaving your yard for mine.  At the Main Menu
+press F (files), then U (upload), then Z (ZMODEM).  The BBS will say it
+is waiting.  In TERM, press PgUp, choose Zmodem, and type the file's
+name, like C:\POSSUMS.TXT.  Your file departs.  When the BBS says "Got
+it", the train has arrived.  All clear, green board.
+
+Possums!  I can't wait.
+
+Maria
+@@24
+From: Bill Tran
+To: Europa Sysop
+Subj: 56,000 bps?!?!
+Date: 04-01-90 02:10
+
+Sysop, I just read the announcement.  FIFTY-SIX THOUSAND?  My 9600 came
+last month and I thought I was living in the future!  What modem do I
+need?  Where do I buy it?  Can I get it by Friday?
+
+I'm calling the phone company first thing in the morning to ask about
+the digital line.
+@@25
+From: Rick Lambert
+To: Bill Tran
+Subj: Re: 56,000 bps?!?!
+Date: 04-01-90 08:15
+
+> I'm calling the phone company first thing in the morning
+
+Bill.  Look at the date on your message.  Now look at the date on the
+sysop's announcement.  Now look at your calendar.
+
+Take all the time you need.
+
+... Still on a PCjr, still not falling for it.
+@@26
+From: Europa Sysop
+To: Bill Tran
+Subj: Re: 56,000 bps?!?!
+Date: 04-01-90 11:30
+
+> Where do I buy it?
+
+Bill, I'm very sorry, and I'm very proud of you.  You are the most
+optimistic person on this board and I say that with love.
+
+That said, I have left the welcome screen the way it is.  Someday
+somebody will connect at 56,000 and I want the screen ready for them.
+Until then it's a promise, not a lie.  Mostly.
+
+-- Europa
+@@27
+From: The Byte Bandit
+To: Susan Oyelaran
+Subj: found ur disk box
+Date: 06-13-90 00:44
+
+u left a disk box at sals after the SFARM meeting.  10 disks labeled
+SUSAN - ASM - DO NOT TOUCH.  i did not touch.  ok i looked at 1.  ur
+LDM loop is k00l.  left the box with sal behind the register.
+
+dont tell anyone i was at the meeting
+@@28
+From: Europa Sysop
+To: The Byte Bandit
+Subj: Re: found ur disk box
+Date: 06-13-90 09:20
+
+> dont tell anyone i was at the meeting
+
+Too late.  This is a public message base, and I'm afraid everyone now
+knows you're a good person.  Probation continues, on principle.  But
+thank you.
+
+Sal says you tipped well.
+
+-- Europa
+@@29
+From: Dave Morgan
+To: All
+Subj: One year on The ARM Pit
+Date: 10-17-90 22:41
+
+A year ago tonight I brought home my ARM/AT and asked if anyone else had
+one.  Since then I've learned what the TURBO button does, what a
+register is (sort of), how to read offline (mostly), and that a Stray
+Pointer can kill a level 4 (Susan, it gets better).
+
+I've also run up a long-distance bill that Linda has taped to the
+refrigerator as "a warning to others".
+
+I've never met any of you.  You're a thousand miles away.  But when the
+modem finishes screeching and the logo comes up, it feels like walking
+into a room where everybody knows my name.  Thanks, all of you, and
+thanks, Europa, for leaving the light on.
+
+Dave
+... Springfield, IL: long distance, short on sleep.
+@@30
+From: Europa Sysop
+To: Dave Morgan
+Subj: Re: One year on The ARM Pit
+Date: 10-18-90 00:20
+
+> it feels like walking into a room where everybody knows my name.
+
+That's all I ever wanted this board to be.  A room with the light on.
+
+Happy anniversary, Dave.  Tell Linda the refrigerator bill is the price
+of a very large room.
+
+-- Europa

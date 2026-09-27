@@ -1,0 +1,768 @@
+; tchelp.txt - the online help of ARM Turbo C (TC.EXE).
+;
+; .topic Name[,alias...]   starts a topic (names are case-insensitive)
+; {Text} or {Text:Topic}   a cross reference (Tab / Shift+Tab, Enter)
+; .ex ... .endex           an example (Edit / Copy example)
+; ";" lines are comments.
+
+.topic Contents
+                      ARM Turbo C Help Contents
+
+  {Using the IDE:Using the IDE}          {Keyboard:Editor keys}
+  {Menus}                                {The Compiling box:Compiling box}
+  {Making a program:Make}                {Running a program:Run}
+  {Projects:Project menu}                {Options:Options menu}
+  {Error messages:Errors}                {The C language:C language}
+  {The C library:Library}                {Header files:Headers}
+  {ARM-DOS programming:ARM-DOS}          {Help on help}
+
+  Press Shift+F1 for the {Index}, Ctrl+F1 for help on the word at the
+  cursor in the editor.
+
+.topic Help on help
+                              Help on help
+
+  The help window shows a topic. Highlighted words are cross references:
+
+    Tab, Shift+Tab   move between cross references
+    Enter            show the highlighted topic (or double-click it)
+    Alt+F1           go back to the previous topic
+    Shift+F1         the {Index} of all topics
+    Ctrl+F1          (in the editor) help on the word at the cursor:
+                     try it on printf or #include
+    F1               in a menu or dialog: help on the highlighted item
+    Esc              close the help window
+
+  Edit / Copy example copies the example of the topic shown to the
+  clipboard, ready for Shift+Ins in your program.
+
+  See also: {Contents}
+
+.topic Using the IDE,IDE
+                            Using the IDE
+
+  ARM Turbo C is an integrated development environment: you edit, compile,
+  run and fix your C programs without leaving it.
+
+  The screen has three parts:
+
+    the {menu bar:Menus} at the top      F10 (or Alt+letter) opens it
+    the desktop with the windows         edit windows, {Message window}
+    the status line at the bottom        the keys you can use now
+
+  A typical session:
+
+    1. F3 opens a file (HELLO.C is there on your first start)
+    2. edit it; F2 saves it
+    3. Ctrl+F9 compiles, links and runs it ({Run})
+    4. errors appear in the {Message window}: Enter goes to the line
+    5. Alt+F5 shows the {user screen} with the output of the program
+
+  Windows: F5 zooms, Ctrl+F5 moves/sizes, F6 goes to the next window,
+  Alt+F3 closes, Alt+1 ... Alt+9 selects window number n, Alt+0 lists them.
+  The mouse works everywhere: menus, windows, scroll bars, dialogs.
+
+  See also: {Editor keys}, {Make}, {Menus}
+
+.topic Menus
+                               The menus
+
+  {\xF0 (System):System menu}   About, Repaint desktop
+  {File:File menu}           Open, New, Save, Save as, Save all, Change dir,
+                         Print, Get info, DOS shell, Quit
+  {Edit:Edit menu}           Restore line, Cut, Copy, Paste, Copy example,
+                         Show clipboard, Clear
+  {Search:Search menu}         Find, Replace, Search again, Go to line number,
+                         Previous error, Next error, Locate function
+  {Run:Run menu}            Run, Arguments
+  {Compile:Compile menu}        Compile to OBJ, Make EXE file, Link EXE file,
+                         Build all, Information, Remove messages
+  {Debug:Debug menu}          (the debugger is not part of this version)
+  {Project:Project menu}        Open project, Close project, Add item, Delete item
+  {Options:Options menu}        Compiler, Make, Linker, Directories, Environment,
+                         Save
+  {Window:Window menu}         Size/Move, Zoom, Tile, Cascade, Next, Close,
+                         Message, Project, User screen, List all
+  {Help:Help menu}           Contents, Index, Topic search, Previous topic,
+                         Help on help, About
+
+.topic System menu
+                             The \xF0 menu
+
+  About...          the version of ARM Turbo C and of its compiler
+  Repaint desktop   redraws the whole screen
+
+  (Alt+Space opens this menu.)
+
+.topic About
+                                 About
+
+  ARM Turbo C 1.0 - an integrated C development environment for ARM-DOS.
+
+  The compiler is TinyCC 0.9.28rc (Fabrice Bellard and the TinyCC authors,
+  GNU Lesser General Public License 2.1) with the ARM-DOS code generator
+  and .EXE writer, linked into TC.EXE. The IDE is built on Turbo Vision.
+
+  Copyright (c) 2026 Europa Micro Systems.
+
+.topic File menu
+                               File menu
+
+  {Open:File Open}          F3      load a file into an edit window
+  {New:File New}                   a new, empty edit window (NONAME00.C)
+  {Save:File Save}          F2      save the active edit window
+  Save as...                save it under a new name
+  Save all                  save every modified file
+  Change dir...             choose the current directory
+  Print                     print the active edit window on PRN
+  {Get info...:Get info}             memory and compile statistics
+  DOS shell                 run COMMAND.COM; EXIT comes back
+  Quit              Alt+X   leave ARM Turbo C (it asks about unsaved files)
+
+.topic File Open,Open
+                                 Open
+
+  File / Open (F3) shows the file dialog: type a name or a wildcard in
+  Name (*.C lists the C files), or pick one in the Files list; Enter
+  opens it. A file that does not exist yet opens as a new, empty file of
+  that name. If the file is already open, its window comes to the front.
+
+  You can also start ARM Turbo C with a file:  TC MYPROG.C
+
+.topic File New,New
+                                 New
+
+  File / New opens an empty edit window called NONAME00.C. The first Save
+  asks for a name.
+
+.topic File Save,Save
+                                 Save
+
+  File / Save (F2) writes the active edit window to its file. The old
+  version is kept as NAME.BAK (Options / Environment: Create backup files).
+  Before a Make or Run, modified files are saved automatically.
+
+.topic Get info
+                              Get info
+
+  Shows the current directory and file, the project, the lines compiled,
+  warnings and errors of the last compile, the exit code of the last
+  program run, and the memory: "Available memory" is the conventional
+  memory a program run from the IDE gets (the IDE itself runs in extended
+  memory).
+
+.topic Edit menu
+                               Edit menu
+
+  Restore line                    undo the last changes
+  Cut                  Shift+Del  selected text to the clipboard
+  Copy                 Ctrl+Ins   copy selected text to the clipboard
+  Paste                Shift+Ins  insert the clipboard at the cursor
+  Copy example                    the example of the help topic shown
+  Show clipboard                  open the Clipboard window
+  Clear                Ctrl+Del   delete the selected text
+
+  Select text with Shift+cursor keys or by dragging the mouse.
+  See also: {Editor keys}
+
+.topic Editor keys,Keyboard
+                             Editor keys
+
+  Cursor         arrows, Home, End, PgUp, PgDn, Ctrl+Left/Right (words),
+                 Ctrl+PgUp/PgDn (start/end of the file)
+  WordStar       Ctrl+S D E X, Ctrl+A F (words), Ctrl+R C (pages)
+  Delete         Del, Backspace, Ctrl+Y (line), Ctrl+T (word), Ctrl+Q Y
+  Insert mode    Ins toggles insert/overwrite (the cursor shape shows it)
+  Blocks         Shift+cursor keys select; Shift+Del cut, Ctrl+Ins copy,
+                 Shift+Ins paste
+  Search         Ctrl+Q F find, Ctrl+Q A replace, Ctrl+L search again
+  Files          F2 save, F3 open
+  Compile        Alt+F9 compile, F9 make, Ctrl+F9 run, Alt+F5 user screen
+  Errors         Alt+F7 previous error, Alt+F8 next error
+  Help           F1, Ctrl+F1 (the word at the cursor), Shift+F1 index
+
+  The bottom frame of the window shows line:column, and a * when the file
+  has changed. Keywords, comments, strings and preprocessor lines are
+  shown in colours (Options / Environment: Syntax highlighting).
+
+.topic Search menu
+                              Search menu
+
+  Find...                  search for text (case, whole words)
+  Replace...               search and replace (prompt, replace all)
+  Search again   Ctrl+L    repeat the last Find or Replace
+  Go to line number...     move the cursor to a line
+  Previous error Alt+F7    the previous message in the {Message window}
+  Next error     Alt+F8    the next message
+  Locate function...       find the definition of a function (the word
+                           at the cursor is suggested)
+
+.topic Run menu,Run
+                                Run menu
+
+  Run            Ctrl+F9  makes the program if a source changed ({Make}),
+                          then runs it. The screen switches to the
+                          {user screen}; when the program ends you are back
+                          in the IDE. Alt+F5 shows what the program wrote.
+  Arguments...            the command line the program gets (argv)
+
+  Program reset, Go to cursor, Trace into and Step over belong to the
+  debugger, which is not part of this version: they are shown dimmed.
+
+  The program runs as a child of ARM Turbo C, with nearly all of
+  conventional memory: the IDE lives in extended memory. A program can
+  call system("MEM") to see for itself.
+
+.topic User screen
+                              User screen
+
+  Alt+F5 (Window / User screen) shows the screen as the program left it.
+  Any key returns to the IDE.
+
+.topic Compile menu,Make,Compile
+                             Compile menu
+
+  Compile to OBJ  Alt+F9   compile the active edit window to NAME.O
+  Make EXE file   F9       compile and link NAME.EXE, if a source or one
+                           of your own header files is newer than it
+  Link EXE file            link NAME.EXE from the .O files
+  Build all                compile and link everything
+  Information...           the statistics of the last compile
+  Remove messages          clear the {Message window}
+
+  Without a project, the program is the file in the active edit window;
+  with a {project:Project menu}, it is all the files of the project and is
+  called like the project. The .EXE goes next to the source, or to the
+  Output directory ({Options / Directories:Options menu}).
+
+  While compiling, the {Compiling box} counts the lines. Errors and
+  warnings go to the {Message window}.
+
+.topic Compiling box
+                            The Compiling box
+
+  Main file          the program being made
+  Compiling          the file being read now (headers too)
+  Lines compiled     all lines read, with the header files, and those of
+                     the main file
+  Warnings, Errors   so far
+  Available memory   conventional memory free for your program
+
+  At the end it says Success, Warnings or Errors: press any key. With
+  errors the {Message window} opens with the first one highlighted and the
+  line shown in the editor.
+
+.topic Message window,Errors
+                             Message window
+
+  The Message window lists what the compiler said:
+
+    Compiling HELLO.C:
+   \x07Error HELLO.C 7: 'count' undeclared
+    Linking HELLO.EXE:
+
+  Up/Down moves through the messages and shows each line in its edit
+  window (the line is highlighted). Enter (or a double-click) goes to the
+  line in the editor; start typing to fix it. Alt+F7/Alt+F8 go to the
+  previous/next message from anywhere.
+
+  TinyCC stops a file at its first error (warnings are all listed).
+  Typical messages:
+    ';' expected (got 'return')     the line above lacks a ;
+    'x' undeclared                  a missing declaration or #include
+    undefined symbol 'foo'          (linker) a function that does not
+                                    exist or is not in LIBC.A
+    implicit declaration of function 'x'   (warning) missing #include
+
+.topic Debug menu
+                              Debug menu
+
+  Inspect, Evaluate/modify, Call stack, Watches, Toggle breakpoint and
+  Breakpoints belong to the integrated debugger, which is not part of
+  ARM Turbo C 1.0: they are shown dimmed. printf() is your friend.
+
+.topic Project menu,Project
+                              Project menu
+
+  A project is a program made of several source files. The project file
+  (NAME.PRJ) is a text file listing them, one per line.
+
+  Open project...   open NAME.PRJ (a new name creates an empty project)
+  Close project     back to single-file mode
+  Add item...       add a source (.C), object (.O) or library (.A)
+  Delete item       remove the highlighted file (Del in the Project window)
+
+  With a project open, F9 and Ctrl+F9 make and run NAME.EXE from all its
+  files. The Project window lists them: Enter opens one, Ins adds, Del
+  deletes. TC NAME.PRJ starts with the project open.
+
+.topic Options menu,Options
+                              Options menu
+
+  Compiler...      Defines (NAME=VALUE;NAME), Warnings: None / Standard
+                   / All, treat warnings as errors
+  Make...          break the make on errors, or on warnings too
+  Linker...        the stack size of the program (KB)
+  Directories...   Include directories (C:\TC\INCLUDE), Library
+                   directories (C:\TC\LIB: CRT0.O and LIBC.A), Output
+                   directory. Separate several with ";".
+  Environment...   backup files, auto save of the desktop and options,
+                   syntax highlighting, auto indent, tab size
+  Save...          write the options to TCCONFIG.TC
+
+  TCCONFIG.TC is read from the current directory, else from C:\TC. With
+  Auto save on, ARM Turbo C also remembers the open files there.
+
+.topic Window menu,Window
+                              Window menu
+
+  Size/Move   Ctrl+F5   move with the arrows, size with Shift+arrows
+  Zoom        F5        full desktop and back
+  Tile, Cascade         arrange the windows
+  Next        F6        the next window
+  Close       Alt+F3    close the active window
+  Message               the {Message window}
+  Project               the Project window
+  User screen Alt+F5    the program's screen ({user screen})
+  List all... Alt+0     a list of the windows
+
+.topic Help menu
+                               Help menu
+
+  Contents                the {Contents}
+  Index        Shift+F1   all topics ({Index})
+  Topic search Ctrl+F1    help on the word at the cursor
+  Previous topic Alt+F1   the topic before
+  Help on help            {Help on help}
+  About...                version information
+
+.topic C language
+                            The C language
+
+  ARM Turbo C compiles C99 (TinyCC): // comments, declarations anywhere,
+  long long, inline, _Bool, designated initializers, variadic macros,
+  and GNU extensions (statement expressions, __attribute__, inline asm).
+
+  The machine is 32-bit: int, long and pointers are 4 bytes, short 2,
+  long long 8; char is unsigned (ARM); float and double are IEEE
+  (software floating point); there are no near/far pointers - memory is
+  flat, and far/near/huge are accepted and ignored.
+
+  A minimal program:
+.ex
+#include <stdio.h>
+
+int main(void)
+{
+    printf("Hello, world!\n");
+    return 0;
+}
+.endex
+
+  See also: {Library}, {Headers}, {ARM-DOS}
+
+.topic Headers,#include,include
+                             Header files
+
+  C:\TC\INCLUDE holds the headers. The standard ones:
+    {stdio.h}  {stdlib.h}  {string.h}  {ctype.h}  {math.h}  {time.h}
+    limits.h  float.h  stddef.h  stdarg.h  stdint.h  stdbool.h
+    assert.h  errno.h  setjmp.h  signal.h  locale.h
+  The DOS ones (as in Microsoft and Turbo C):
+    {conio.h}  {dos.h}  {bios.h}  {io.h}  {direct.h}  {process.h}
+    malloc.h  fcntl.h
+  ARM-DOS's own:
+    {armdos.h} (registers, interrupts, ports), sb.h (Sound Blaster)
+
+  #include <file.h> searches the include directories; #include "file.h"
+  looks next to the source first.
+
+.topic Library
+                              The C library
+
+  The library (C:\TC\LIB\LIBC.A) is newlib with the ARM-DOS run-time
+  (the same as every ARM-DOS program uses). By header:
+
+  {stdio.h}     printf scanf puts gets fgets fopen fclose fread fwrite
+                fprintf fscanf fseek ftell sprintf sscanf getchar putchar
+  {stdlib.h}    malloc calloc realloc free atoi atol atof strtol rand
+                srand abs exit system qsort getenv
+  {string.h}    strlen strcpy strncpy strcat strcmp strncmp strchr strrchr
+                strstr memcpy memmove memset memcmp strdup strupr
+  {ctype.h}     isalpha isdigit isspace isupper islower toupper tolower
+  {math.h}      sin cos tan atan atan2 sqrt pow exp log log10 floor ceil
+                fabs fmod
+  {time.h}      time clock difftime localtime strftime
+  {conio.h}     getch getche kbhit putch cputs cprintf cgets
+  {dos.h}       int86 intdos inp outp _dos_getdate _dos_gettime
+  {process.h}   spawnl system
+  {io.h}        open read write close lseek
+  {direct.h}    mkdir chdir getcwd
+  {armdos.h}    ARM-DOS's machine interface
+
+.topic stdio.h
+                               stdio.h
+
+  Streams: stdin, stdout, stderr; FILE *; EOF; BUFSIZ.
+  {printf}  {scanf}  {puts}  {gets}  {fgets}  {getchar}  {putchar}
+  {fopen}  {fclose}  {fread}  {fwrite}  {fprintf}  {fscanf}  {fseek}
+  {ftell}  {sprintf}  {sscanf}  {remove}  {rename}  {feof}  {perror}
+
+  Text files: "\n" is written as CR LF and read back as "\n" (DOS text
+  mode); open with "rb"/"wb" for binary files.
+
+.topic printf,fprintf,sprintf,snprintf,vprintf
+                                printf
+
+  int printf(const char *format, ...);
+  int fprintf(FILE *f, const char *format, ...);
+  int sprintf(char *buf, const char *format, ...);
+  int snprintf(char *buf, size_t size, const char *format, ...);
+
+  Formatted output. Conversions: %d %i (int), %u, %x %X (hex), %o, %c,
+  %s, %f %e %g (double), %p, %%; flags - + space 0 #; width and
+  precision (%5d, %-10s, %.2f, %*d); l for long. Returns the number of
+  characters written.
+.ex
+    printf("%5d|%-6s|%.2f\n", 42, "ab", 3.14159);   /*    42|ab    |3.14 */
+.endex
+  See also: {scanf}, {puts}, {stdio.h}
+
+.topic scanf,fscanf,sscanf
+                                 scanf
+
+  int scanf(const char *format, ...);
+  int fscanf(FILE *f, const char *format, ...);
+  int sscanf(const char *s, const char *format, ...);
+
+  Formatted input: %d, %u, %x, %f (float *), %lf (double *), %s (a word),
+  %c, %[...]. Pass addresses: scanf("%d", &n). Returns the number of
+  items converted, EOF at the end of the input.
+.ex
+    int age;
+    printf("How old are you? ");
+    if (scanf("%d", &age) == 1)
+        printf("In ten years you will be %d.\n", age + 10);
+.endex
+
+.topic puts,fputs
+                                 puts
+
+  int puts(const char *s);            s and a newline to stdout
+  int fputs(const char *s, FILE *f);  s (no newline) to f
+
+.topic gets,fgets
+                                 fgets
+
+  char *fgets(char *buf, int size, FILE *f);
+  Reads a line (with its "\n") of at most size-1 characters; NULL at the
+  end of the file. Use fgets(buf, sizeof buf, stdin) - gets() does not
+  know the size of the buffer.
+
+.topic getchar,putchar,getc,putc,fgetc,fputc
+                             getchar, putchar
+
+  int getchar(void);        the next character of stdin, EOF at the end
+  int putchar(int c);       c to stdout
+  int fgetc(FILE *f), fputc(int c, FILE *f), getc, putc: the same for f.
+  (getch() in {conio.h} reads a key without Enter and without echo.)
+
+.topic fopen,fclose,FILE
+                              fopen, fclose
+
+  FILE *fopen(const char *name, const char *mode);
+  int fclose(FILE *f);
+
+  Modes: "r" read, "w" write (new/truncate), "a" append, "r+" update;
+  add "b" for a binary file. fopen returns NULL if it fails (errno).
+.ex
+    FILE *f = fopen("NOTES.TXT", "w");
+    if (f) {
+        fprintf(f, "line %d\n", 1);
+        fclose(f);
+    }
+.endex
+
+.topic fread,fwrite
+                              fread, fwrite
+
+  size_t fread(void *buf, size_t size, size_t n, FILE *f);
+  size_t fwrite(const void *buf, size_t size, size_t n, FILE *f);
+  Read/write n items of size bytes; return the number of whole items.
+
+.topic fseek,ftell,rewind
+                              fseek, ftell
+
+  int fseek(FILE *f, long offset, int whence);  SEEK_SET SEEK_CUR SEEK_END
+  long ftell(FILE *f);                          the current position
+  void rewind(FILE *f);
+
+.topic feof,ferror,perror,remove,rename
+                         feof, perror, remove, rename
+
+  int feof(FILE *f);          non-zero after a read hit the end
+  void perror(const char *s); prints s: the message for errno
+  int remove(const char *name);              deletes a file
+  int rename(const char *old, const char *new);
+
+.topic stdlib.h
+                               stdlib.h
+
+  {malloc}  {free}  {atoi}  {strtol}  {rand}  {exit}  {system}  {qsort}
+  {getenv}  {abs}
+  NULL, EXIT_SUCCESS, EXIT_FAILURE, RAND_MAX (0x7FFFFFFF).
+
+.topic malloc,calloc,realloc,free
+                          malloc, calloc, free
+
+  void *malloc(size_t n);             n bytes, or NULL
+  void *calloc(size_t n, size_t size);  zeroed
+  void *realloc(void *p, size_t n);
+  void free(void *p);
+
+  The heap grows in conventional memory, then continues in extended
+  memory (XMS): a program can allocate megabytes.
+
+.topic atoi,atol,atof,strtol,strtoul,strtod,itoa
+                            atoi, strtol
+
+  int atoi(const char *s); long atol(const char *s); double atof(...);
+  long strtol(const char *s, char **end, int base);
+  double strtod(const char *s, char **end);
+  char *itoa(int value, char *buf, int radix);
+
+.topic rand,srand,random,RAND_MAX
+                              rand, srand
+
+  int rand(void);             0 .. RAND_MAX
+  void srand(unsigned seed);  srand(time(NULL)) for a new sequence
+  A number from 1 to 6:  rand() % 6 + 1
+
+.topic exit,abort,atexit
+                                 exit
+
+  void exit(int status);   ends the program; files are flushed and closed
+  void abort(void);        "abnormal program termination", exit code 3
+  int atexit(void (*f)(void));
+  The exit code is the ERRORLEVEL of batch files (Get info shows it).
+
+.topic system,spawnl,spawnv,process.h
+                            system, spawnl
+
+  int system(const char *command);   runs COMMAND.COM /C command
+  int spawnl(P_WAIT, path, arg0, arg1, ..., NULL);  runs a program
+  (process.h), returns its exit code.
+.ex
+    system("MEM");           /* how much memory do I have? */
+    system("DIR *.C /W");
+.endex
+
+.topic qsort,bsearch
+                                 qsort
+
+  void qsort(void *base, size_t n, size_t size,
+             int (*cmp)(const void *, const void *));
+.ex
+static int cmpint(const void *a, const void *b)
+{
+    return *(const int *)a - *(const int *)b;
+}
+    ...
+    qsort(v, 10, sizeof v[0], cmpint);
+.endex
+
+.topic getenv,putenv
+                                getenv
+
+  char *getenv(const char *name);   the value of an environment variable
+                                    (PATH, COMSPEC, ...), NULL if unset
+
+.topic abs,labs,div
+                                  abs
+
+  int abs(int n); long labs(long n); (fabs for doubles: {math.h})
+
+.topic string.h
+                               string.h
+
+  {strlen}  {strcpy}  {strcat}  {strcmp}  {strchr}  {strstr}  {memcpy}
+  {memset}  {strdup}  {strupr}
+
+.topic strlen
+                                 strlen
+
+  size_t strlen(const char *s);   the length of s, without the '\0'
+
+.topic strcpy,strncpy
+                                 strcpy
+
+  char *strcpy(char *dst, const char *src);
+  char *strncpy(char *dst, const char *src, size_t n);  (may leave dst
+  without a '\0' if src is n characters or longer)
+
+.topic strcat,strncat
+                                 strcat
+
+  char *strcat(char *dst, const char *src);   appends src to dst
+
+.topic strcmp,strncmp,stricmp,strcasecmp,strnicmp
+                                 strcmp
+
+  int strcmp(const char *a, const char *b);   <0, 0, >0
+  int strncmp(a, b, n); int stricmp(a, b) (ignores case, like strcasecmp)
+
+.topic strchr,strrchr
+                                 strchr
+
+  char *strchr(const char *s, int c);   the first c in s, or NULL
+  char *strrchr(const char *s, int c);  the last one
+
+.topic strstr,strtok
+                            strstr, strtok
+
+  char *strstr(const char *s, const char *what);  the first occurrence
+  char *strtok(char *s, const char *delim);  splits s into tokens (NULL
+  for s to continue with the same string)
+
+.topic memcpy,memmove,memcmp
+                                 memcpy
+
+  void *memcpy(void *dst, const void *src, size_t n);  (no overlap)
+  void *memmove(void *dst, const void *src, size_t n); (overlap allowed)
+  int memcmp(const void *a, const void *b, size_t n);
+
+.topic memset
+                                 memset
+
+  void *memset(void *p, int c, size_t n);   n bytes of c
+
+.topic strdup,strupr,strlwr
+                            strdup, strupr
+
+  char *strdup(const char *s);   a malloc'ed copy
+  char *strupr(char *s); char *strlwr(char *s);   in place
+
+.topic ctype.h,isalpha,isdigit,isalnum,isspace,isupper,islower,toupper,tolower,isxdigit,ispunct
+                                ctype.h
+
+  isalpha(c) isdigit(c) isalnum(c) isspace(c) isupper(c) islower(c)
+  isxdigit(c) ispunct(c) iscntrl(c) isprint(c): non-zero if true
+  toupper(c), tolower(c): the other case (other characters unchanged)
+
+.topic math.h,sin,cos,tan,asin,acos,atan,atan2,sqrt,pow,exp,log,log10,floor,ceil,fabs,fmod,M_PI
+                                math.h
+
+  double sin(x) cos(x) tan(x) asin(x) acos(x) atan(x) atan2(y, x)
+  double sqrt(x) pow(x, y) exp(x) log(x) log10(x)
+  double floor(x) ceil(x) fabs(x) fmod(x, y)
+  M_PI = 3.14159...   Angles are in radians.
+  Floating point is done in software (the ARM926 of this PC has a VFP
+  coprocessor, but ARM Turbo C does not use it).
+.ex
+    printf("%f\n", sqrt(2.0));    /* 1.414214 */
+.endex
+
+.topic time.h,time,clock,difftime,localtime,strftime,CLOCKS_PER_SEC
+                                time.h
+
+  time_t time(time_t *t);   seconds since 1970 (from the DOS clock)
+  clock_t clock(void);      hundredths of a second since the program
+                            started (CLOCKS_PER_SEC = 100)
+  struct tm *localtime(const time_t *t);  tm_hour tm_min tm_sec tm_mday
+                                          tm_mon (0-11) tm_year (+1900)
+  size_t strftime(char *buf, size_t n, const char *fmt, const struct tm *);
+.ex
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    printf("%02d:%02d\n", t->tm_hour, t->tm_min);
+.endex
+
+.topic conio.h,getch,getche,kbhit,putch,cputs,cprintf,cgets,ungetch
+                                conio.h
+
+  int getch(void);     waits for a key, no echo (0 then a scan code for
+                       function and cursor keys)
+  int getche(void);    the same, with echo
+  int kbhit(void);     non-zero if a key is waiting
+  int putch(int c);  int cputs(const char *s);  int cprintf(fmt, ...):
+                       straight to the screen (not redirectable)
+  char *cgets(char *buf);   buf[0] = max length; DOS line input
+.ex
+    printf("Press any key...");
+    getch();
+.endex
+
+.topic dos.h,int86,intdos,REGS,inp,outp,int86x,MK_FP,peek,poke
+                                 dos.h
+
+  int int86(int n, union REGS *in, union REGS *out);  raises INT n
+  int intdos(union REGS *in, union REGS *out);        INT 21h
+  union REGS: r.h.ah, r.h.al, r.x.ax, r.x.bx, ... r.x.cflag
+  On ARM-DOS the registers are 32 bits and pointers go into them flat:
+  r.x.dx = (unsigned)buffer for DS:DX.
+  int inp(port), outp(port, value): I/O ports.
+  _dos_getdate, _dos_gettime, _dos_findfirst/_dos_findnext, ...
+.ex
+    union REGS r;
+    r.x.ax = 0x0013;              /* 320x200, 256 colours */
+    int86(0x10, &r, &r);
+.endex
+  See also: {armdos.h}
+
+.topic bios.h,_bios_keybrd
+                                 bios.h
+
+  unsigned _bios_keybrd(unsigned cmd);  _KEYBRD_READ, _KEYBRD_READY,
+  _KEYBRD_SHIFTSTATUS (INT 16h); _bios_disk, _bios_equiplist,
+  _bios_memsize, _bios_timeofday, _bios_printer, _bios_serialcom.
+
+.topic io.h,open,read,write,close,lseek,filelength,setmode
+                                  io.h
+
+  int open(const char *name, int flags);  O_RDONLY O_WRONLY O_RDWR
+  O_CREAT O_TRUNC O_BINARY O_TEXT (fcntl.h); read, write, close, lseek,
+  filelength(fd), setmode(fd, O_BINARY). DOS handles 0-4 are stdin,
+  stdout, stderr, AUX and PRN.
+
+.topic direct.h,mkdir,chdir,getcwd,rmdir,_getdrive,_chdrive
+                                direct.h
+
+  int mkdir(const char *dir); int rmdir(dir); int chdir(dir);
+  char *getcwd(char *buf, int size);  "C:\TC\SAMPLES"
+  int _getdrive(void) (1 = A:), int _chdrive(int drive)
+
+.topic armdos.h,ARM-DOS
+                          ARM-DOS programming
+
+  ARM-DOS is DOS 4.00 on an ARM926 PC. What is different from an x86 PC:
+
+    registers   union REGS fields are 32 bits; segment:offset pairs become
+                flat pointers (the offset register holds the address)
+    memory      flat: the text screen is at (unsigned short *)0xB8000,
+                mode 13h graphics at (unsigned char *)0xA0000
+    ports       inp/outp (dos.h) as on a PC: 0x3C8/0x3C9 VGA palette,
+                0x61 speaker, 0x60 keyboard
+    interrupts  INT n is "svc #n"; int86() does it for you
+    code        ARM (32-bit instructions); inline assembler: asm("...")
+
+  armdos.h has the details: struct armregs, _armdos_intr(n, &regs),
+  armdos_setvect (interrupt handlers are plain C functions), port access,
+  ARMDOS_TEXT_VRAM, armdos_halt() (wait for an interrupt). The samples in
+  C:\TC\SAMPLES show mode 13h graphics (MODE13.C), the PC speaker
+  (TUNE.C) and inline assembler (ASMDEMO.C).
+.ex
+#include <dos.h>
+#include <conio.h>
+
+int main(void)
+{
+    union REGS r;
+    unsigned char *vga = (unsigned char *)0xA0000;
+    int i;
+    r.x.ax = 0x13; int86(0x10, &r, &r);     /* mode 13h */
+    for (i = 0; i < 64000; i++) vga[i] = i % 320;
+    getch();
+    r.x.ax = 0x03; int86(0x10, &r, &r);     /* back to text */
+    return 0;
+}
+.endex

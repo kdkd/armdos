@@ -1,0 +1,11 @@
+@X0F Welcome to The ARM Pit, new user!@X07
+
+ This is a hobby board about ARM PCs, ARM-DOS and the people who use them.
+ A few simple rules:
+
+   @X0E1.@X07 Use your real name.  Handles are for CB radio.
+   @X0E2.@X07 Be nice.  We were all newbies once (the sysop still is).
+   @X0E3.@X07 No pirated software.  Upload what you wrote or what is free.
+   @X0E4.@X07 One call a day, one hour a call - other people want in too.
+
+ Please answer a few questions so we can set up your account.

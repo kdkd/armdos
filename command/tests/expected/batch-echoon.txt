@@ -1,0 +1,15 @@
+
+C:\T>echoon
+
+C:\T>echo on
+
+C:\T>echo one
+one
+
+C:\T>
+C:\T>echo two
+two
+
+C:\T>echo off
+three
+C:\T>

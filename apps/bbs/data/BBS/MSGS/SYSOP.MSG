@@ -1,0 +1,329 @@
+@@1
+From: Europa Sysop
+To: All
+Subj: We're back: The Pit is now The ARM Pit
+Date: 06-17-88 19:30
+
+After three months of silence, the phone at 555-1989 is answering again.
+
+What's new:
+
+  * A new name.  The Pit is now THE ARM PIT.
+  * A new machine.  The prototype went back to Boca Raton (mostly; I kept
+    the keyboard, and nobody has asked for it).  The board now runs on a
+    production ARM/AT with a 40 MB hard disk.
+  * 2400 baud.  1200 still works.  300 works if you are very patient.
+  * Real names only from now on.  The old handles are not forgotten: they
+    are on the Wall of Fame (bulletin 7), carved in ASCII forever.
+
+What's old: your user records.  They came back from 38 floppies.  The
+messages did not.  If you had a thread going in February, please start
+it again.  I'm sorry.  I have learned about backups the hard way, which
+is the only way anybody ever learns about backups.
+
+Welcome home.
+
+-- Europa
+@@2
+From: Europa Sysop
+To: All
+Subj: The leap-day crash: what happened
+Date: 06-19-88 22:15
+
+Several of you asked, so here is the whole story, once, and then I'd
+like never to think about it again.
+
+At 2:10 AM on February 29th the northbound freight came through, as it
+does every night.  The house shook, as it does every night.  The old
+10 MB drive, which had been making a noise like a coffee grinder for a
+week, chose that moment to put its heads down on the platter and keep
+them there.
+
+I heard it from the kitchen.  There is no sound quite like it.
+
+The good news: I had a floppy backup of the user file, 38 disks, made
+the Sunday before.  The bad news: nothing else.  It took a weekend and
+four pizzas to put the user file back together (disk 23 had a bad
+sector; Karen Whitfield sat on the floor with me and retyped eleven
+records from a printout).
+
+Lessons, for free:
+
+  1. Back up.  Then back up the backup.
+  2. A disk that sounds different IS different.
+  3. Do not put your computer on the same wall as the railroad.
+
+The new machine sits on a foam pad on the OTHER side of the room.  It
+was down "a few weeks".  It was three months.  I know.
+
+On the bright side, it happened on February 29th, a day that only
+exists one year in four.  So technically, it never happened.
+
+-- Europa
+@@3
+From: Europa Sysop
+To: All
+Subj: Real names only (and why)
+Date: 07-04-88 11:05
+
+A few people have asked why I dropped handles when we reopened.
+
+When the board was The Pit, it was twenty of us who all knew each
+other.  Now we get callers from Atlanta and California and, for some
+reason, a very persistent gentleman in Springfield, Illinois.  A real
+name makes a message board feel like a room full of people instead of a
+room full of masks.  People are kinder with their names on.
+
+Exceptions: none.  The Byte Bandit says "The Byte Bandit" IS his real
+name.  He is on probation until he produces a birth certificate.
+
+The old handles live on the Wall of Fame (bulletin 7), with honours.
+
+-- Europa
+@@4
+From: Europa Sysop
+To: All
+Subj: FidoNet: we are node 1:1989/1
+Date: 11-12-88 21:40
+
+The ARM Pit now has a FidoNet address: 1:1989/1.  Yes, I picked the net
+number to match the phone number.  Yes, I am that kind of person.
+
+What this means for you:
+
+  * NetMail goes out at 4 AM, during mail hour, when the line is quiet
+    and the long-distance rates are low.  Leave netmail as a comment to
+    the sysop with the address in the first line and I'll send it.
+  * The board will be busy for a few minutes around 4 AM.  If you call
+    then and get a screech, that's another computer talking to mine.
+    Don't take it personally.
+
+-- Europa
+@@5
+From: Europa Sysop
+To: All
+Subj: SFARM meets at Sal's Pizza
+Date: 01-05-89 18:20
+
+The South Florida ARM Users' Group (SFARM) meets on the SECOND TUESDAY
+of every month, 7:30 PM, in the back room of Sal's Pizza on Hollywood
+Blvd.  Sal says we can stay until close if we keep ordering garlic
+knots.  We always keep ordering garlic knots.
+
+Bring your machine, your questions and your floppies.  Every meeting
+has a disk-of-the-month (bring a blank 5.25" disk, leave with a full
+one) and a copy of The Barrel Shifter, Maria Delgado's newsletter.
+
+This month: Susan Oyelaran on ARM assembly without tears, and Karen
+Whitfield will open up an ARM/AT and show where everything goes.  Dave
+from Illinois will not be there, because Illinois.
+
+Bulletin 10 has the details and the next meeting dates.
+
+-- Europa
+@@6
+From: Europa Sysop
+To: All
+Subj: ARM-DOS 4.00 is running the board
+Date: 06-02-89 23:50
+
+The ARM Pit now runs ARM-DOS 4.00.  The upgrade took twenty minutes, or
+two hours if you count the time I spent playing with DOSSHELL.
+
+The one thing you will notice: ZMODEM.  It checks every block, resends
+what the line noise ate, and picks up where it left off if the call
+drops.  Use it.  Bulletin 3 tells you how.
+
+The one thing you will not notice: MEM says the board leaves 540K of my
+640K free.  I'm told this is excellent.  I'm keeping the other 100K for
+emergencies.
+
+-- Europa
+@@7
+From: Europa Sysop
+To: All
+Subj: Door #1 is open: Legend of the RISC Dragon
+Date: 08-11-89 20:00
+
+Press D at the Main Menu.  You'll find yourself in Acorn Vale, a small
+village with a large dragon problem.
+
+You get fifteen forest fights a day.  Kill monsters, buy better weapons
+from Hacker Hank, beat your master at the Training Hall to go up a
+level, and at level 12 go down into the Silicon Caves and face the RISC
+Dragon itself.  Deposit your gold in the bank before you go into the
+forest.  I'm telling you this because nobody told me.
+
+Everything happens on a real schedule: the forest resets at midnight,
+and the Daily News reports who died of what.  Susan, I'm so sorry about
+the Stray Pointers.
+
+-- Europa
+@@8
+From: Europa Sysop
+To: All
+Subj: Caller #1,000!
+Date: 09-12-89 23:59
+
+Tonight at 11:14 PM, the board counted its thousandth call, and the
+caller was Karen Whitfield of Boca Raton.  Karen gets a coffee mug that
+says I AM CALLER #1000, which I had made in July and hid in a closet
+because I was sure it would be the Byte Bandit.
+
+Thank you, all of you.  A thousand calls on one phone line in a spare
+bedroom.  Parity the cat was asleep on the modem for most of them and
+would like it noted that she helped.
+
+-- Europa
+@@9
+From: Europa Sysop
+To: All
+Subj: Happy 1990 (the clock was right)
+Date: 01-01-90 00:01
+
+Happy New Year from the spare bedroom!
+
+I dialed the time service in Boulder at 11:50 last night, set the board
+clock, and watched it roll over from 12-31-89 23:59:59 to 01-01-90
+00:00:00 at exactly the moment the neighbours started banging pots.  I
+may have cheered louder than the neighbours.
+
+By tomorrow it will be two seconds slow again.  The ARM/AT is a
+wonderful computer with the timekeeping instincts of a sundial.  I will
+keep fighting.
+
+Here's to a new decade of bad line noise and good company.
+
+-- Europa
+@@10
+From: Europa Sysop
+To: All
+Subj: New door: RISC Wars (door 2)
+Date: 02-14-90 21:00
+
+A new door has opened, and it goes to space.
+
+RISC WARS is a trading game in the grand tradition of the space trading
+doors: you have a ship, cargo holds and a few fighters, the galaxy is a
+web of numbered sectors, and every port buys and sells at its own
+prices.  Buy low, fly, sell high, repeat, and try not to fly into a
+sector someone has mined with fighters.
+
+It's a shared galaxy: everything the other players do stays done.  You
+get a daily ration of turns.  Some of the other pilots out there don't
+sleep.  I'm not saying they're computers.  I'm not saying they aren't.
+
+Main Menu, D, then 2.  Today's news (bulletin 9) keeps the score.
+
+-- Europa
+@@11
+From: Europa Sysop
+To: All
+Subj: The DIGITAL LINE is here: 56,000 bps!
+Date: 04-01-90 00:05
+
+Big news, everyone.  As of tonight The ARM Pit is connected to the phone
+company's new DIGITAL LINE.  Callers with the right modem will connect
+at 56,000 bits per second.  That is twenty-three times faster than
+2400.  A 40K file in under ten seconds.  The whole message base before
+your coffee cools.
+
+How does it work?  The line is digital on my end and analog on yours,
+and the modem does clever things with the difference.  I'd explain
+more, but the explanation is at the phone company, and the phone
+company is closed today.
+
+The welcome screen has been updated to say so.
+
+-- Europa
+
+P.S. Please check today's date before you call your modem manufacturer.
+@@12
+From: Europa Sysop
+To: All
+Subj: Two more doors: Byte-Sized Trivia and Pit Poker
+Date: 05-19-90 22:30
+
+Two new doors tonight.
+
+  Door 3: BYTE-SIZED TRIVIA.  Questions about the computers of the
+  1970s and '80s, the modems, the games, the people.  Answer fast for
+  more points.  There's a high-score board, and I already know Lenny
+  Szabo is going to be on top of it by Friday.
+
+  Door 4: PIT POKER.  Video poker, Jacks or Better, played for the
+  board's own chips, which are worth exactly nothing and are therefore
+  the only chips I allow on this board.  The biggest stack goes on the
+  scoreboard.
+
+The scores from all four doors show up in bulletin 9, "Today's news".
+The Legend of the RISC Dragon is still open, and the dragon is still
+hungry.
+
+-- Europa
+@@13
+From: Europa Sysop
+To: All
+Subj: Goodies you may have missed
+Date: 08-25-90 23:15
+
+A quiet summer night, so here is a list of things on (and around) the
+board that people keep discovering by accident:
+
+  * File area 2 has Keen Dreams.  Yes, that one.  Look at the file's date
+    and don't ask me about it.  If you have an ARM PC, C:\GAMES\KEEN has
+    a GETKEEN.BAT that dials in here and fetches it for you, using a
+    TERM script.  Watch it log in all by itself.  It's spooky.
+  * Zork I is in the Games area too, with its story file.  Get both.
+  * The DEMO in file area 2 is four minutes of VGA and music.  Turn the
+    lights off.
+  * ARMINFO in file area 1 benchmarks your machine and prints a report
+    that will make your 386 friends quiet for a while.
+  * POPUP.COM: run POPUP once, then press Ctrl+Alt+P any time you like.
+    Calculator, notepad, ASCII table, right over whatever you're doing.
+  * That amber lamp on your front panel marked X86?  Type CD \ELBOW,
+    then DEMO, and keep your eyes on it.
+  * Some of you have been dialing 555-0199.  I don't know who runs it.
+    I don't know how it knows tomorrow's weather.  I call it anyway.
+  * TERM's dialing directory has a few numbers in it that I did not put
+    there.  Try the one called WOPR.  It won't answer.  Probably.
+
+-- Europa
+@@14
+From: Europa Sysop
+To: All
+Subj: New in the file area: a disk optimizer!
+Date: 10-06-90 21:45
+
+New in file area 1 (ARM-DOS Utilities): DEFRAG11.ZIP, the ARM Disk
+Optimizer, version 1.1.  Inside: DEFRAG.EXE, DEFRAG.DOC (read it!) and
+the FILE_ID.DIZ description.
+
+Why you want it: when DOS saves a file, it puts the pieces wherever it
+finds free room.  Delete a few files, save a few more, and after a year
+your spreadsheet lives in fourteen places across the disk.  Every time
+you load it, the heads have to go and fetch all fourteen.  That's
+fragmentation, and that's why your two-year-old hard disk sounds busier
+and feels slower than it did on the first day.
+
+A disk optimizer picks all the pieces up and puts each file back
+together, in one run, in order.  The heads stop wandering.  The disk
+gets quieter.  Things load faster.  It is deeply satisfying to watch.
+
+How to get it:
+
+  1. F at the Main Menu, A to change to area 1.
+  2. D, then DEFRAG11.ZIP, then Z for ZMODEM.
+  3. On your machine:   UNZIP DEFRAG11.ZIP
+  4. Read DEFRAG.DOC before you run anything.
+
+And please, BACK UP FIRST.  A defragmenter moves every file you own.  It
+is careful, and your power is probably reliable, and the 2:10 freight
+probably won't shake anything loose.  I have said "probably" before.
+Ask me about leap day.
+
+I ran it on the board's disk last night.  CHKDSK is happy, the message
+base loads faster, and Parity slept through the whole thing on top of
+the modem.
+
+-- Europa

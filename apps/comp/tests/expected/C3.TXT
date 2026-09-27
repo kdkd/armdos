@@ -1,0 +1,6 @@
+
+
+C:F1.TXT and C:F2.TXT
+
+Files compare OK
+n

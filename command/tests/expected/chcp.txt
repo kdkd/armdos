@@ -1,0 +1,8 @@
+
+C:\T>chcp
+Active code page: 437
+
+C:\T>chcp 850
+NLSFUNC not installed
+
+C:\T>

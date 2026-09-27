@@ -1,0 +1,25 @@
+
+C:\>args x y
+[ x y]
+1:0 X
+2:0 Y
+
+C:\>path q:\;c:\t
+
+C:\>args z
+Invalid drive in search path
+[ z]
+1:0 Z
+2:0
+
+C:\>path
+PATH=Q:\;C:\T
+
+C:\>path ;
+
+C:\>args
+Bad command or file name
+
+C:\>cd \t
+
+C:\T>

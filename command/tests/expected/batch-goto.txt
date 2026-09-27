@@ -1,0 +1,9 @@
+
+C:\T>badgoto
+before
+Label not found
+
+C:\T>labels
+matched the first eight characters
+end
+C:\T>

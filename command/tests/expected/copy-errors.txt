@@ -1,0 +1,22 @@
+
+C:\T>copy
+Required parameter missing
+
+C:\T>copy a b c
+Too many parameters
+
+C:\T>copy a.txt+
+File cannot be copied onto itself
+        0 File(s) copied
+
+C:\T>copy /x a.txt b.txt
+Invalid switch -  /x
+
+C:\T>copy a.txt \nodir\x\
+Invalid directory
+
+C:\T>copy a.txt+nofile.txt ab3.txt
+A.TXT
+        1 File(s) copied
+
+C:\T>

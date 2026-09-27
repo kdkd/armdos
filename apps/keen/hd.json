@@ -1,0 +1,11 @@
+{
+  "comment": "C:\\GAMES\\KEEN: the Keen Dreams engine without its data (shareware, fetched from The ARM Pit BBS by GETKEEN.BAT). KEENDRMS.ZIP itself is on the BBS disk only (apps/bbs/bbs.json).",
+  "dirs": ["GAMES", "GAMES\\KEEN"],
+  "files": [
+    { "src": "build/KEEN.EXE", "dst": "GAMES\\KEEN\\KEEN.EXE" },
+    { "src": "apps/keen/data/GETKEEN.BAT", "dst": "GAMES\\KEEN\\GETKEEN.BAT" },
+    { "src": "apps/keen/data/GETKEEN.SCR", "dst": "GAMES\\KEEN\\GETKEEN.SCR" },
+    { "src": "apps/keen/data/README.TXT", "dst": "GAMES\\KEEN\\README.TXT" }
+  ],
+  "excludeFromDos": ["KEEN.EXE"]
+}

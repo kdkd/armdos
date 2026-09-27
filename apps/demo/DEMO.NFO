@@ -1,0 +1,26 @@
+
+       ‹‹‹  ‹‹‹‹  ‹   ‹       ‹‹‹‹   ‹‹‹   ‹‹‹
+      €   € €   € €€ €€       €   € €   € €
+      €ﬂﬂﬂ€ €ﬂﬂ€ﬂ € ﬂ €  ﬂﬂﬂ  €   € €   €  ﬂﬂ‹
+      ﬂ   ﬂ ﬂ   ﬂ ﬂ   ﬂ       ﬂﬂﬂﬂ   ﬂﬂﬂ  ﬂﬂﬂ
+                  4.00  :  T H E   D E M O
+
+   Released at the Europa Micro Systems summer party, June 1990.
+
+   Machine .... ARM/AT, ARM926EJ-S at 100 MHz, VGA, PC speaker
+   Code ....... C for the frame, hand-written ARM assembler for
+                everything that touches a pixel (FX.S)
+   Music ...... PC speaker, one voice, played from INT 08h with
+                the 8253 at 1120 Hz (70 Hz player, arpeggio chords)
+
+   Parts: starfield intro, plasma, rotozoomer, tunnel, copper
+   bars, and a sine scroller that tells you how it was done.
+
+   Keys: SPACE next part, ESC back to DOS.
+   Options: DEMO /Q (no music)  /P n (start at part n)  /T s (quit
+            after s seconds)
+
+   Turn the Turbo off and watch the frame rate drop - it will tell
+   you on exit how much of the ARM it used.
+
+   Greetings to everybody who ever typed DEBUG and G=100.

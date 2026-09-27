@@ -1,0 +1,7 @@
+Dear Visitor,
+
+This letter was written with VDE, a WordStar-style word processor
+for DOS, running unmodified on the ARM PC.
+
+Yours sincerely,
+ELBOW

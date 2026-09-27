@@ -1,0 +1,16 @@
+***** \T\L1.TXT
+Hello World
+foo  bar
+***** \T\L2.TXT
+hello world
+foo bar
+*****
+
+***** \T\L1.TXT
+same 6
+end
+***** \T\L2.TXT
+same 6
+END
+*****
+

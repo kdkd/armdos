@@ -1,0 +1,25 @@
+C:\T>type a.txt b.txt
+Too many parameters - b.txt
+
+C:\T>md x y
+Too many parameters - y
+
+C:\T>cd x y
+Too many parameters - y
+
+C:\T>vol c: d:
+Invalid drive specification
+
+C:\T>path x y
+Too many parameters
+
+C:\T>break on off
+Must specify ON or OFF
+
+C:\T>ren a b c
+Too many parameters - c
+
+C:\T>del a b
+Too many parameters - b
+
+C:\T>

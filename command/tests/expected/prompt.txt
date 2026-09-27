@@ -1,0 +1,13 @@
+
+C>prompt $p$g
+
+C:\T>prompt [$p] $v$_$q$$$b$l$h$g
+
+[C:\T] ARM-DOS Version 4.00
+=$|>prompt $n$g
+
+C>prompt
+
+C>prompt =$p$g
+
+C:\T>

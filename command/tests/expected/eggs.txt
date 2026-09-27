@@ -1,0 +1,24 @@
+
+C:\T>msd
+Microsoft Diagnostics? On an ARM926? Type ARMINFO - it knows this
+machine better than anyone in Redmond ever will.
+
+C:\T>win /3
+Windows? This machine has GEM. Type GEM - it was here first, and it
+doesn't need a 386.
+
+C:\T>deltree \
+DELTREE arrives with DOS 6.0, in 1993. Patience.
+
+C:\T>memmaker
+640K ought to be enough for anybody. You have 15 MB of extended
+memory anyway. Relax.
+
+C:\T>intel
+No Intel inside. This is an ARM926EJ-S.
+(For the other kind of PC, look for the ELBOW box.)
+
+C:\T>xyzzy
+Nothing happens.
+
+C:\T>

@@ -1,0 +1,10 @@
+M: Memory report
+    mem /program | more
+C: Check the disk
+    chkdsk
+T: Directory tree
+    tree | more
+D: Wide directory listing
+    dir /w /p
+A: Edit AUTOEXEC.BAT with EDLIN
+    edlin c:\autoexec.bat

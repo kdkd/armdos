@@ -1,0 +1,85 @@
+                     ARM-DOS 4.00  -  Things to try
+                     ==============================
+
+  This PC's processor is an ARM926EJ-S. Every program here is ARM code,
+  except the x86 ones, which the ELBOW box translates as they run.
+
+  THE CLASSICS
+    DIR, VER, MEM /PROGRAM     how DOS 4 sees this machine
+    CHKDSK                     check the 128 MB hard disk
+    DOSSHELL                   the DOS 4.00 Shell, menus and all
+    TREE C:\ /F | MORE         pipes and filters work as they should
+    AC                         ARM Commander, a two-panel file manager
+    GEM                        Digital Research's GEM desktop, native on
+                               ARM (GEM /V for 640x480 colour)
+
+  PEEK UNDER THE HOOD
+    ARMINFO                    system information and benchmarks
+                               (then press the TURBO button and re-test)
+    TURBO MAX                  lift the clock limit: as fast as your computer
+                               can go (TURBO RESTORE puts it back)
+    DEBUG C:\COMMAND.COM       then type U to disassemble its ARM code
+    FILE C:\DOS\*.EXE          what kind of files are these?
+    CRASH                      a guided tour of ARM exceptions
+
+  RUN x86 PROGRAMS             watch the X86 lamp on the front panel
+    CD \ELBOW, then DEMO       genuine 8086 programs, incl. MS-DOS 2.0's MASM
+    X86GAMES                   real x86 classics (Kroz, ZZT, Sopwith, Apogee's
+                               platformers...), translated to ARM as they run,
+                               and Future Crew's Second Reality demo (#17)
+    X86APPS                    real x86 office software: GW-BASIC (assembled
+                               on this ARM from Microsoft's source!), VDE,
+                               SC spreadsheet, DataPerfect, MS-DOS Kermit
+
+  GAMES                        (in C:\GAMES; plug in a gamepad and run
+                               JOYTEST to use it as a PC joystick)
+    DOOM, WOLF3D, QUAKE,       CD into their directories first
+    DUKE3D
+    ZORK1, ZORK2, ZORK3        in C:\GAMES\ZORK
+    ADVENT                     Colossal Cave, in C:\GAMES\ADVENT
+    GETKEEN                    in C:\GAMES\KEEN: fetches Keen Dreams
+                               from The ARM Pit BBS by modem
+    HEXEN2                     bring your own demo data: read C:\GAMES\HEXEN2
+
+  MAKE THINGS
+    EDIT HELLO.C               a full-screen editor
+    TC                         ARM Turbo C: an IDE with a C compiler that
+                               runs on this PC (F9 builds, Ctrl+F9 runs)
+    QB                         ARM QuickBASIC: try QB /RUN C:\QB\BANANAS
+    PAINT                      ARM Paint - and print on the dot-matrix
+    BANNER                     print a giant banner across the paper
+
+  DOCTOR                       Dr. ARMitso, the talking psychologist
+  SAY Hello there              the Sound Blaster talks back
+
+  MUSIC                        (put the Sampler disc in the CD-ROM drive)
+    CDPLAY                     play CD audio from drive D:
+    PLAYMIDI C:\MIDI\*.MID     General MIDI on the sound card
+    C:\DEMO\DEMO               a 1990s-style demo, all ARM assembly
+
+  GO ONLINE                    (set the modem speed on its front panel)
+    ONLINE                     ARM-DOS Online: live encyclopedia, weather,
+                               news and pictures over the modem
+    TERM                       dial The ARM Pit BBS at 555-1989
+                               (its file areas hold extra tools you won't
+                               find on this disk - worth a look)
+
+  INTERNATIONAL                DOS 4 style keyboards, code pages, countries
+    KEYB GR                    a German keyboard: Y and Z swap, AltGr+Q = @,
+                               the key right of á then E = ‚; KEYB alone
+                               shows the layout. Also FR UK SP IT SG SF NL
+                               BE DK NO SV SU PO CF LA - and DV, Dvorak.
+                               Ctrl+Alt+F1 = US, Ctrl+Alt+F2 = back again.
+                               The PC KEYS on the page follow.
+    In CONFIG.SYS:  DEVICE=C:\DOS\DISPLAY.SYS CON=(EGA,437,1)
+    MODE CON CP PREP=((850) C:\DOS\EGA.CPI)
+    MODE CON CP SEL=850        new characters on the screen (code page 850)
+    NLSFUNC, then CHCP 850     the whole system switches code page
+    In CONFIG.SYS:  COUNTRY=049
+                               DATE, TIME and DIR the German way
+
+  POPUP                        a pop-up utility: press Ctrl+Alt+P anytime
+
+  ABOUT THIS PC                what it is, whom to call, and who made it
+    TYPE C:\README.TXT | MORE
+    TYPE C:\CREDITS.TXT | MORE

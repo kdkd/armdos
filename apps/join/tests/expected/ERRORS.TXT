@@ -1,0 +1,9 @@
+Directory not empty - \WORK
+Invalid parameter - C:
+Invalid parameter - A:
+Invalid switch - /X
+Too many parameters - X
+Too many parameters - /D
+Invalid parameter - C:\
+Invalid parameter - X:
+Invalid parameter - A:

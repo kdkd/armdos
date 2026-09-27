@@ -1,0 +1,23 @@
+
+C:\T>xyzzq
+Bad command or file name
+
+C:\T>q:
+Invalid drive specification
+
+C:\T>*.bat
+Bad command or file name
+
+C:\T>c:\t\nocmd.exe
+Bad command or file name
+
+C:\T>a.txt
+Bad command or file name
+
+C:\T>ver/x
+Invalid switch
+
+C:\T>cls /x
+Invalid switch
+
+C:\T>

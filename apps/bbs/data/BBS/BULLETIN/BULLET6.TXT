@@ -1,0 +1,44 @@
+@X0F  MEET THE SYSOP@X07   @X08(a questionnaire the user group made me fill out)@X07
+
+@X0EName:@X07        Europa.  Just Europa.  The SFARM roster says "Europa,
+              Hollywood" and the pizza place has learned not to ask.
+
+@X0EWhy Europa?@X07  It's the moon of Jupiter with an ocean under the ice.
+              Cold on the outside, warm underneath.  Also it was the
+              first thing I saw through the telescope the night I set up
+              the board, and I needed a name before the modem answered.
+
+@X0EDay job:@X07     Nights, actually.  Somewhere with a lot of blinking
+              lights.  That's why the board is up at 3 AM, and why I
+              answer your comments at 3 AM.
+
+@X0EHobbies:@X07     * Astronomy.  A 6-inch reflector on the carport roof.
+                If the board is slow on a clear night, I'm outside.
+              * Diesel locomotives.  The 2:10 AM freight is a GP40, the
+                4:45 is usually a pair of GP38s.  I can tell by the horn.
+                Harold Pruitt spent forty years signalling them and he
+                says I'm right about half the time.
+              * Keeping time.  I dial the government time service in
+                Boulder every night to set the board clock.  It still
+                drifts two seconds a week.  This is my white whale.
+
+@X0EThe cat:@X07     Parity.  Grey, eleven pounds, sleeps on the modem.
+              Co-sysop.  Her rulings are final and not subject to appeal.
+
+@X0EFirst computer:@X07  A kit with 256 bytes of memory and toggle switches.
+              I entered a program that played a tune on an AM radio held
+              next to it.  It played the tune.  I've been hooked since.
+
+@X0EFavorite thing about running a board:@X07
+              The moment a new caller figures something out.  Their first
+              download, their first reply, the first time they beat a
+              master in the RISC Dragon.  You can almost hear it through
+              the modem.
+
+@X0EWhat the sysop wants from you:@X07
+              Leave a message.  Answer a newbie.  Upload something you
+              made.  Hang up properly.  That's it.
+
+@X0EFavorite tagline:@X07  "ARM-DOS: because RISC is its own reward."
+
+                                                             -- Europa

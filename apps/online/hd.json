@@ -1,0 +1,9 @@
+{
+  "dirs": ["ONLINE", "ONLINE\\PICTURES"],
+  "files": [
+    { "src": "build/ONLINE.EXE", "dst": "ONLINE\\" },
+    { "src": "apps/online/data/ONLINE.CFG", "dst": "ONLINE\\" },
+    { "src": "apps/online/data/ONLINE.BAT", "dst": "DOS\\ONLINE.BAT" }
+  ],
+  "excludeFromDos": ["ONLINE.EXE"]
+}

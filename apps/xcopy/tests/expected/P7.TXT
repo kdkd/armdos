@@ -1,0 +1,6 @@
+\S\A.TXT (Y/N)?y
+\S\OLD.TXT (Y/N)?n
+\S\D1\B.TXT (Y/N)?y
+\S\D1\NEW.TXT (Y/N)?n
+\S\D1\D2\C.TXT (Y/N)?y
+        3 File(s) copied

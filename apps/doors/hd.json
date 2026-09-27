@@ -1,0 +1,4 @@
+{
+  "comment": "The door games belong on the BBS machine's disk (build/bbs.img, apps/bbs/bbs.json), not in the visitor's C:\\DOS",
+  "excludeFromDos": ["RISCWARS.EXE", "TRIVIA.EXE", "PITPOKER.EXE"]
+}

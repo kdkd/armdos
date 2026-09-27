@@ -1,0 +1,10 @@
+{
+  "files": [
+    { "src": "apps/dosshell/data/DOSSHELL.BAT", "dst": "DOS\\DOSSHELL.BAT" },
+    { "src": "build/dosshell/SHELL.MEU", "dst": "DOS\\SHELL.MEU" },
+    { "src": "build/dosshell/DOSUTIL.MEU", "dst": "DOS\\DOSUTIL.MEU" },
+    { "src": "build/dosshell/GAMES.MEU", "dst": "DOS\\GAMES.MEU" },
+    { "src": "build/dosshell/SHELL.HLP", "dst": "DOS\\SHELL.HLP" },
+    { "src": "build/dosshell/SHELL.CLR", "dst": "DOS\\SHELL.CLR" }
+  ]
+}

@@ -1,0 +1,18 @@
+-A 100
+1A0C:0100 MOV DL,41
+1A0C:0102 MOV AH,2
+1A0C:0104 INT 21
+1A0C:0106 INT 20
+1A0C:0108 
+-T
+
+AX=0000  BX=0000  CX=0000  DX=0041  SP=FFEE  BP=0000  SI=0000  DI=0000  
+DS=1A0C  ES=1A0C  SS=1A0C  CS=1A0C  IP=0102   NV UP EI PL NZ NA PO NC 
+1A0C:0102 B402          MOV	AH,02                              
+-G
+A
+Program terminated normally
+-G
+A
+Program terminated normally
+-Q

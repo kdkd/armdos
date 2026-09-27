@@ -1,0 +1,12 @@
+
+C:\T>date 13-45-88
+
+Invalid date
+Enter new date (mm-dd-yy):
+
+C:\T>time 25:99
+
+Invalid time
+Enter new time:
+
+C:\T>

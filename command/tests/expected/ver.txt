@@ -1,0 +1,24 @@
+
+C>ver
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C>ver x
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C>ver /x
+Invalid switch
+
+C>
+
+
+
+
+
+
+

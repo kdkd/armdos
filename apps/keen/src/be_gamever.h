@@ -1,0 +1,233 @@
+#ifndef BE_GAMEVER_H
+#define BE_GAMEVER_H
+
+/* This is separate from be_cross.h since the compiled code
+ * depends on version-related macros
+ */
+
+typedef enum {
+#ifdef REFKEEN_HAS_VER_KDREAMS
+	BE_GAME_KDREAMS,
+#endif
+#ifdef REFKEEN_HAS_VER_CATACOMB_ALL
+	BE_GAME_CATACOMB_ALL,
+#endif
+#ifdef REFKEEN_HAS_VER_WOLF3D_ALL
+	BE_GAME_WOLF3D_ALL,
+#endif
+#ifdef REFKEEN_HAS_VER_BMENACE_ALL
+	BE_GAME_BMENACE_ALL,
+#endif
+	BE_GAME_LAST
+} BE_Game_T;
+
+typedef enum {
+#ifdef REFKEEN_HAS_VER_KDREAMS
+	BE_GAMEVER_KDREAMSE100,
+	BE_GAMEVER_KDREAMSC100,
+	BE_GAMEVER_KDREAMSE113,
+	BE_GAMEVER_KDREAMSC105,
+	BE_GAMEVER_KDREAMSE193,
+	BE_GAMEVER_KDREAMSE120,
+	BE_GAMEVER_KDREAMS2015,
+#endif
+#ifdef REFKEEN_HAS_VER_CAT3D
+	BE_GAMEVER_CAT3D100,
+	BE_GAMEVER_CAT3D122,
+#endif
+#ifdef REFKEEN_HAS_VER_CATABYSS
+	BE_GAMEVER_CATABYSS113,
+	BE_GAMEVER_CATABYSS124,
+#endif
+#ifdef REFKEEN_HAS_VER_CATARM
+	BE_GAMEVER_CATARM102,
+#endif
+#ifdef REFKEEN_HAS_VER_CATAPOC
+	BE_GAMEVER_CATAPOC101,
+#endif
+#ifdef REFKEEN_HAS_VER_WL920312
+	BE_GAMEVER_WL920312,
+#endif
+#ifdef REFKEEN_HAS_VER_WL1AP10
+	BE_GAMEVER_WL1AP10,
+#endif
+#ifdef REFKEEN_HAS_VER_WL1AP11
+	BE_GAMEVER_WL1AP11,
+#endif
+#ifdef REFKEEN_HAS_VER_WL6AP11
+	BE_GAMEVER_WL6AP11,
+	BE_GAMEVER_WL1AP12,
+	BE_GAMEVER_WL3AP12,
+	BE_GAMEVER_WL6AP12,
+#endif
+#ifdef REFKEEN_HAS_VER_WL1AP14
+	BE_GAMEVER_WL1AP14,
+	BE_GAMEVER_WL3AP14,
+	BE_GAMEVER_WL6AP14,
+#endif
+#ifdef REFKEEN_HAS_VER_WL6GT14A
+	BE_GAMEVER_WL6GT14A,
+	BE_GAMEVER_WL6ID14,
+#endif
+#ifdef REFKEEN_HAS_VER_WJ6IM14
+	BE_GAMEVER_WJ6IM14,
+#endif
+#ifdef REFKEEN_HAS_VER_WL6GT14B
+	BE_GAMEVER_WL6GT14B,
+#endif
+#ifdef REFKEEN_HAS_VER_WL6AC14
+	BE_GAMEVER_WL6AC14,
+#endif
+#ifdef REFKEEN_HAS_VER_SDMFG10
+	BE_GAMEVER_SDMFG10,
+#endif
+#ifdef REFKEEN_HAS_VER_SODFG10
+	BE_GAMEVER_SODFG10,
+	BE_GAMEVER_SD2FG10,
+	BE_GAMEVER_SD3FG10,
+#endif
+#ifdef REFKEEN_HAS_VER_SODFG14
+	BE_GAMEVER_SODFG14,
+	BE_GAMEVER_SD2FG14,
+	BE_GAMEVER_SD3FG14,
+#endif
+#ifdef REFKEEN_HAS_VER_SODAC14
+	BE_GAMEVER_SODAC14,
+	BE_GAMEVER_SD2AC14,
+	BE_GAMEVER_SD3AC14,
+#endif
+#ifdef REFKEEN_HAS_VER_N3DWT10
+	BE_GAMEVER_N3DWT10,
+#endif
+#ifdef REFKEEN_HAS_VER_BH071592
+	BE_GAMEVER_BH071592,
+#endif
+#ifdef REFKEEN_HAS_VER_BM1V10S
+	BE_GAMEVER_BM1V10S,
+#endif
+#ifdef REFKEEN_HAS_VER_BM1V10R
+	BE_GAMEVER_BM1V10R,
+#endif
+#ifdef REFKEEN_HAS_VER_BM2V10R
+	BE_GAMEVER_BM2V10R,
+#endif
+#ifdef REFKEEN_HAS_VER_BM3V10R
+	BE_GAMEVER_BM3V10R,
+#endif
+#ifdef REFKEEN_HAS_VER_BM1V11S
+	BE_GAMEVER_BM1V11S,
+#endif
+#ifdef REFKEEN_HAS_VER_BM1V11R
+	BE_GAMEVER_BM1V11R,
+#endif
+#ifdef REFKEEN_HAS_VER_BM2V11R
+	BE_GAMEVER_BM2V11R,
+#endif
+#ifdef REFKEEN_HAS_VER_BM3V11R
+	BE_GAMEVER_BM3V11R,
+#endif
+#ifdef REFKEEN_HAS_VER_BM1V11GM
+	BE_GAMEVER_BM1V11GM,
+#endif
+#ifdef REFKEEN_HAS_VER_BM1V11F
+	BE_GAMEVER_BM1V11F,
+#endif
+#ifdef REFKEEN_HAS_VER_BM2V11F
+	BE_GAMEVER_BM2V11F,
+#endif
+#ifdef REFKEEN_HAS_VER_BM3V11F
+	BE_GAMEVER_BM3V11F,
+#endif
+	BE_GAMEVER_LAST
+} BE_GameVer_T;
+
+#ifndef REFKEEN_UNIFIED_BUILD
+
+#define REFKEEN_NS_B
+#define REFKEEN_NS_B_FOR(x)
+#define REFKEEN_NS_ENCLOSE(x, f) (f)
+#define REFKEEN_NS_E
+
+#else
+
+#define REFKEEN_NS_B_FOR(x) namespace x {
+#define REFKEEN_NS_ENCLOSE(x, f) (x::f)
+#define REFKEEN_NS_E }
+
+#ifdef REFKEEN_VER_CAT3D
+#define REFKEEN_NS_B namespace cat3d {
+#elif (defined REFKEEN_VER_CATABYSS)
+#define REFKEEN_NS_B namespace catabyss {
+#elif (defined REFKEEN_VER_CATARM)
+#define REFKEEN_NS_B namespace catarm {
+#elif (defined REFKEEN_VER_CATAPOC)
+#define REFKEEN_NS_B namespace catapoc {
+#elif (defined REFKEEN_VER_WL920312)
+#define REFKEEN_NS_B namespace wl920312 {
+#elif (defined REFKEEN_VER_WL1AP10)
+#define REFKEEN_NS_B namespace wl1ap10 {
+#elif (defined REFKEEN_VER_WL1AP11)
+#define REFKEEN_NS_B namespace wl1ap11 {
+#elif (defined REFKEEN_VER_WL6AP11)
+#define REFKEEN_NS_B namespace wl6ap11 {
+#elif (defined REFKEEN_VER_WL1AP14)
+#define REFKEEN_NS_B namespace wl1ap14 {
+#elif (defined REFKEEN_VER_WL6GT14A)
+#define REFKEEN_NS_B namespace wl6gt14a {
+#elif (defined REFKEEN_VER_WJ6IM14)
+#define REFKEEN_NS_B namespace wj6im14 {
+#elif (defined REFKEEN_VER_WL6GT14B)
+#define REFKEEN_NS_B namespace wl6gt14b {
+#elif (defined REFKEEN_VER_WL6AC14)
+#define REFKEEN_NS_B namespace wl6ac14 {
+#elif (defined REFKEEN_VER_SDMFG10)
+#define REFKEEN_NS_B namespace sdmfg10 {
+#elif (defined REFKEEN_VER_SODFG10)
+#define REFKEEN_NS_B namespace sodfg10 {
+#elif (defined REFKEEN_VER_SODFG14)
+#define REFKEEN_NS_B namespace sodfg14 {
+#elif (defined REFKEEN_VER_SODAC14)
+#define REFKEEN_NS_B namespace sodac14 {
+#elif (defined REFKEEN_VER_N3DWT10)
+#define REFKEEN_NS_B namespace n3dwt10 {
+#elif (defined REFKEEN_VER_BH071592)
+#define REFKEEN_NS_B namespace bh071592 {
+#elif (defined REFKEEN_VER_BM1V10S)
+#define REFKEEN_NS_B namespace bm1v10s {
+#elif (defined REFKEEN_VER_BM1V10R)
+#define REFKEEN_NS_B namespace bm1v10r {
+#elif (defined REFKEEN_VER_BM2V10R)
+#define REFKEEN_NS_B namespace bm2v10r {
+#elif (defined REFKEEN_VER_BM3V10R)
+#define REFKEEN_NS_B namespace bm3v10r {
+#elif (defined REFKEEN_VER_BM1V11S)
+#define REFKEEN_NS_B namespace bm1v11s {
+#elif (defined REFKEEN_VER_BM1V11R)
+#define REFKEEN_NS_B namespace bm1v11r {
+#elif (defined REFKEEN_VER_BM2V11R)
+#define REFKEEN_NS_B namespace bm2v11r {
+#elif (defined REFKEEN_VER_BM3V11R)
+#define REFKEEN_NS_B namespace bm3v11r {
+#elif (defined REFKEEN_VER_BM1V11GM)
+#define REFKEEN_NS_B namespace bm1v11gm {
+#elif (defined REFKEEN_VER_BM1V11F)
+#define REFKEEN_NS_B namespace bm1v11f {
+#elif (defined REFKEEN_VER_BM2V11F)
+#define REFKEEN_NS_B namespace bm2v11f {
+#elif (defined REFKEEN_VER_BM3V11F)
+#define REFKEEN_NS_B namespace bm3v11f {
+#endif
+
+#endif // REFKEEN_UNIFIED_BUILD
+
+#ifdef REFKEEN_PLATFORM_ARMDOS
+// ARM-DOS: one version only (Keen Dreams EGA v1.13 shareware), so the
+// version checks fold at compile time
+#define refkeen_current_gamever BE_GAMEVER_KDREAMSE113
+#else
+extern BE_GameVer_T refkeen_current_gamever;
+#endif
+// This MUST have the same order as in the BE_GameVer_T enum
+extern const char *refkeen_gamever_strs[BE_GAMEVER_LAST];
+
+#endif // BE_GAMEVER_H

@@ -1,0 +1,18 @@
+
+C:\T>truename
+
+C:\T
+
+C:\T>truename a.txt
+
+C:\T\A.TXT
+
+C:\T>truename \t\sub\..\b.txt
+
+C:\T\B.TXT
+
+C:\T>truename c:
+
+C:\T
+
+C:\T>

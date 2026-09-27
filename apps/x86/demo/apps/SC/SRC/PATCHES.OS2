@@ -1,0 +1,1213 @@
+Only in orig: bugs.msg
+diff -c orig/cmds.c src/cmds.c
+*** orig/cmds.c	Mon Jun 01 07:35:52 1992
+--- src/cmds.c	Mon Mar 21 09:48:16 1994
+***************
+*** 19,24 ****
+--- 19,40 ----
+  #endif
+  #endif
+  
++ /* emx and MSC can produce bound versions, but the usual popen is only
++    available in OS2_MODE. For bound versions, both __OS2__ and MSDOS 
++    will be defined. PDCurses can "#undef MSDOS", so keep this before 
++    the curses.h include. */
++ #if defined(MSDOS) || defined(__OS2__)
++ #include <stdlib.h>
++ #if defined(MSDOS)
++ #include "popen.h"
++ #define popen os_popen
++ #define pclose os_pclose
++ #elif defined(_MSC_VER)
++ #define popen _popen
++ #define pclose _pclose
++ #endif
++ #endif
++ 
+  #include <curses.h>
+  #if defined(BSD42) || defined(BSD43) || defined(VMS)
+  #include <sys/file.h>
+***************
+*** 28,38 ****
+  #include "sc.h"
+  #include <signal.h>
+  #include <errno.h>
+! 
+! #ifdef SYSV3
+! extern void exit();
+! #else
+! extern int exit();
+  #endif
+  
+  void	openrow();
+--- 44,51 ----
+  #include "sc.h"
+  #include <signal.h>
+  #include <errno.h>
+! #if !defined(__OS2__) && !defined(MSDOS)
+! extern	int	errno;
+  #endif
+  
+  void	openrow();
+***************
+*** 39,46 ****
+  void	syncref();
+  void	unspecial();
+  
+- extern	int	errno;
+- 
+  /* a linked list of free [struct ent]'s, uses .next as the pointer */
+  extern	struct ent *freeents;
+  
+--- 52,57 ----
+***************
+*** 687,692 ****
+--- 698,860 ----
+      (void) fprintf(f, "\n");
+  }
+  
++ 
++ /* The Jun-92 updates included default filenames for listings, with
++    a 14-char limit on names. IsHPFSFileSystem(), getname(), add_ext(),
++    and mangle() provide the necessary changes for OS/2 and DOS. */
++ 
++ #if defined(__OS2__)
++ int IsHPFSFileSystem (char *directory)
++ {
++     ULONG		lMap;
++     BYTE		bData[128];
++     BYTE		bName[3];
++     int			i;
++     char		*FName;
++ #if defined (_MSC_VER)
++     USHORT		cbData;
++     USHORT		nDrive;
++ #define DosQueryCurrentDisk DosQCurDisk
++ #else
++     ULONG		cbData;
++     ULONG		nDrive;
++     PFSQBUFFER2		pFSQ = (PFSQBUFFER2)bData;
++ #endif
++ 
++     if ( _osmode == DOS_MODE )
++ 	return FALSE;
++ 
++     if (isalpha (directory[0]) && (directory[1] == ':'))
++ 	nDrive = toupper (directory[0]) - '@';
++     else
++ 	DosQueryCurrentDisk (&nDrive, &lMap);
++ 
++ /* Set up the drive name */
++ 
++     bName[0] = (char) (nDrive + '@');
++     bName[1] = ':';
++     bName[2] = 0;
++ 
++     cbData = sizeof (bData);
++ 
++ #if defined(_MSC_VER)
++     if (DosQFSAttach (bName, 0, FSAIL_QUERYNAME, bData, &cbData, 0L))
++ #else
++     if (DosQueryFSAttach (bName, 0, FSAIL_QUERYNAME, pFSQ, &cbData))
++ #endif
++       return FALSE;
++ 
++ #if defined(_MSC_VER)
++     FName = bData + (*((USHORT *) (bData + 2)) + 7);
++ #else
++     FName = pFSQ->szName + pFSQ->cbName + 1;
++ #endif
++ 
++     if (strcmp(FName, "HPFS"))
++       return FALSE;
++     return(TRUE);
++ }
++ #endif
++ 
++ #if defined(__OS2__) || defined(MSDOS)
++ char *getshell(shellbuf *shell)
++ {
++   static char *sname[] = {"cmd", "command", "4os2", "4dos", NULL};
++   char cmd[_MAX_PATH], *shl, *opt;
++   int i;
++ 
++   opt = "-c";
++   if ((shl = getenv("SHELL")) == NULL)
++     shl = getenv("COMSPEC");
++   if (shl) {
++     _splitpath(shl, NULL, NULL, cmd, NULL);
++     for (i = 0; sname[i]; i++)
++       if (stricmp(cmd, sname[i]) == 0) {
++ 	opt = "/c"; break;
++       }
++   }
++   else
++     shl = "/bin/sh";
++   if (shell) {
++     strcpy(shell->name, shl);
++     strcpy(shell->opt, opt);
++   }
++   return(shl);
++ }
++ #endif
++ 
++ char *
++ getname(path)
++ char *path;
++ {
++   char *tpp;
++ 
++ #if defined(__EMX__)
++   tpp = _getname(path);
++ #elif defined(__OS2__) || defined(MSDOS)
++   for (tpp = path + strlen(path); tpp > path; tpp--)
++     if (strchr(":/\\", *(tpp-1))) break;
++ #else
++   if ((tpp = strrchr(path, '/'))  == NULL)
++     tpp = path;
++   else
++     tpp++;
++ #endif
++   return(tpp);
++ }
++ 
++ char *
++ mangle(filename)
++ char *filename;
++ {
++ #if defined(__OS2__) || defined(MSDOS)
++   char drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
++   char *p;
++   int i, j;
++ 
++ #if defined(__OS2__)
++   if (IsHPFSFileSystem(filename)) 
++     return(filename);
++ #endif
++ 
++   /* Simple mangling tries to get most of the filename characters. */
++   _splitpath(filename, drive, dir, fname, ext);
++   if ((i = strlen(fname)) > 8) {   /* try to put chars in extension */
++     if (*ext == '\0') sprintf(ext, ".%.3s", fname + 8);
++   }
++   else if ((j = strlen(ext)) > 4) {  /* try to put chars in fname portion */
++     if (i < 7) {
++       j = (7-i < j-4) ? 7-i : j-4;
++       sprintf(fname + i, "_%*s", j, ext+1);
++       strcpy(ext + 1, ext + 1 + j);
++     }
++   }
++   fname[8] = '\0'; ext[4] = '\0';
++   while (p = strchr(fname, '.')) *p = '_';
++   _makepath(filename, drive, dir, fname, ext);
++ #else                   /* put 14-char limit on filename */
++   if (strlen(filename) > 14) filename[14] = '\0';
++ #endif
++   return(filename);
++ }
++ 
++ char *
++ add_ext(path, ext)
++ char *path, *ext;
++ {
++   char *fname;
++ 
++   if (ext == NULL || *ext == '\0') return path;
++ #if defined(__OS2__) || defined(MSDOS)
++   mangle(strcat(path, ext));
++ #else    /* filename is limited to 14 characters */
++   fname = getname(path);
++   fname[10] = '\0';
++   strcat(fname, ext);
++ #endif
++   return(path);
++ }
++ 
+  void
+  printfile (fname, r0, c0, rn, cn)
+  char *fname;
+***************
+*** 700,723 ****
+      int fieldlen, nextcol;
+      register row, col;
+      register struct ent **pp;
+-     char file[32];
+      char path[256];
+-     char *tpp;
+  
+-     /* printfile will be the [path/]file ---> [path/]file.out,
+-      * file is limited to 14 characters.
+-      */
+      if (*fname == '\0') {
+! 	strcpy(path, curfile);
+! 
+! 	if ((tpp = strrchr(path, '/'))  == NULL)
+! 		tpp = path;
+! 	else
+! 		tpp++;
+! 	strcpy(file, tpp);
+! 	file[10] = '\0';
+! 	sprintf(tpp, "%s.asc", file);
+! 	fname = path;
+      }
+  
+      if ((strcmp(fname, curfile) == 0) &&
+--- 868,881 ----
+      int fieldlen, nextcol;
+      register row, col;
+      register struct ent **pp;
+      char path[256];
+  
+      if (*fname == '\0') {
+!       /* printfile will be the [path/]file ---> [path/]file.out,
+!        * possibly with some mangling by add_ext().
+!        */
+!       strcpy(path, curfile);
+!       add_ext(fname = path, ".asc");
+      }
+  
+      if ((strcmp(fname, curfile) == 0) &&
+***************
+*** 886,915 ****
+      register row, col;
+      register struct ent **pp;
+      char coldelim = DEFCOLDELIM;
+-     char file[32];
+      char path[256];
+-     char *tpp;
+  
+-     /* tblprintfile will be the [path/]file ---> [path/]file.out,
+-      * file is limited to 14 characters.
+-      */
+      if (*fname == '\0') {
+!     strcpy(path, curfile);
+!     if ((tpp = strrchr(path, '/'))  == NULL)
+!       tpp = path;
+!     else
+!       tpp++;
+!     strcpy(file, tpp);
+!     file[10] = '\0';
+!     if (tbl_style == 0)
+!       sprintf(tpp, "%s.cln", file);
+!     else if (tbl_style == TBL)
+!       sprintf(tpp, "%s.tbl", file);
+!     else if (tbl_style == LATEX)
+!       sprintf(tpp, "%s.lat", file);
+!     else if (tbl_style == TEX)
+!       sprintf(tpp, "%s.tex", file);
+!     fname = path;
+      }
+  
+      if ((strcmp(fname, curfile) == 0) &&
+--- 1044,1065 ----
+      register row, col;
+      register struct ent **pp;
+      char coldelim = DEFCOLDELIM;
+      char path[256];
+  
+      if (*fname == '\0') {
+!       /* tblprintfile will be the [path/]file ---> [path/]file.out,
+!        * possibly with some mangling by add_ext().
+!        */
+!       strcpy(path, curfile);
+!       if (tbl_style == 0)
+! 	add_ext(path, ".cln");
+!       else if (tbl_style == TBL)
+! 	add_ext(path, ".tbl");
+!       else if (tbl_style == LATEX)
+! 	add_ext(path, ".lat");
+!       else if (tbl_style == TEX)
+! 	add_ext(path, ".tex");
+!       fname = path;
+      }
+  
+      if ((strcmp(fname, curfile) == 0) &&
+***************
+*** 1306,1316 ****
+  	return(fopen(efname, "w"));
+      }
+  
+- #if defined(MSDOS)
+-     error("Piping not available under MS-DOS\n");
+-     return(0);
+- #else
+      fname++;				/* Skip | */
+      if ( pipe (pipefd) < 0) {
+  	error("Can't make pipe to child");
+  	*rpid = 0;
+--- 1456,1481 ----
+  	return(fopen(efname, "w"));
+      }
+  
+      fname++;				/* Skip | */
++ 
++ #if defined(MSDOS) || defined(__OS2__) 
++     { 
++       shellbuf shell;
++       char cmd[256];
++ 
++       getshell(&shell);
++       sprintf(cmd, "%s %s %s", shell.name, shell.opt, fname);
++       if ((f = popen(cmd, "w")) == NULL) {
++ 	error ("Can't popen output");
++ 	*rpid = 0;
++ 	return(0);
++       }
++       else
++ 	*rpid = -1;
++     }
++ 
++ #else
++ 
+      if ( pipe (pipefd) < 0) {
+  	error("Can't make pipe to child");
+  	*rpid = 0;
+***************
+*** 1343,1351 ****
+  	    return(0);
+  	}
+      }
+! #endif /* VMS */
+      return(f);
+- #endif /* MSDOS */
+  }
+  
+  /* close a file opened by openout(), if process wait for return */
+--- 1508,1516 ----
+  	    return(0);
+  	}
+      }
+! #endif
+! #endif
+      return(f);
+  }
+  
+  /* close a file opened by openout(), if process wait for return */
+***************
+*** 1356,1363 ****
+  {
+      int temp;
+  
+      (void) fclose (f);
+- #if !defined(MSDOS)
+      if (pid) {
+           while (pid != wait(&temp)) /**/;
+  	 (void) printf("Press RETURN to continue ");
+--- 1521,1538 ----
+  {
+      int temp;
+  
++ #if defined(MSDOS) || defined(__OS2__)
++     if (pid == -1) {
++       pclose(f);
++       (void) printf("Press RETURN to continue ");
++       (void) fflush(stdout);
++       (void) nmgetch();
++       goraw();
++     }
++     else
++       fclose(f);
++ #else
+      (void) fclose (f);
+      if (pid) {
+           while (pid != wait(&temp)) /**/;
+  	 (void) printf("Press RETURN to continue ");
+***************
+*** 1365,1371 ****
+  	 (void) nmgetch();
+  	 goraw();
+      }
+! #endif /* MSDOS */
+  }
+  
+  void
+--- 1540,1546 ----
+  	 (void) nmgetch();
+  	 goraw();
+      }
+! #endif
+  }
+  
+  void
+***************
+*** 1466,1472 ****
+      (void) strcpy(save,fname);
+  
+      if ((f= openout(fname, &pid)) == (FILE *)0)
+!     {	error ("Can't create file \"%s\"", fname);
+  	return (-1);
+      }
+  
+--- 1641,1647 ----
+      (void) strcpy(save,fname);
+  
+      if ((f= openout(fname, &pid)) == (FILE *)0)
+!     { error ("Can't create file \"%s\"", fname);
+  	return (-1);
+      }
+  
+***************
+*** 1772,1778 ****
+  }
+  
+  /* expand a ~ in a path to your home directory */
+! #if !defined(MSDOS) && !defined(VMS)
+  #include <pwd.h>
+  #endif
+  char	*
+--- 1947,1953 ----
+  }
+  
+  /* expand a ~ in a path to your home directory */
+! #if !defined(MSDOS) && !defined(__OS2__) && !defined(VMS)
+  #include <pwd.h>
+  #endif
+  char	*
+***************
+*** 1795,1801 ****
+  		if ((*pathptr == '/') || (*pathptr == '\0'))
+  		{	strcpy(tmppath, HomeDir);
+  		}
+! #if !defined(MSDOS) && !defined(VMS)
+  		else
+  		{	struct	passwd *pwent;
+  			extern	struct	passwd *getpwnam();
+--- 1970,1976 ----
+  		if ((*pathptr == '/') || (*pathptr == '\0'))
+  		{	strcpy(tmppath, HomeDir);
+  		}
+! #if !defined(MSDOS) && !defined(__OS2__) && !defined(VMS)
+  		else
+  		{	struct	passwd *pwent;
+  			extern	struct	passwd *getpwnam();
+***************
+*** 1846,1857 ****
+  
+  	/* tpath will be the [path/]file ---> [path/]#file~ */
+  	strcpy(tpath, path);
+! 	if ((tpp = strrchr(tpath, '/')) == NULL)
+! 		tpp = tpath;
+! 	else
+! 		tpp++;
+! 	strcpy(fname, tpp);
+  	(void) sprintf(tpp, "#%s~", fname);
+  
+  	if (stat(path, &statbuf) == 0)
+  	{
+--- 2021,2029 ----
+  
+  	/* tpath will be the [path/]file ---> [path/]#file~ */
+  	strcpy(tpath, path);
+! 	strcpy(fname, tpp = getname(tpath));
+  	(void) sprintf(tpp, "#%s~", fname);
++ 	mangle(tpath);
+  
+  	if (stat(path, &statbuf) == 0)
+  	{
+***************
+*** 1895,1913 ****
+  }
+  #endif
+  
+- static int day_month_starts[12] = {0,31,59,90,120,151,181,212,243,273,304,334};
+- 
+  double convert_date(d, m, y)
+  int d;
+  int m;
+  int y;
+  {
+!   /* Convert to years since 1970. (or 2000, fix by 2070) */
+!   if (y > 1970) y -= 1970;	/* Full year given */
+!   else if (y >= 70) y -= 70;	/* Years since 1900 */
+!   else y += 30;			/* Years since 2000 */
+!   /* Use quarter days to compensate for leap years. */
+!   return (double)((y * (365 * 4 + 1) + day_month_starts[m-1] * 4 + d * 4 - 2) *
+! 		  6 * 60 * 60);
+  }
+  
+--- 2067,2080 ----
+  }
+  #endif
+  
+  double convert_date(d, m, y)
+  int d;
+  int m;
+  int y;
+  {
+!   /* Convert to yyyy (if y<70 then assume 2000+y, fix by 2070) */
+!   if (y < 70) y += 2000;
+!   else if (y < 100) y += 1900;
+!   return dodts(m,d,y);
+  }
+  
+Only in src: COPYING
+Only in src: COPYING.EMX
+diff -c orig/format.c src/format.c
+*** orig/format.c	Mon Jun 01 07:35:54 1992
+--- src/format.c	Tue Nov 09 19:02:04 1993
+***************
+*** 95,103 ****
+  #define EOS	'\0'
+  #define MAXBUF	256
+  
+! extern char
+!   *strcpy(),
+!   *strcat();
+  
+  static char
+    *fmt_int(),
+--- 95,106 ----
+  #define EOS	'\0'
+  #define MAXBUF	256
+  
+! #if defined(__OS2__)
+! # include <string.h>
+! #else
+! extern char *strcpy();
+! extern char *strcat();
+! #endif
+  
+  static char
+    *fmt_int(),
+***************
+*** 578,584 ****
+    }
+    if (fmt == REFMTDATE) {
+      int i;
+!     char *time;
+      long int secs;
+  
+      if (buflen < 9) {
+--- 581,587 ----
+    }
+    if (fmt == REFMTDATE) {
+      int i;
+!     char *time_of_day;
+      long int secs;
+  
+      if (buflen < 9) {
+***************
+*** 587,602 ****
+      }
+      else {
+        secs = (time_t)val;
+!       time = ctime(&secs);
+!       buf[0] = time[8];
+!       buf[1] = time[9];
+        buf[2] = ' ';
+!       buf[3] = time[4];
+!       buf[4] = time[5];
+!       buf[5] = time[6];
+        buf[6] = ' ';
+!       buf[7] = time[22];
+!       buf[8] = time[23];
+        for (i = 9; i < width; i++) buf[i] = ' ';
+        buf[i] = '\0';
+      }
+--- 590,605 ----
+      }
+      else {
+        secs = (time_t)val;
+!       time_of_day = ctime(&secs);
+!       buf[0] = time_of_day[8];
+!       buf[1] = time_of_day[9];
+        buf[2] = ' ';
+!       buf[3] = time_of_day[4];
+!       buf[4] = time_of_day[5];
+!       buf[5] = time_of_day[6];
+        buf[6] = ' ';
+!       buf[7] = time_of_day[22];
+!       buf[8] = time_of_day[23];
+        for (i = 9; i < width; i++) buf[i] = ' ';
+        buf[i] = '\0';
+      }
+Only in src: getopt.c
+Only in src: gram.c
+Only in src: gram.err
+diff -c orig/help.c src/help.c
+*** orig/help.c	Mon Jun 01 07:35:54 1992
+--- src/help.c	Wed Nov 10 21:28:58 1993
+***************
+*** 610,619 ****
+      while (*pagep)
+      {
+  #ifndef TROFF
+! 	(void) fputs(SCNAME, stdout);
+! 	(void) fputs(header);
+! 	(void) printf("\n");
+! 	(void) puts(revision);
+  #endif
+  
+  	for (lineno = 0; (*pagep)[lineno]; lineno++) {
+--- 610,616 ----
+      while (*pagep)
+      {
+  #ifndef TROFF
+! 	(void) printf("%s%s\n%s", SCNAME, header, revision);
+  #endif
+  
+  	for (lineno = 0; (*pagep)[lineno]; lineno++) {
+diff -c orig/interp.c src/interp.c
+*** orig/interp.c	Mon Jun 01 07:38:50 1992
+--- src/interp.c	Sat Nov 20 09:24:10 1993
+***************
+*** 26,33 ****
+  #include <setjmp.h>
+  #include <stdio.h>
+  #include <ctype.h>
+! 
+  extern int errno;		/* set by math functions */
+  #ifdef BSD42
+  #include <strings.h>
+  #include <sys/time.h>
+--- 26,36 ----
+  #include <setjmp.h>
+  #include <stdio.h>
+  #include <ctype.h>
+! #include <errno.h>
+! #if !defined(__OS2__) && !defined(MSDOS)
+  extern int errno;		/* set by math functions */
++ #endif
++ 
+  #ifdef BSD42
+  #include <strings.h>
+  #include <sys/time.h>
+***************
+*** 41,46 ****
+--- 44,65 ----
+  #endif
+  #endif
+  
++ /* emx and MSC can produce bound versions, but the usual popen is only
++    available in OS2_MODE. For bound versions, both __OS2__ and MSDOS 
++    will be defined. PDCurses can "#undef MSDOS", so keep this before 
++    the curses.h include. */
++ #if defined(MSDOS) || defined(__OS2__)
++ #include <stdlib.h>
++ #if defined(MSDOS)
++ #include "popen.h"
++ #define popen os_popen
++ #define pclose os_pclose
++ #elif defined(_MSC_VER)
++ #define popen _popen
++ #define pclose _pclose
++ #endif
++ #endif
++ 
+  #include <curses.h>
+  #include "sc.h"
+  
+***************
+*** 551,557 ****
+--- 570,578 ----
+  int which;
+  double when;
+  {
++ #if !defined(__OS2__)
+  	long time();
++ #endif
+  
+  	static long t_cache;
+  	static struct tm tm_cache;
+***************
+*** 1023,1029 ****
+   * written to files, etc.
+   */
+  
+! #if defined(VMS) || defined(MSDOS)
+  char *
+  doext(command, value)
+  char *command;
+--- 1044,1050 ----
+   * written to files, etc.
+   */
+  
+! #if defined(VMS)
+  char *
+  doext(command, value)
+  char *command;
+***************
+*** 1336,1348 ****
+  	for (i=0; i<=maxrow; i++)
+  	    for (j=0; j<=maxcol; j++)
+  		if ((p = *ATBL(tbl,i,j)) && !(p->flags&is_locked) && p->expr) RealEvalOne(p,i,j,&chgct);
+!     }
+      else if ( calc_order == BYCOLS ) {
+! 	for (j=0; j<=maxcol; j++)
+  	{   for (i=0; i<=maxrow; i++)
+  		if ((p = *ATBL(tbl,i,j)) && !(p->flags&is_locked) && p->expr) RealEvalOne(p,i,j,&chgct);
+  	}
+!     }
+      else error("Internal error calc_order");
+   
+      return(chgct);
+--- 1357,1369 ----
+  	for (i=0; i<=maxrow; i++)
+  	    for (j=0; j<=maxcol; j++)
+  		if ((p = *ATBL(tbl,i,j)) && !(p->flags&is_locked) && p->expr) RealEvalOne(p,i,j,&chgct);
+!     } 
+      else if ( calc_order == BYCOLS ) {
+! 	for (j=0; j<=maxcol; j++) 
+  	{   for (i=0; i<=maxrow; i++)
+  		if ((p = *ATBL(tbl,i,j)) && !(p->flags&is_locked) && p->expr) RealEvalOne(p,i,j,&chgct);
+  	}
+!     } 
+      else error("Internal error calc_order");
+   
+      return(chgct);
+diff -c orig/lex.c src/lex.c
+*** orig/lex.c	Mon Jun 01 07:38:50 1992
+--- src/lex.c	Wed Nov 10 21:25:28 1993
+***************
+*** 544,550 ****
+  
+  #endif
+  
+! #if defined(SYSV2) || defined(SYSV3) || defined(MSDOS)
+  
+  void
+  initkbd()
+--- 544,550 ----
+  
+  #endif
+  
+! #if defined(SYSV2) || defined(SYSV3) || defined(MSDOS) || defined(__OS2__)
+  
+  void
+  initkbd()
+Only in src: Makefile.os2
+Only in src: popen.c
+Only in src: popen.h
+diff -c orig/psc.c src/psc.c
+*** orig/psc.c	Mon Jun 01 07:38:50 1992
+--- src/psc.c	Sun Nov 21 11:09:10 1993
+***************
+*** 35,46 ****
+  char	*progname;
+  int	getrow(), getcol(), scan();
+  
+- #ifdef SYSV3
+- extern void exit();
+- #else
+- extern int exit();
+- #endif
+- 
+  int *fwidth;
+  int *precision;
+  int maxcols;
+--- 35,40 ----
+Only in src: regex.c
+Only in src: regex.h
+Only in src: sc-32.def
+diff -c orig/sc.c src/sc.c
+*** orig/sc.c	Mon Jun 01 07:38:50 1992
+--- src/sc.c	Sun Nov 21 11:07:10 1993
+***************
+*** 27,32 ****
+--- 27,36 ----
+  
+  #include <stdio.h>
+  #include "sc.h"
++ #if defined(MSDOS) || defined(__OS2__)
++ #include <stdlib.h>    /* Use _splitpath to get progname */
++ #include <process.h>   /* use spawn instead of fork     */
++ #endif
+  
+  extern	char	*getenv();
+  extern	void	startdisp(), stopdisp();
+***************
+*** 177,182 ****
+--- 181,197 ----
+      to_fix = NULL;
+  }
+  
++ void *
++ default_file_is(filename, ext)
++ char *filename, *ext;
++ {
++   extern char *add_ext();
++   char path[256];
++ 
++   strcpy(path, filename);
++   error ("Default file is \"%s\"",add_ext(path, ext));
++ }
++ 
+  char    *progname;
+  
+  int
+***************
+*** 206,213 ****
+  
+      int tempx, tempy; 	/* Temp versions of curx, cury */
+  
+! #if defined(MSDOS)
+!     if ((revi = strrchr(argv[0], '\\')) != NULL)
+  #else
+  #ifdef VMS
+      if ((revi = strrchr(argv[0], ']')) != NULL)
+--- 221,229 ----
+  
+      int tempx, tempy; 	/* Temp versions of curx, cury */
+  
+! #if defined(MSDOS) || defined(__OS2__)
+!     static char fname[_MAX_FNAME];
+!     _splitpath(argv[0], NULL, NULL, progname = fname, NULL);
+  #else
+  #ifdef VMS
+      if ((revi = strrchr(argv[0], ']')) != NULL)
+***************
+*** 214,223 ****
+  #else
+      if ((revi = strrchr(argv[0], '/')) != NULL)
+  #endif
+- #endif
+  	progname = revi+1;
+      else
+  	progname = argv[0];
+  
+      while (argc > 1 && argv[1][0] == '-') {
+  	argv++;
+--- 230,239 ----
+  #else
+      if ((revi = strrchr(argv[0], '/')) != NULL)
+  #endif
+  	progname = revi+1;
+      else
+  	progname = argv[0];
++ #endif
+  
+      while (argc > 1 && argv[1][0] == '-') {
+  	argv++;
+***************
+*** 736,752 ****
+  		     *  "!"	forks a shell
+  		     *  "!!" repeats last command
+  		     */
+! #if VMS || MSDOS
+! 		    error("Not implemented on VMS or MS-DOS");
+  #else /* VMS */
+! 		    char *shl;
+  		    int pid, temp;
+  		    char cmd[MAXCMD];
+  		    static char lastcmd[MAXCMD];
+  
+  		    if (!(shl = getenv("SHELL")))
+  			shl = "/bin/sh";
+! 
+  		    deraw();
+  		    (void) fputs("! ", stdout);
+  		    (void) fflush(stdout);
+--- 752,775 ----
+  		     *  "!"	forks a shell
+  		     *  "!!" repeats last command
+  		     */
+! #if defined(VMS)
+! 		    error("Not implemented");
+  #else /* VMS */
+! 		    char *shl, *opt;
+  		    int pid, temp;
+  		    char cmd[MAXCMD];
+  		    static char lastcmd[MAXCMD];
+  
++ #if defined(MSDOS) || defined(__OS2__)
++ 		    shellbuf shell;
++ 
++ 		    shl = getshell(&shell);
++ 		    opt = shell.opt;
++ #else
+  		    if (!(shl = getenv("SHELL")))
+  			shl = "/bin/sh";
+! 		    opt = "-c";
+! #endif
+  		    deraw();
+  		    (void) fputs("! ", stdout);
+  		    (void) fflush(stdout);
+***************
+*** 763,773 ****
+  			(void) fflush (stdout);
+  		    }
+  
+  		    if (!(pid = fork()))
+  		    {
+  			(void) signal (SIGINT, SIG_DFL);  /* reset */
+  			if(strlen(cmd))
+! 				(void)execl(shl,shl,"-c",cmd,(char *)0);
+  			else
+  				(void) execl(shl, shl, (char *)0);
+  			exit(-127);
+--- 786,802 ----
+  			(void) fflush (stdout);
+  		    }
+  
++ #if defined(MSDOS) || defined(__OS2__)
++ 		    if(strlen(cmd))
++ 		      (void) spawnl(P_WAIT, shl, shl, opt, cmd, (char *)0);
++ 		    else
++ 		      (void) spawnl(P_WAIT, shl, shl, (char *)0);
++ #else
+  		    if (!(pid = fork()))
+  		    {
+  			(void) signal (SIGINT, SIG_DFL);  /* reset */
+  			if(strlen(cmd))
+! 				(void)execl(shl,shl,opt,cmd,(char *)0);
+  			else
+  				(void) execl(shl, shl, (char *)0);
+  			exit(-127);
+***************
+*** 774,780 ****
+  		    }
+  
+  		    while (pid != wait(&temp));
+! 
+  		    (void) printf("Press RETURN to continue ");
+  		    fflush(stdout);
+  		    (void)nmgetch();
+--- 803,809 ----
+  		    }
+  
+  		    while (pid != wait(&temp));
+! #endif
+  		    (void) printf("Press RETURN to continue ");
+  		    fflush(stdout);
+  		    (void)nmgetch();
+***************
+*** 1131,1137 ****
+  		case 'W':
+  		    (void) sprintf (line, "write [\"dest\" range] \"");
+  		    if (*curfile)
+!                        error ("Default file is \"%s.asc\"",curfile);
+  		    linelim = strlen (line);
+  		    insert_mode();
+  		    break;
+--- 1160,1166 ----
+  		case 'W':
+  		    (void) sprintf (line, "write [\"dest\" range] \"");
+  		    if (*curfile)
+!                        default_file_is(curfile, ".asc");
+  		    linelim = strlen (line);
+  		    insert_mode();
+  		    break;
+***************
+*** 1144,1158 ****
+  		case 'T':	/* tbl output */
+  		    (void) sprintf (line, "tbl [\"dest\" range] \"");
+  		    if (*curfile && tbl_style == 0)
+!                        error ("Default file is \"%s.cln\"",curfile);
+                      else if (*curfile && tbl_style == TBL)
+!                        error ("Default file is \"%s.tbl\"",curfile);
+                      else if (*curfile && tbl_style == LATEX)
+!                        error ("Default file is \"%s.lat\"",curfile);
+                      else if (*curfile && tbl_style == SLATEX)
+!                        error ("Default file is \"%s.stx\"",curfile);
+                      else if (*curfile && tbl_style == TEX)
+!                        error ("Default file is \"%s.tex\"",curfile);
+  		    linelim = strlen (line);
+  		    insert_mode();
+  		    break;
+--- 1173,1187 ----
+  		case 'T':	/* tbl output */
+  		    (void) sprintf (line, "tbl [\"dest\" range] \"");
+  		    if (*curfile && tbl_style == 0)
+!                        default_file_is(curfile, ".cln");
+                      else if (*curfile && tbl_style == TBL)
+!                        default_file_is(curfile, ".tbl");
+                      else if (*curfile && tbl_style == LATEX)
+!                        default_file_is(curfile, ".lat");
+                      else if (*curfile && tbl_style == SLATEX)
+!                        default_file_is(curfile, ".stx");
+                      else if (*curfile && tbl_style == TEX)
+!                        default_file_is(curfile, ".tex");
+  		    linelim = strlen (line);
+  		    insert_mode();
+  		    break;
+***************
+*** 1330,1336 ****
+  #endif
+  
+      (void) signal(SIGINT, SIG_IGN);
+! #if !defined(MSDOS)
+      (void) signal(SIGQUIT, dump_me);
+      (void) signal(SIGPIPE, doquit);
+      (void) signal(SIGALRM, time_out);
+--- 1359,1365 ----
+  #endif
+  
+      (void) signal(SIGINT, SIG_IGN);
+! #if !defined(MSDOS) && !defined(__OS2__)
+      (void) signal(SIGQUIT, dump_me);
+      (void) signal(SIGPIPE, doquit);
+      (void) signal(SIGALRM, time_out);
+***************
+*** 1385,1391 ****
+  {   char	path[PATHLEN];
+  
+      if (modcheck(" before Spreadsheet dies") == 1)
+!     {	(void) sprintf(path, "~/%s", SAVENAME);
+  	if (writefile(path, 0, 0, maxrow, maxcol) < 0)
+  	{
+  	    (void) sprintf(path, "/tmp/%s", SAVENAME);
+--- 1414,1425 ----
+  {   char	path[PATHLEN];
+  
+      if (modcheck(" before Spreadsheet dies") == 1)
+!     {
+! #if defined(MSDOS) || defined(__OS2__)
+! 	(void) sprintf(path, "%s", SAVENAME);
+! #else
+!     	(void) sprintf(path, "~/%s", SAVENAME);
+! #endif
+  	if (writefile(path, 0, 0, maxrow, maxcol) < 0)
+  	{
+  	    (void) sprintf(path, "/tmp/%s", SAVENAME);
+Only in src: sc.def
+diff -c orig/sc.h src/sc.h
+*** orig/sc.h	Mon Jun 01 07:38:50 1992
+--- src/sc.h	Mon Mar 21 09:49:56 1994
+***************
+*** 10,17 ****
+   *
+   */
+  
+! #if defined(MSDOS)
+! #include <stdio.h>
+  #endif
+  
+  #define	ATBL(tbl, row, col)	(*(tbl + row) + (col))
+--- 10,19 ----
+   *
+   */
+  
+! #if defined(MSDOS) || defined(__OS2__)
+! #define STDC_HEADERS 1
+! # include <stdio.h>
+! # include <stdlib.h>
+  #endif
+  
+  #define	ATBL(tbl, row, col)	(*(tbl + row) + (col))
+***************
+*** 267,272 ****
+--- 269,280 ----
+  extern	struct ent *to_fix;
+  extern	int showsc, showsr;
+  
++ #ifdef __STDC__
++ #define P(x) x
++ #else
++ #define P(x) ()
++ #endif
++ 
+  extern	FILE *openout();
+  extern	FILE *fdopen(), *fopen();
+  extern	char *coltoa();
+***************
+*** 385,390 ****
+--- 393,421 ----
+  extern	int backup_file();
+  #endif
+  
++ /* Fox's 6.18 dd_mm_yy input change was broken (did it ever work?).
++    See CHANGES and convert_date in gram.y and cmds.c. */
++ extern double dodts P((int mo, int day, int yr));
++ extern double convert_date P((int day, int mo, int yr));
++ 
++ #if defined(SYSV3)
++ extern void exit();
++ #elif !defined(__OS2__) && !defined(MSDOS)
++ extern int exit();
++ #endif
++ 
++ char *mangle P((char *filename));
++ char *getname P((char *path));
++ char *add_ext P((char *path, char *ext));
++ 
++ #if defined(__OS2__) || defined(MSDOS)
++ typedef struct {
++   char name[_MAX_PATH];
++   char opt[3];
++ } shellbuf;
++ char *getshell(shellbuf *);
++ #endif
++ 
+  extern	int modflg;
+  #if !defined(VMS) && !defined(MSDOS) && defined(CRYPT_PATH)
+  extern	int Crypt;
+***************
+*** 419,426 ****
+  #endif
+  
+  #if defined(BSD42) || defined(BSD43) && !defined(ultrix)
+! #define	memcpy(dest, source, len)	bcopy(source, dest, (unsigned int)len);
+! #define	memset(dest, zero, len)		bzero((dest), (unsigned int)(len));
+  #else
+  #include <memory.h>
+  #endif
+--- 450,457 ----
+  #endif
+  
+  #if defined(BSD42) || defined(BSD43) && !defined(ultrix)
+! # define memcpy(dest, source, len)	bcopy(source, dest, (unsigned int)len);
+! # define memset(dest, zero, len)	bzero((dest), (unsigned int)(len));
+  #else
+  #include <memory.h>
+  #endif
+Only in orig: sc621.format.bugfix
+diff -c orig/screen.c src/screen.c
+*** orig/screen.c	Mon Jun 01 07:38:50 1992
+--- src/screen.c	Sun Nov 14 20:31:46 1993
+***************
+*** 445,452 ****
+  		if (p1 -> flags & is_valid) {
+  		    /* has value or num expr */
+  		    if ((! (p1 -> expr)) || (p1 -> flags & is_strexpr))
+  			(void) sprintf (line, "%.15g", p1 -> v);
+! 
+  		    (void) addch ('[');
+  		    (void) addstr (line);
+  		    (void) addch (']');
+--- 445,455 ----
+  		if (p1 -> flags & is_valid) {
+  		    /* has value or num expr */
+  		    if ((! (p1 -> expr)) || (p1 -> flags & is_strexpr))
++ #if defined(__EMX__)
++ 			(void) sprintf (line, "%.13g", p1 -> v);
++ #else
+  			(void) sprintf (line, "%.15g", p1 -> v);
+! #endif
+  		    (void) addch ('[');
+  		    (void) addstr (line);
+  		    (void) addch (']');
+Only in src: SUMS
+Only in src: time.c
+diff -c orig/VMS_NOTES src/VMS_NOTES
+*** orig/VMS_NOTES	Mon Jun 10 08:17:40 1991
+--- src/VMS_NOTES	Tue Mar 15 20:39:04 1994
+***************
+*** 78,83 ****
+--- 78,84 ----
+   */
+  
+  #include <stdio.h>
++ #include <string.h>
+  
+  char    *optarg;        /* Global argument pointer. */
+  int     optind = 0;     /* Global argv index. */
+diff -c orig/xmalloc.c src/xmalloc.c
+*** orig/xmalloc.c	Mon Jun 01 07:38:52 1992
+--- src/xmalloc.c	Sun Nov 21 11:57:12 1993
+***************
+*** 7,15 ****
+--- 7,19 ----
+  #include <curses.h>
+  #include "sc.h"
+  
++ #if defined(STDC_HEADERS)
++ #include <stdlib.h>
++ #else
+  extern	char *malloc();
+  extern	char *realloc();
+  extern	void free();
++ #endif
+  void	fatal();
+  
+  #ifdef SYSV3
+Only in src: y_tab.h

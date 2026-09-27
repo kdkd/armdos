@@ -1,0 +1,9 @@
+# third-party data: fetched by tools/fetch-3rdparty.sh (only the manifest is tracked)
+/3rdparty/*
+!/3rdparty/manifest.json
+# build output
+/build/
+/public_html/
+node_modules/
+__pycache__/
+*.pyc

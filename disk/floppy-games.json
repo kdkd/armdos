@@ -1,0 +1,9 @@
+{
+  "comment": "Drive A: data diskette 'games' - contents come from apps/*/floppy-games.json fragments.",
+  "base": "..",
+  "format": "fd1440",
+  "label": "GAMES",
+  "date": "1988-06-17 12:00:00",
+  "files": [],
+  "tree": []
+}

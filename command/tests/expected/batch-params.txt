@@ -1,0 +1,13 @@
+
+C:\T>params a b c d e f g h i j k
+0=params 1=a 2=b 3=c 9=i
+0=a 1=b 2=c
+C:\T>params
+0=params 1= 2= 3= 9=
+0= 1= 2=
+C:\T>loop x y z
+arg x
+arg y
+arg z
+finished
+C:\T>

@@ -1,0 +1,25 @@
+equal
+
+C:\T>if a==b echo equal
+
+C:\T>if not a==b echo not equal
+not equal
+
+C:\T>if exist a.txt echo exists
+exists
+
+C:\T>if exist nofile echo exists
+
+C:\T>if
+Syntax error
+
+C:\T>if a
+Syntax error
+
+C:\T>if a==
+Syntax error
+
+C:\T>if a===a echo triple
+triple
+
+C:\T>

@@ -1,0 +1,8 @@
+End of input file
+*2d;l;1
+       1: r1
+       2:*r3
+       3: r4
+       1:*r1
+       1:*first
+*e

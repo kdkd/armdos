@@ -1,0 +1,4 @@
+{
+  "comment": "ANSI.SYS itself goes to C:\\DOS with the other build/*.SYS; this adds the demo picture (TYPE C:\\DOS\\ANSI.ART with ANSI.SYS loaded)",
+  "files": [ { "src": "apps/ansi/art/ANSI.ART", "dst": "DOS\\" } ]
+}

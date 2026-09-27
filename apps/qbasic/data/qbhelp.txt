@@ -1,0 +1,2183 @@
+; qbhelp.txt - the online help of ARM QuickBASIC (QB.EXE)
+; format: apps/tvlib/tvhelp.h
+; ".topic Name,Alias..." starts a topic; "{Text:Topic}" is a cross reference;
+; ".ex" ... ".endex" is an example. Lines <= 78 columns (as shown).
+; No braces except links (they would be taken as cross references).
+;
+; ===========================================================================
+;  The environment
+; ===========================================================================
+.topic Survival Guide
+  ARM QuickBASIC Survival Guide
+
+  Using the menus:  press Alt to activate the menu bar, then the highlighted
+  letter of a menu (or Left/Right and Enter). Alt+letter opens a menu at
+  once. Esc closes a menu. You can also click with the mouse.
+
+  Getting help:     press Shift+F1 for help on using help, or move the
+                    cursor to a BASIC keyword and press F1.
+  Running:          press F5 to run the program in the program window.
+  Stopping:         press Ctrl+Break to stop a running program.
+  Exiting:          press Alt, F, X (File menu, Exit).
+
+  Where to go next:
+    {Contents}            all the help, by subject
+    {Index}               an alphabetical list of every help topic
+    {Keywords by Task}    BASIC keywords grouped by what they do
+    {Using Help}          how to move around in help
+    {Keyboard}            the editing keys
+    {Samples}             example programs to load and run
+    {Differences}         how ARM QuickBASIC differs from other BASICs
+
+.topic Contents
+  ARM QuickBASIC Help Contents
+
+  Orientation                         Using the environment
+    {Survival Guide}                      {Menus}
+    {Using Help}                          {File Menu}      {Run Menu}
+    {Keyboard}                            {Edit Menu}      {Debug Menu}
+    {Samples}                             {View Menu}      {Options Menu}
+    {Differences}                         {Search Menu}    {Help Menu}
+    {Command Line}                        {Immediate Window}
+                                        {Output Screen}
+  BASIC reference                       {Debugging}
+    {Keywords by Task}
+    {Index}                             Programming
+    {Run-Time Errors}                     {Variables}      {Operators}
+                                        {SUB}            {FUNCTION}
+                                        {Files:OPEN}
+
+.topic Using Help
+  Using Help
+
+  Shift+F1      opens this topic.
+  F1            shows help on the BASIC keyword at the cursor, or on the
+                menu command or dialog box you are in.
+  Tab           moves to the next cross reference (a highlighted word).
+  Shift+Tab     moves to the previous cross reference.
+  Enter         shows the topic of the selected cross reference; a double
+                click on a cross reference does the same.
+  Alt+F1        goes back to the topic you saw before (up to 16 topics).
+  Shift+F1      in the help window: shows the {Index}.
+  F6            switches between the help window and the other windows.
+  Esc           closes the help window.
+
+  The help window opens at the top of the screen; use the arrow keys, PgUp
+  and PgDn or the scroll bars to read the whole topic. Examples can be
+  copied into your program: see {Edit Menu}.
+
+  See also: {Contents}  {Index}  {Help Menu}
+
+.topic Keyboard,Editing Keys,Keys
+  Editing Keys
+
+  Moving the cursor                   Inserting and deleting
+    Arrows    character / line          Enter      split line / new line
+    Ctrl+Left / Ctrl+Right  word        Backspace  delete left character
+    Home / End  start / end of line     Del        delete character or
+    PgUp / PgDn  one screen                        the selected text
+    Ctrl+Home / Ctrl+End  start / end   Ins        insert / overwrite
+                of the program          Ctrl+Y     delete the line
+
+  Selecting text: hold Shift while moving the cursor, or drag the mouse.
+  Cut Shift+Del, Copy Ctrl+Ins, Paste Shift+Ins (see {Edit Menu}).
+
+  Other keys
+    F1  help on the keyword     F2  list of SUBs      F3  find again
+    F4  output screen           F5  run / continue    F6  next window
+    F8  step                    F9  breakpoint        F10 procedure step
+    Shift+F5  start             Ctrl+Break  stop the program
+    Alt  the menu bar           Shift+F1  help on help
+
+  BASIC keywords are converted to upper case when the cursor leaves a line.
+
+  See also: {Menus}  {Debugging}
+
+.topic Menus,Menu Bar
+  The Menu Bar
+
+  The menu bar is at the top of the screen:
+
+    File  Edit  View  Search  Run  Debug  Options               Help
+
+  Press Alt (and release it) to activate the menu bar, then press the
+  highlighted letter of a menu, or use Left, Right and Enter. Alt+letter
+  opens a menu directly (Alt+F for File). In a menu, press the highlighted
+  letter of a command or move with Up / Down and press Enter. Esc closes
+  the menu. With the mouse, click a menu, then a command.
+
+  Many commands have shortcut keys, shown next to them in the menu. A
+  command followed by "..." opens a dialog box. Press F1 on a command to
+  get help on it.
+
+  The status line at the bottom of the screen shows the most useful keys
+  and the cursor position (line:column):
+
+    <Shift+F1=Help> <F6=Window> <F2=Subs> <F5=Run> <F8=Step>
+
+  {File Menu}    {Edit Menu}    {View Menu}     {Search Menu}
+  {Run Menu}     {Debug Menu}   {Options Menu}  {Help Menu}
+
+.topic File Menu
+  File Menu
+
+  New          Removes the program in memory and starts a new, untitled
+               one. You are asked whether to save any changes.
+  Open...      Loads a program (.BAS file) from disk. Choose a file in the
+               list, or type a name; directories change with a double
+               click. You are asked whether to save the current program.
+  Save         Saves the program under its name (Save As... if untitled).
+  Save As...   Saves the program under a new name.
+  Print...     Prints the program, or the selected text, on the printer.
+  Exit         Leaves ARM QuickBASIC and returns to ARM-DOS. You are asked
+               whether to save any changes.
+
+  Programs are saved as plain text files; any text editor can read them.
+  The name of the program is shown in the title of the program window
+  ("Untitled" for a new program).
+
+  See also: {Menus}  {Samples}
+
+.topic Edit Menu
+  Edit Menu
+
+  Cut             Shift+Del   Removes the selected text and puts it on the
+                              Clipboard.
+  Copy            Ctrl+Ins    Copies the selected text to the Clipboard.
+  Paste           Shift+Ins   Inserts the Clipboard's text at the cursor
+                              (it replaces the selected text, if any).
+  Clear           Del         Deletes the selected text (not on the
+                              Clipboard).
+  New SUB...                  Creates a new {SUB} procedure.
+  New FUNCTION...             Creates a new {FUNCTION} procedure.
+
+  Select text by holding Shift while moving the cursor, or by dragging the
+  mouse. In a help window, Copy copies the topic's example, so you can
+  paste it into your program and run it.
+
+  New SUB... and New FUNCTION... ask for a name, then add "SUB name" ...
+  "END SUB" (or FUNCTION ... END FUNCTION) at the end of the program and
+  put the cursor inside it.
+
+  See also: {Keyboard}  {Menus}
+
+.topic View Menu
+  View Menu
+
+  SUBs...          F2   Lists the main module and every SUB and FUNCTION
+                        of the program. Choose one and press Enter: the
+                        cursor moves to it.
+  Split                 Not available in ARM QuickBASIC.
+  Output Screen    F4   Shows the {Output Screen}: what your program last
+                        put on the screen. Press any key to return.
+
+  The whole program is one text in one window: the main module comes
+  first, followed by the SUBs and FUNCTIONs; there are no separate
+  procedure views. Use F2 to jump to a procedure quickly.
+
+  See also: {SUB}  {FUNCTION}  {Differences}
+
+.topic Search Menu
+  Search Menu
+
+  Find...               Searches for text. Type the text, choose the
+                        options (match upper/lower case, whole word) and
+                        press Enter. The text found is selected.
+  Repeat Last Find  F3  Searches again for the same text.
+  Change...             Searches for text and replaces it with new text.
+                        Choose Find and Verify to confirm each change, or
+                        Change All to change every occurrence at once.
+
+  The search starts at the cursor and continues at the beginning of the
+  program when it reaches the end.
+
+  See also: {Menus}  {Keyboard}
+
+.topic Run Menu
+  Run Menu
+
+  Start      Shift+F5  Clears all variables and runs the program from the
+                       beginning.
+  Restart              Clears all variables and prepares to step through
+                       the program: the first statement is highlighted;
+                       press F8 to execute it.
+  Continue   F5        Continues the program after a break, a breakpoint
+                       or a step. If the program has not been started (or
+                       it was edited), F5 starts it from the beginning.
+
+  While the program runs you see the {Output Screen}. When it ends,
+  "Press any key to continue" appears at the bottom; press a key to return
+  to the editor. Ctrl+Break stops a running program: the next statement is
+  highlighted, and F5 continues it.
+
+  See also: {Debug Menu}  {Debugging}  {Run-Time Errors}
+
+.topic Debug Menu
+  Debug Menu
+
+  Step                  F8   Executes the next statement. The statement
+                             that will be executed next is highlighted.
+  Procedure Step        F10  Like Step, but executes a whole SUB or
+                             FUNCTION call as one step.
+  Trace On                   Not available in ARM QuickBASIC.
+  Toggle Breakpoint     F9   Sets or removes a breakpoint on the line at
+                             the cursor. The line turns red; the program
+                             stops before executing it.
+  Clear All Breakpoints      Removes every breakpoint.
+  Set Next Statement         Makes the statement at the cursor the next
+                             one to be executed (F5 or F8 continues there).
+
+  See also: {Debugging}  {Run Menu}  {Immediate Window}
+
+.topic Debugging
+  Debugging a Program
+
+  1. Set a breakpoint (F9) on a line, or press F8 to start stepping.
+  2. Run the program (F5). It stops before the breakpoint's line; that
+     line is highlighted.
+  3. Look at variables in the {Immediate Window}: type PRINT X and press
+     Enter. You can also change them there: X = 10.
+  4. Step with F8 (into SUBs) or F10 (over SUB and FUNCTION calls), or
+     continue with F5. Press F4 to look at the {Output Screen}.
+
+  Ctrl+Break stops a running program at any time. After a run-time error
+  the cursor is at the statement that failed; correct it and press F5 to
+  run the program again.
+
+  See also: {Debug Menu}  {Run Menu}  {STOP}  {Run-Time Errors}
+
+.topic Options Menu
+  Options Menu
+
+  Display...     Sets the colours of the editor (normal text, the current
+                 statement, breakpoint lines), whether the program window
+                 has scroll bars, and the tab stops (the number of columns
+                 the Tab key moves).
+  Help Path...   Sets the current directory: the directory where your
+                 programs open and create files (OPEN, KILL, FILES ...).
+
+  See also: {Menus}  {Command Line}
+
+.topic Help Menu
+  Help Menu
+
+  Index                  Lists every help topic alphabetically.
+  Contents               Shows the table of contents of the help.
+  Topic:          F1     Shows help on the keyword at the cursor (the
+                         menu shows the word).
+  Using Help      Shift+F1  Explains how to use help.
+  About...               Shows the version of ARM QuickBASIC.
+
+  See also: {Using Help}  {Index}  {Contents}
+
+.topic Immediate Window
+  The Immediate Window
+
+  The Immediate window is below the program window. Press F6 to move to it
+  (and F6 again to go back). Type a BASIC statement and press Enter: it is
+  executed at once, and uses the variables of your program:
+
+.ex
+PRINT 2 + 2
+X = 5
+PRINT X * 3, SQR(X)
+CALL MySub
+.endex
+
+  If the statement prints anything, the {Output Screen} appears with
+  "Press any key to continue". The lines you type stay in the window: move
+  the cursor to one and press Enter to execute it again.
+
+  Use it to try out statements, to test a {SUB} or {FUNCTION}, and to look
+  at or change variables while a program is stopped (see {Debugging}).
+
+.topic Output Screen
+  The Output Screen
+
+  Your program does not print into the program window: it has a screen of
+  its own, the output screen. While the program runs you see the output
+  screen; when it ends, "Press any key to continue" appears at the bottom
+  and a key returns you to the editor.
+
+  Press F4 (View menu, Output Screen) to look at the output screen again at
+  any time; press any key to return.
+
+  See also: {SCREEN}  {CLS}  {Run Menu}
+
+.topic Command Line,QB
+  The QB Command Line
+
+  QB [[/RUN] [drive:][path]filename] [/B] [/H] [/NOHI]
+
+    filename    the program to load (.BAS is added if there is no
+                extension)
+    /RUN        runs the program at once
+    /B          monochrome display (black and white)
+    /H          uses 50 lines on the screen
+    /NOHI       no high-intensity colours
+
+.ex
+QB
+QB C:\QB\BANANAS
+QB /RUN SERPENT.BAS
+.endex
+
+  See also: {Samples}  {Options Menu}
+
+.topic Samples
+  Sample Programs
+
+  The directory C:\QB contains two sample programs. Load one with
+  File, Open... and press F5 to run it.
+
+  BANANAS.BAS   Two chimps stand on the roofs of a city skyline at dusk and
+                throw exploding bananas at each other. Enter the angle and
+                the speed of each throw; mind the wind.
+
+  SERPENT.BAS   Guide the serpent through the levels with the arrow keys:
+                eat the numbers, and do not run into the walls or into
+                yourself. The serpent grows with each number it eats.
+
+  Both are good examples of graphics ({SCREEN}, {LINE}, {CIRCLE}), sound
+  ({PLAY}), keyboard input ({INKEY$}) and {SUB} procedures.
+
+  See also: {Command Line}  {File Menu}
+
+.topic Differences
+  How ARM QuickBASIC Differs
+
+  ARM QuickBASIC runs programs with Bywater BASIC 3.40 (GNU General Public
+  License, version 2) behind its own editor and debugger. Most programs
+  run unchanged, but note:
+
+  - All variables are global: a SUB or FUNCTION sees the variables of the
+    main program. Parameters are passed by value, so a SUB cannot change
+    its arguments; use a FUNCTION or a global variable instead.
+  - DECLARE, SHARED, COMMON and STATIC are accepted and ignored.
+  - There is no TYPE ... END TYPE, no graphics GET and PUT, no VIEW or
+    WINDOW, and no event trapping (ON KEY, ON TIMER).
+  - PLAY and SOUND wait until the music is done (no background music).
+  - Numbers are double precision; PRINT shows 6 significant digits.
+  - Errors are reported when the program runs, not when you type a line:
+    the editor does not check the syntax as you type.
+  - The program is one text: SUBs and FUNCTIONs are not shown in separate
+    windows (use F2 to find them). Files are plain text; there is no
+    binary .BAS format.
+  - SCREEN supports the modes 0, 1, 2 and 13 only.
+
+  See also: {SUB}  {Variables}  {SCREEN}
+
+.topic Run-Time Errors,Errors,Error Messages
+  Run-Time Errors
+
+  When a statement fails, the program stops and a dialog box shows the
+  message; the cursor moves to the statement. Correct it and press F5.
+
+  Syntax error             The statement is not valid BASIC: a misspelled
+                           keyword, a missing parenthesis or comma.
+  Division by zero         An expression divides by zero (/, \ or MOD).
+  Overflow                 A result is too large for its data type.
+  Subscript out of range   An array index is outside the bounds of DIM.
+  Illegal function call    An argument is not allowed, e.g. SQR(-1) or
+                           a SCREEN mode that does not exist.
+  Type mismatch            A string where a number is needed, or the
+                           other way around (A$ = 5).
+  Out of DATA              READ has no more DATA items to read.
+  RETURN without GOSUB     RETURN was reached without a GOSUB.
+  NEXT without FOR         A NEXT has no FOR, or a FOR has no NEXT
+  FOR without NEXT         (also: DO/LOOP, WHILE/WEND, IF/END IF).
+  Undefined line           GOTO or GOSUB names a missing line label.
+  Out of memory            The program or its arrays are too large.
+  File not found           OPEN, KILL, NAME ... names a missing file.
+  Bad file number          The file number was not opened with OPEN.
+  Input past end of file   INPUT # read past the end; test {EOF} first.
+
+  See also: {ON ERROR}  {Debugging}
+
+; ===========================================================================
+;  Programming basics
+; ===========================================================================
+.topic Keywords by Task,Keywords
+  BASIC Keywords by Task
+
+  Program flow        {IF}  {SELECT CASE}  {FOR}  {DO}  {WHILE}  {GOTO}
+                      {GOSUB}  {ON}  {EXIT}  {END}  {STOP}  {SYSTEM}
+  Procedures          {SUB}  {FUNCTION}  {DEF FN}  {DECLARE}  {CALL}
+  Variables, arrays   {LET}  {DIM}  {CONST}  {DEFINT}  {ERASE}  {LBOUND}
+                      {Variables}  {Operators}  {REM}
+  Data in programs    {DATA}  {READ}  {RESTORE}
+  Screen output       {PRINT}  {PRINT USING}  {CLS}  {LOCATE}  {COLOR}
+                      {TAB}  {CSRLIN}  {POS}  {WIDTH}
+  Keyboard input      {INPUT}  {LINE INPUT}  {INKEY$}
+  Graphics            {SCREEN}  {PSET}  {PRESET}  {LINE}  {CIRCLE}  {PAINT}
+                      {DRAW}  {POINT}  {PALETTE}
+  Sound               {BEEP}  {SOUND}  {PLAY}
+  Math functions      {ABS}  {ATN}  {COS}  {SIN}  {TAN}  {EXP}  {LOG}
+                      {SQR}  {SGN}  {INT}  {FIX}  {CINT}  {RND}
+                      {RANDOMIZE}  {MOD}
+  String functions    {LEFT$}  {RIGHT$}  {MID$}  {LEN}  {INSTR}  {LCASE$}
+                      {UCASE$}  {LTRIM$}  {RTRIM$}  {SPACE$}  {STRING$}
+  Conversion          {ASC}  {CHR$}  {STR$}  {VAL}  {HEX$}
+  Time                {TIMER}  {DATE$}  {TIME$}  {SLEEP}
+  Files               {OPEN}  {CLOSE}  {PRINT #}  {WRITE}  {INPUT #}
+                      {EOF}  {KILL}  {NAME}  {FILES}
+  Directories, DOS    {CHDIR}  {MKDIR}  {RMDIR}  {SHELL}
+  Hardware            {PEEK}  {POKE}  {DEF SEG}  {INP}  {OUT}
+  Errors              {ON ERROR}  {Run-Time Errors}
+
+.topic Variables,Data Types,Variable Names
+  Variables and Data Types
+
+  A variable name starts with a letter and may contain letters, digits
+  and periods (up to 40 characters). A suffix gives the data type:
+
+    %   integer              A% = 5
+    &   long integer         Big& = 100000
+    !   single precision     Speed! = 1.5
+    #   double precision     Pi# = 3.14159265358979
+    $   string               Name$ = "Europa"
+
+  A name without a suffix is single precision unless a {DEFINT} statement
+  says otherwise. Upper and lower case are the same (Score = SCORE).
+
+  ARM QuickBASIC calculates in double precision; PRINT shows numbers with
+  6 significant digits (use {PRINT USING} or {STR$} for other formats).
+  Strings can hold any characters, up to 32767 of them.
+
+  Numbers can be written in decimal (12.5, 1E6), hexadecimal (&HFF) or
+  octal (&O17).
+
+  See also: {DIM}  {CONST}  {Operators}  {Differences}
+
+.topic Operators,MOD,AND,OR,NOT,XOR,Expressions
+  Operators
+
+  Arithmetic   ^ power      * multiply     / divide     + add   - subtract
+               \ integer division (7 \ 2 = 3)
+               MOD remainder (7 MOD 2 = 1)
+  Relational   =  <>  <  >  <=  >=   (true = -1, false = 0)
+  Logical      NOT  AND  OR  XOR     (bitwise on integers)
+  Strings      + joins strings ("AB" + "C" = "ABC"); relational operators
+               compare them alphabetically
+
+  Precedence, highest first: ^, - (negation), * /, \, MOD, + -,
+  relational, NOT, AND, OR, XOR. Use parentheses to change the order.
+
+  Syntax
+    result = number1 MOD number2
+    result = [NOT] expression1 AND | OR | XOR expression2
+
+  MOD rounds both numbers to integers and returns the remainder of the
+  division. AND, OR, XOR and NOT work bit by bit: IF A > 0 AND B > 0 is
+  true when both conditions are true.
+
+.ex
+PRINT 17 MOD 5, 17 \ 5, 17 / 5
+IF X >= 1 AND X <= 10 THEN PRINT "in range"
+PRINT 12 AND 10, 12 OR 10, 12 XOR 10, NOT 0
+.endex
+
+  See also: {Variables}  {IF}
+
+; ===========================================================================
+;  Keywords
+; ===========================================================================
+.topic ABS
+  ABS - a math function that returns the absolute value of a number
+
+  ABS(numeric-expression)
+
+  The absolute value is the number without its sign: ABS(-5) and ABS(5)
+  are both 5.
+
+.ex
+PRINT ABS(-3.5), ABS(2)
+.endex
+
+  See also: {SGN}  {INT}
+
+.topic ASC
+  ASC - a string function that returns the ASCII code of a character
+
+  ASC(stringexpression)
+
+  Returns the code (0-255) of the first character of the string. The
+  string must not be empty. {CHR$} does the opposite.
+
+.ex
+PRINT ASC("A")          ' 65
+K$ = INKEY$: IF K$ <> "" THEN PRINT ASC(K$)
+.endex
+
+  See also: {CHR$}  {VAL}
+
+.topic ATN
+  ATN - a math function that returns the arctangent of a number
+
+  ATN(numeric-expression)
+
+  The result is an angle in radians, between -PI/2 and PI/2. To convert
+  radians to degrees, multiply by 180 / PI.
+
+.ex
+PI = 4 * ATN(1)
+PRINT PI
+.endex
+
+  See also: {TAN}  {SIN}  {COS}
+
+.topic BEEP
+  BEEP - a statement that sounds the speaker
+
+  BEEP
+
+  Sounds a short tone. PRINT CHR$(7) does the same.
+
+.ex
+INPUT "Guess"; G
+IF G <> 7 THEN BEEP: PRINT "Wrong!"
+.endex
+
+  See also: {SOUND}  {PLAY}
+
+.topic CHR$
+  CHR$ - a string function that returns the character with an ASCII code
+
+  CHR$(code%)
+
+  code% is a number from 0 to 255. Useful for characters you cannot type,
+  such as quotation marks (34) or the box-drawing characters (179-218).
+
+.ex
+PRINT CHR$(65); CHR$(66); CHR$(67)     ' ABC
+PRINT CHR$(34); "quoted"; CHR$(34)
+FOR I = 176 TO 178: PRINT STRING$(10, I): NEXT
+.endex
+
+  See also: {ASC}  {STRING$}
+
+.topic CINT,CLNG
+  CINT - a conversion function that rounds a number to an integer
+
+  CINT(numeric-expression)
+  CLNG(numeric-expression)
+
+  CINT rounds to the nearest integer (-32768 to 32767); CLNG rounds to a
+  long integer. Numbers ending in .5 are rounded to the even integer.
+
+.ex
+PRINT CINT(2.5), CINT(3.5), CINT(-2.7)     ' 2  4 -3
+.endex
+
+  See also: {INT}  {FIX}
+
+.topic CIRCLE
+  CIRCLE - a graphics statement that draws a circle, an arc or an ellipse
+
+  CIRCLE [STEP] (x!,y!), radius! [,[color%] [,[start!] [,[end!]
+         [,aspect!]]]]
+
+  (x!,y!)    the center (STEP: relative to the last point drawn)
+  radius!    the radius in pixels
+  color%     the colour (default: the foreground colour)
+  start!, end!  the angles, in radians, where an arc starts and ends
+  aspect!    the ratio of height to width; draws an ellipse
+
+  Works in the graphics modes of {SCREEN} (1, 2, 13).
+
+.ex
+SCREEN 13
+CIRCLE (160, 100), 50, 14
+CIRCLE (160, 100), 80, 12, , , .5
+CIRCLE (160, 100), 30, 10, 0, 3.14159
+.endex
+
+  See also: {LINE}  {PAINT}  {PSET}  {SCREEN}
+
+.topic CLS
+  CLS - a statement that clears the screen
+
+  CLS
+
+  Clears the screen with the background colour and moves the cursor to the
+  top left corner. In graphics modes the last point is the center of the
+  screen.
+
+.ex
+COLOR 15, 1
+CLS
+PRINT "White on blue"
+.endex
+
+  See also: {COLOR}  {LOCATE}  {SCREEN}
+
+.topic COLOR
+  COLOR - a statement that sets the screen colours
+
+  SCREEN 0 (text):    COLOR [foreground%] [,[background%] [,border%]]
+  SCREEN 1:           COLOR [background%] [,palette%]
+  SCREEN 2 and 13:    COLOR [foreground%]
+
+  Text mode colours:  0 black     4 red        8 gray        12 light red
+                      1 blue      5 magenta    9 light blue  13 pink
+                      2 green     6 brown     10 light green 14 yellow
+                      3 cyan      7 white     11 light cyan  15 bright white
+  In text mode, foreground 16-31 blinks; the background is 0-7.
+  SCREEN 13 has 256 colours (0-255), set with {PALETTE}.
+
+  The new colours apply to the text printed afterwards; use {CLS} to clear
+  the whole screen with the background colour.
+
+.ex
+COLOR 14, 1: CLS
+PRINT "Yellow on blue"
+COLOR 7, 0
+.endex
+
+  See also: {SCREEN}  {PALETTE}  {CLS}
+
+.topic CONST
+  CONST - a statement that declares a symbolic constant
+
+  CONST name = expression [, name = expression] ...
+
+  A constant is a name for a value that does not change. Use it instead of
+  numbers scattered through the program; the program is easier to read and
+  to change.
+
+.ex
+CONST PI = 3.141593, MAXSCORE = 100
+PRINT "Area:"; PI * 2 ^ 2
+.endex
+
+  See also: {DIM}  {LET}  {Variables}
+
+.topic COS
+  COS - a math function that returns the cosine of an angle
+
+  COS(angle)
+
+  The angle is in radians. To convert degrees to radians, multiply by
+  PI / 180 (PI = 3.141593).
+
+.ex
+PI = 4 * ATN(1)
+PRINT COS(0), COS(PI), COS(60 * PI / 180)
+.endex
+
+  See also: {SIN}  {TAN}  {ATN}
+
+.topic CSRLIN
+  CSRLIN - a screen function that returns the cursor's row
+
+  CSRLIN
+
+  Returns the row (1-25) of the cursor. {POS}(0) returns its column.
+
+.ex
+PRINT "Hello";
+R = CSRLIN: C = POS(0)
+LOCATE 20, 1: PRINT "The cursor was at"; R; C
+.endex
+
+  See also: {POS}  {LOCATE}
+
+.topic DATA,READ,RESTORE
+  DATA, READ, RESTORE - statements that keep data in the program
+
+  DATA constant [,constant] ...
+  READ variablelist
+  RESTORE [line]
+
+  DATA lists numbers and strings (strings containing commas or spaces
+  at the ends need quotation marks). DATA statements are not executed.
+  READ assigns the next DATA items to the variables, in order through
+  the program. RESTORE makes the next READ start with the first DATA
+  statement, or with the first one at or after the line label.
+
+  Reading after the last item causes "Out of DATA".
+
+.ex
+FOR I = 1 TO 3
+  READ Name$, Age
+  PRINT Name$; " is"; Age
+NEXT
+DATA Ada, 36, "Smith, John", 42, Io, 7
+.endex
+
+  See also: {DIM}  {Run-Time Errors}
+
+.topic DATE$,TIME$
+  DATE$, TIME$ - functions that return the date and the time
+
+  DATE$
+  TIME$
+
+  DATE$ returns the date as "mm-dd-yyyy"; TIME$ returns the time as
+  "hh:mm:ss". They come from the computer's real-time clock.
+
+.ex
+PRINT "Today is "; DATE$; ", the time is "; TIME$
+.endex
+
+  See also: {TIMER}
+
+.topic DECLARE
+  DECLARE - a statement that declares a SUB or FUNCTION
+
+  DECLARE SUB name [(parameterlist)]
+  DECLARE FUNCTION name [(parameterlist)]
+
+  Many programs declare their procedures at the beginning. ARM
+  QuickBASIC accepts DECLARE statements and ignores them: you do not need
+  them, but programs that have them run unchanged.
+
+  See also: {SUB}  {FUNCTION}  {Differences}
+
+.topic DEF FN,FN
+  DEF FN - a statement that defines a one-line function
+
+  DEF FNname[(parameterlist)] = expression
+
+  The function's name starts with FN. It can be used in expressions after
+  the DEF FN statement has been executed. {FUNCTION} procedures are more
+  powerful.
+
+.ex
+DEF FNArea (R) = 3.141593 * R * R
+PRINT FNArea(2)
+.endex
+
+  See also: {FUNCTION}  {DEF SEG}
+
+.topic DEFINT,DEFLNG,DEFSNG,DEFDBL,DEFSTR
+  DEFINT, DEFLNG, DEFSNG, DEFDBL, DEFSTR - set the default data type
+
+  DEFINT letterrange [,letterrange] ...
+
+  Variables without a type suffix whose names begin with the letters in
+  the range get the data type: integer (DEFINT), long integer (DEFLNG),
+  single (DEFSNG) or double precision (DEFDBL), or string (DEFSTR).
+
+  DEFINT A-Z is common at the beginning of programs. ARM
+  QuickBASIC calculates in double precision (see {Differences}).
+
+.ex
+DEFINT A-Z
+DEFSTR S
+S = "a string"
+.endex
+
+  See also: {Variables}  {DIM}
+
+.topic DIM
+  DIM - a statement that declares an array or a variable
+
+  DIM [SHARED] variable[(subscripts)] [AS type] [, ...]
+
+  subscripts   [lower TO] upper [, [lower TO] upper] ...
+  type         INTEGER, LONG, SINGLE, DOUBLE or STRING
+
+  DIM A(10) makes an array of 11 elements, A(0) to A(10). Arrays of up to
+  10 elements need no DIM. The elements start at 0 (or ""). Use {ERASE}
+  to free an array, {LBOUND} and {UBOUND} for its bounds.
+
+.ex
+DIM Score(1 TO 5), Name$(1 TO 5), Board(8, 8)
+DIM Count AS INTEGER
+Score(1) = 99: Board(3, 4) = 1
+.endex
+
+  See also: {Variables}  {CONST}  {ERASE}
+
+.topic DO,LOOP,UNTIL
+  DO...LOOP - statements that repeat a block of statements
+
+  DO [WHILE | UNTIL condition]          DO
+     [statementblock]                      [statementblock]
+  LOOP                                  LOOP [WHILE | UNTIL condition]
+
+  WHILE repeats while the condition is true; UNTIL repeats until it is
+  true. With the test at LOOP, the block runs at least once. DO ... LOOP
+  without a condition repeats forever; use EXIT DO to leave it.
+
+.ex
+DO
+  K$ = INKEY$
+LOOP UNTIL K$ <> ""
+I = 1
+DO WHILE I < 100
+  PRINT I;: I = I * 2
+LOOP
+.endex
+
+  See also: {WHILE}  {FOR}  {EXIT}
+
+.topic DRAW
+  DRAW - a graphics statement that draws a figure
+
+  DRAW commandstring$
+
+  The string contains drawing commands; n is a number of pixels (default
+  1), multiplied by the scale.
+
+    U n  up      D n  down    L n  left       R n  right
+    E n  up-right            F n  down-right
+    G n  down-left           H n  up-left
+    M x,y     moves to x,y (M +x,-y: relative)
+    B         prefix: move without drawing
+    N         prefix: draw, then return to the starting point
+    C n       sets the colour           S n  scale (4 = 1 pixel)
+    A n       rotates by n * 90 degrees
+    P c,b     paints with colour c up to border colour b
+
+.ex
+SCREEN 1
+DRAW "BM 100,50 C2 R40 D40 L40 U40"
+DRAW "BM 160,100 C3 E20 F20 G20 H20"
+.endex
+
+  See also: {LINE}  {PSET}  {SCREEN}
+
+.topic END
+  END - a statement that ends the program
+
+  END
+
+  Stops the program and closes all files. "Press any key to continue"
+  appears; press a key to return to the editor. END is also the end of
+  blocks: END IF, END SELECT, END SUB, END FUNCTION, END DEF.
+
+  See also: {STOP}  {SYSTEM}  {IF}  {SUB}
+
+.topic EXIT,EXIT DO,EXIT FOR
+  EXIT - a statement that leaves a loop or a procedure
+
+  EXIT DO | FOR | SUB | FUNCTION | DEF
+
+  EXIT DO and EXIT FOR leave the innermost DO or FOR loop; the program
+  continues after the LOOP or NEXT. EXIT SUB and EXIT FUNCTION return from
+  the procedure.
+
+.ex
+FOR I = 1 TO 1000
+  IF I * I > 50 THEN EXIT FOR
+NEXT
+PRINT I
+.endex
+
+  See also: {DO}  {FOR}  {SUB}  {FUNCTION}
+
+.topic EXP
+  EXP - a math function that returns e raised to a power
+
+  EXP(x)
+
+  e is 2.718282, the base of natural logarithms. {LOG} does the opposite.
+
+.ex
+PRINT EXP(1), EXP(0), LOG(EXP(2))
+.endex
+
+  See also: {LOG}
+
+.topic FIX
+  FIX - a math function that removes the fraction of a number
+
+  FIX(numeric-expression)
+
+  FIX cuts off the digits after the decimal point: FIX(2.7) is 2 and
+  FIX(-2.7) is -2. {INT} rounds down instead: INT(-2.7) is -3.
+
+.ex
+PRINT FIX(2.7), FIX(-2.7), INT(-2.7)
+.endex
+
+  See also: {INT}  {CINT}
+
+.topic FOR,NEXT,STEP,TO
+  FOR...NEXT - statements that repeat a block a given number of times
+
+  FOR counter = start TO end [STEP increment]
+      [statementblock]
+  NEXT [counter [,counter] ...]
+
+  The counter starts at start and changes by increment (default 1) after
+  each pass, until it passes end. With a negative STEP it counts down. If
+  start is already past end, the block is not executed. EXIT FOR leaves
+  the loop early.
+
+.ex
+FOR I = 1 TO 10
+  PRINT I; I * I
+NEXT I
+FOR T = 10 TO 0 STEP -2: PRINT T;: NEXT
+.endex
+
+  See also: {DO}  {WHILE}  {EXIT}
+
+.topic FUNCTION,END FUNCTION,EXIT FUNCTION
+  FUNCTION - a procedure that returns a value
+
+  FUNCTION name [(parameterlist)]
+      [statementblock]
+      name = expression
+      [EXIT FUNCTION]
+      [statementblock]
+  END FUNCTION
+
+  Assign the result to the function's name; use the function in an
+  expression, like a built-in function. Create one with Edit, New
+  FUNCTION...; press F2 to list them.
+
+  In ARM QuickBASIC the variables of the main program are visible in the
+  function, and parameters are passed by value (see {Differences}).
+
+.ex
+PRINT Max(3, 8)
+
+FUNCTION Max (A, B)
+  IF A > B THEN Max = A ELSE Max = B
+END FUNCTION
+.endex
+
+  See also: {SUB}  {DEF FN}  {EXIT}
+
+.topic GOSUB,RETURN
+  GOSUB...RETURN - statements that call and return from a subroutine
+
+  GOSUB line
+  ...
+  RETURN
+
+  GOSUB jumps to a line label or line number; RETURN goes back to the
+  statement after the GOSUB. {SUB} procedures are usually a better choice.
+
+.ex
+FOR I = 1 TO 3: GOSUB Stars: NEXT
+END
+Stars:
+  PRINT "*****"
+RETURN
+.endex
+
+  See also: {GOTO}  {ON}  {SUB}
+
+.topic GOTO
+  GOTO - a statement that jumps to a line
+
+  GOTO line
+
+  line is a line number or a line label (a name followed by a colon at the
+  beginning of a line). Too many GOTOs make a program hard to follow; use
+  {DO}, {FOR}, {IF} and {SELECT CASE} instead where you can.
+
+.ex
+Again:
+INPUT "Number (0 ends)"; N
+IF N <> 0 THEN PRINT N * N: GOTO Again
+.endex
+
+  See also: {GOSUB}  {ON}
+
+.topic HEX$,OCT$
+  HEX$, OCT$ - functions that return a number in hexadecimal or octal
+
+  HEX$(numeric-expression)
+  OCT$(numeric-expression)
+
+  The number is rounded to an integer first. In a program, write
+  hexadecimal numbers as &H1F and octal numbers as &O17.
+
+.ex
+PRINT HEX$(255), OCT$(8), &HFF
+.endex
+
+  See also: {STR$}  {VAL}
+
+.topic IF,THEN,ELSE,ELSEIF,END IF
+  IF - statements that execute statements depending on a condition
+
+  IF condition THEN thenpart [ELSE elsepart]
+
+  IF condition1 THEN
+      [statementblock-1]
+  [ELSEIF condition2 THEN
+      [statementblock-2]] ...
+  [ELSE
+      [statementblock-n]]
+  END IF
+
+  The single-line form fits on one line; its parts are statements
+  separated by colons, or a line number. In the block form, the first
+  block whose condition is true is executed; if none is, the ELSE block.
+  A condition is true when it is not zero (see {Operators}).
+
+.ex
+INPUT "Age"; Age
+IF Age < 13 THEN
+  PRINT "child"
+ELSEIF Age < 20 THEN
+  PRINT "teenager"
+ELSE
+  PRINT "adult"
+END IF
+IF Age = 18 THEN PRINT "Congratulations!"
+.endex
+
+  See also: {SELECT CASE}  {Operators}
+
+.topic INKEY$
+  INKEY$ - a function that reads a key from the keyboard, without waiting
+
+  INKEY$
+
+  Returns "" if no key has been pressed; otherwise the character of the
+  key (one character), or for special keys two characters: CHR$(0) and the
+  key's scan code. Up = CHR$(0)+"H", Down = "P", Left = "K", Right = "M".
+
+.ex
+PRINT "Press keys; Esc ends"
+DO
+  K$ = INKEY$
+  IF K$ = CHR$(0) + "H" THEN PRINT "Up"
+  IF LEN(K$) = 1 THEN PRINT ASC(K$)
+LOOP UNTIL K$ = CHR$(27)
+.endex
+
+  See also: {INPUT}  {SLEEP}  {CHR$}
+
+.topic INPUT
+  INPUT - a statement that reads input from the keyboard
+
+  INPUT [;] ["prompt" ; | ,] variablelist
+
+  Prints the prompt (with ";" a question mark follows it), then waits for
+  the user to type values separated by commas and press Enter. If the
+  input does not fit the variables, "Redo from start" appears. INPUT; keeps
+  the cursor on the same line after Enter.
+
+.ex
+INPUT "Your name"; N$
+INPUT "Width, height: ", W, H
+PRINT N$; ", the area is"; W * H
+.endex
+
+  See also: {LINE INPUT}  {INKEY$}  {INPUT #}
+
+.topic LINE INPUT
+  LINE INPUT - a statement that reads a whole line into a string
+
+  LINE INPUT [;] ["prompt";] stringvariable$
+  LINE INPUT #filenumber, stringvariable$
+
+  Reads everything typed up to Enter, commas and quotation marks
+  included. No question mark is printed. With #filenumber it reads the
+  next line of a file opened for INPUT.
+
+.ex
+LINE INPUT "Address: "; A$
+PRINT A$
+.endex
+
+  See also: {INPUT}  {INPUT #}  {OPEN}
+
+.topic INSTR
+  INSTR - a string function that finds a string in another string
+
+  INSTR([start%,] stringexpression1, stringexpression2)
+
+  Returns the position of stringexpression2 in stringexpression1, starting
+  the search at position start% (default 1), or 0 if it is not found.
+
+.ex
+A$ = "ARM QuickBASIC"
+PRINT INSTR(A$, "Quick")        ' 5
+PRINT INSTR(A$, "q")            ' 0: the case matters
+.endex
+
+  See also: {MID$}  {LEFT$}  {LEN}
+
+.topic INT
+  INT - a math function that returns the largest integer <= a number
+
+  INT(numeric-expression)
+
+  INT rounds down: INT(2.7) is 2, INT(-2.7) is -3. Use INT(X + .5) to
+  round to the nearest integer.
+
+.ex
+PRINT INT(2.7), INT(-2.7), INT(2.5 + .5)
+Die = INT(RND * 6) + 1
+.endex
+
+  See also: {FIX}  {CINT}  {RND}
+
+.topic LCASE$
+  LCASE$ - a string function that converts a string to lower case
+
+  LCASE$(stringexpression)
+
+  Letters become lower case; other characters are unchanged.
+
+.ex
+PRINT LCASE$("ARM-DOS 1988")      ' arm-dos 1988
+.endex
+
+  See also: {UCASE$}
+
+.topic UCASE$
+  UCASE$ - a string function that converts a string to upper case
+
+  UCASE$(stringexpression)
+
+  Letters become upper case; other characters are unchanged. Useful to
+  compare answers without caring about the case.
+
+.ex
+INPUT "Again (y/n)"; A$
+IF UCASE$(A$) = "Y" THEN PRINT "Once more!"
+.endex
+
+  See also: {LCASE$}
+
+.topic LEFT$
+  LEFT$ - a string function that returns the leftmost characters
+
+  LEFT$(stringexpression, n%)
+
+  Returns the first n% characters of the string (all of it if it is
+  shorter; "" if n% is 0).
+
+.ex
+A$ = "Europa Micro Systems"
+PRINT LEFT$(A$, 6)          ' Europa
+.endex
+
+  See also: {RIGHT$}  {MID$}  {LEN}
+
+.topic RIGHT$
+  RIGHT$ - a string function that returns the rightmost characters
+
+  RIGHT$(stringexpression, n%)
+
+  Returns the last n% characters of the string (all of it if it is
+  shorter; "" if n% is 0).
+
+.ex
+F$ = "SERPENT.BAS"
+PRINT RIGHT$(F$, 3)         ' BAS
+PRINT RIGHT$("000" + LTRIM$(STR$(7)), 3)   ' 007
+.endex
+
+  See also: {LEFT$}  {MID$}  {LEN}
+
+.topic MID$
+  MID$ - a string function that returns part of a string
+
+  MID$(stringexpression, start% [, length%])
+
+  Returns length% characters of the string, starting at position start%
+  (the first character is 1). Without length%, it returns the rest of the
+  string.
+
+.ex
+A$ = "ARM QuickBASIC"
+PRINT MID$(A$, 5, 5)        ' Quick
+FOR I = LEN(A$) TO 1 STEP -1: PRINT MID$(A$, I, 1);: NEXT
+.endex
+
+  See also: {LEFT$}  {RIGHT$}  {INSTR}  {LEN}
+
+.topic LEN
+  LEN - a function that returns the length of a string
+
+  LEN(stringexpression)
+
+  Returns the number of characters in the string (0 for "").
+
+.ex
+INPUT "Your name"; N$
+PRINT "Your name has"; LEN(N$); "letters"
+.endex
+
+  See also: {LEFT$}  {MID$}  {SPACE$}
+
+.topic LET
+  LET - a statement that assigns a value to a variable
+
+  [LET] variable = expression
+
+  The word LET is optional: X = 5 is the same as LET X = 5. The variable
+  and the expression must both be numbers or both be strings.
+
+.ex
+LET A = 5
+B$ = "Hello, " + "world"
+Total = Total + A
+.endex
+
+  See also: {Variables}  {CONST}  {DIM}
+
+.topic LINE,BF
+  LINE - a graphics statement that draws a line or a box
+
+  LINE [[STEP](x1,y1)]-[STEP](x2,y2) [,[color%] [,B | BF]]
+
+  Draws a line from (x1,y1) to (x2,y2). Without the first point, the line
+  starts at the last point drawn. STEP makes a point relative to the last
+  one. B draws a box with the two points as corners; BF a filled box.
+
+  Works in the graphics modes of {SCREEN}. For reading a line of text from
+  the keyboard, see {LINE INPUT}.
+
+.ex
+SCREEN 13
+LINE (0, 0)-(319, 199), 14
+LINE (50, 50)-(150, 100), 4, BF
+LINE -STEP(50, 50), 2
+LINE (200, 20)-(300, 80), 15, B
+.endex
+
+  See also: {PSET}  {CIRCLE}  {DRAW}  {SCREEN}
+
+.topic LOCATE
+  LOCATE - a statement that moves the cursor
+
+  LOCATE [row%] [,[column%] [,cursor%]]
+
+  Moves the cursor to the row (1-25) and column (1-80; 1-40 in SCREEN 1
+  and 13); the next PRINT starts there. A missing value stays unchanged.
+  cursor% 0 hides the cursor, 1 shows it.
+
+.ex
+CLS
+LOCATE 12, 35: PRINT "Center"
+LOCATE 25, 1: PRINT "Bottom line";
+.endex
+
+  See also: {CSRLIN}  {POS}  {PRINT}
+
+.topic LOG
+  LOG - a math function that returns the natural logarithm of a number
+
+  LOG(x)
+
+  x must be greater than 0. The base-10 logarithm is LOG(x) / LOG(10).
+
+.ex
+PRINT LOG(1), LOG(EXP(3)), LOG(1000) / LOG(10)
+.endex
+
+  See also: {EXP}
+
+.topic LTRIM$
+  LTRIM$ - a string function that removes leading spaces
+
+  LTRIM$(stringexpression)
+
+  Removes the spaces at the beginning of the string. Useful with STR$,
+  which puts a space before positive numbers.
+
+.ex
+PRINT "[" + LTRIM$("   left") + "]"
+PRINT "Level" + LTRIM$(STR$(3))
+.endex
+
+  See also: {RTRIM$}  {STR$}
+
+.topic RTRIM$
+  RTRIM$ - a string function that removes trailing spaces
+
+  RTRIM$(stringexpression)
+
+  Removes the spaces at the end of the string.
+
+.ex
+PRINT "[" + RTRIM$("right   ") + "]"
+.endex
+
+  See also: {LTRIM$}
+
+.topic PAINT
+  PAINT - a graphics statement that fills an area with a colour
+
+  PAINT [STEP] (x!,y!) [,[paint%] [,border%]]
+
+  Fills the area around the point (x!,y!) with the colour paint% until it
+  reaches pixels of the colour border% (default: paint%). The area must be
+  closed, or the colour leaks out.
+
+.ex
+SCREEN 13
+CIRCLE (160, 100), 50, 15
+PAINT (160, 100), 4, 15
+.endex
+
+  See also: {CIRCLE}  {LINE}  {DRAW}
+
+.topic PALETTE
+  PALETTE - a statement that changes a colour of the palette
+
+  PALETTE attribute%, color&
+
+  Changes the colour shown for the attribute (the colour number used by
+  COLOR, PSET ...). In SCREEN 13 color& = 65536 * blue + 256 * green + red,
+  each 0-63.
+
+.ex
+SCREEN 13
+LINE (100, 50)-(220, 150), 1, BF
+FOR R = 0 TO 63
+  PALETTE 1, R          ' fade colour 1 to red
+  FOR D = 1 TO 200: NEXT
+NEXT
+.endex
+
+  See also: {COLOR}  {SCREEN}
+
+.topic PEEK
+  PEEK - a function that returns a byte of memory
+
+  PEEK(address)
+
+  Returns the byte (0-255) at the address in the segment set by {DEF SEG}.
+  Use it with care; it reads the computer's memory directly.
+
+.ex
+DEF SEG = &H40
+PRINT PEEK(&H17)        ' keyboard shift flags
+DEF SEG
+.endex
+
+  See also: {POKE}  {DEF SEG}  {INP}
+
+.topic POKE
+  POKE - a statement that writes a byte to memory
+
+  POKE address, byte%
+
+  Writes byte% (0-255) at the address in the segment set by {DEF SEG}.
+  Writing to the wrong address can crash the program or ARM-DOS.
+
+.ex
+DEF SEG = &HB800        ' the text screen
+POKE 0, 65: POKE 1, 14  ' a yellow A in the top left corner
+DEF SEG
+.endex
+
+  See also: {PEEK}  {DEF SEG}  {OUT}
+
+.topic DEF SEG,DEF,SEG
+  DEF SEG - a statement that sets the segment for PEEK and POKE
+
+  DEF SEG [= address]
+
+  PEEK and POKE addresses are offsets in this segment. DEF SEG without an
+  address restores the default segment. (For one-line functions, see
+  {DEF FN}.)
+
+.ex
+DEF SEG = &HB800
+PRINT PEEK(0)
+DEF SEG
+.endex
+
+  See also: {PEEK}  {POKE}
+
+.topic INP,OUT
+  INP, OUT - read from and write to an I/O port
+
+  INP(port)
+  OUT port, data%
+
+  INP returns the byte (0-255) read from the hardware port; OUT writes
+  data% to it. Port numbers are 0-65535.
+
+.ex
+PRINT INP(&H60)         ' the last keyboard scan code
+.endex
+
+  See also: {PEEK}  {POKE}
+
+.topic PLAY
+  PLAY - a statement that plays music
+
+  PLAY commandstring$
+
+    A-G [#|+|-] [n]  a note (# or + sharp, - flat; n a length, below)
+    N n        a note by number (0-84; 0 is a rest)
+    O n        the octave (0-6, default 4); < and > go down and up one
+    L n        the length of the notes: 1 whole, 2 half, 4 quarter ...
+    P n        a pause (length as in L); a period after a note or a
+               pause makes it one and a half times as long
+    T n        the tempo in quarter notes per minute (32-255, default 120)
+    ML MN MS   legato, normal, staccato
+
+  PLAY waits until the music has been played (see {Differences}).
+
+.ex
+PLAY "T160 O3 L8 C D E F G4 G4 A A A A G2"
+PLAY "O4 L4 E E E2 E E E2 E G C. D8 E1"
+.endex
+
+  See also: {SOUND}  {BEEP}
+
+.topic POINT
+  POINT - a graphics function that returns the colour of a pixel
+
+  POINT(x%, y%)
+
+  Returns the colour number of the pixel at (x%, y%), or -1 if the point
+  is outside the screen. Useful to detect collisions in games.
+
+.ex
+SCREEN 13
+PSET (10, 10), 5
+PRINT POINT(10, 10), POINT(11, 10)
+.endex
+
+  See also: {PSET}  {SCREEN}
+
+.topic POS
+  POS - a screen function that returns the cursor's column
+
+  POS(0)
+
+  Returns the column (1-80) of the cursor. The argument is not used.
+
+.ex
+PRINT "ABC";
+PRINT POS(0)            ' 4
+.endex
+
+  See also: {CSRLIN}  {LOCATE}
+
+.topic PRINT,?
+  PRINT - a statement that writes data on the screen
+
+  PRINT [expressionlist] [; | ,]
+
+  expressionlist   numbers and strings separated by semicolons or commas
+  ;                the next item follows immediately
+  ,                the next item starts in the next print zone (every
+                   14 columns)
+
+  A ; or , at the end keeps the cursor on the same line; otherwise PRINT
+  moves to the next line. Numbers are printed with a space before (or a
+  minus sign) and a space after. You can type ? instead of PRINT.
+
+.ex
+PRINT "Hello, world"
+PRINT "2 + 2 ="; 2 + 2
+PRINT 1, 2, 3
+PRINT "No new line";
+.endex
+
+  See also: {PRINT USING}  {LOCATE}  {TAB}  {WIDTH}  {PRINT #}
+
+.topic PRINT USING,USING
+  PRINT USING - a statement that prints formatted text and numbers
+
+  PRINT USING formatstring$; expressionlist [; | ,]
+
+  Characters of formatstring$ for numbers:
+    #      a digit position              .      the decimal point
+    ,      (before the .) thousands separators
+    +      a sign (+ or -)              -      (at the end) a trailing minus
+    $$     a dollar sign before the digits
+    **     fills the leading spaces with *
+  For strings:
+    &      the whole string       !      the first character
+    \  \   2 + the number of spaces characters
+  Other characters are printed as they are.
+
+.ex
+PRINT USING "###.##"; 3.14159
+PRINT USING "Total: $$#,###.##"; 1234.5
+PRINT USING "& has ## points"; "Ada"; 42
+.endex
+
+  See also: {PRINT}  {STR$}
+
+.topic PSET
+  PSET - a graphics statement that draws a point
+
+  PSET [STEP] (x%,y%) [,color%]
+
+  Sets the pixel at (x%,y%) to color% (default: the foreground colour).
+  STEP makes the point relative to the last point drawn. The top left
+  corner is (0,0).
+
+.ex
+SCREEN 13
+FOR X = 0 TO 319
+  PSET (X, 100 + 50 * SIN(X / 20)), 10
+NEXT
+.endex
+
+  See also: {PRESET}  {POINT}  {LINE}  {SCREEN}
+
+.topic PRESET
+  PRESET - a graphics statement that erases a point
+
+  PRESET [STEP] (x%,y%) [,color%]
+
+  Like {PSET}, but without color% the point is set to the background
+  colour (erased).
+
+.ex
+SCREEN 13
+PSET (100, 100), 15
+PRESET (100, 100)
+.endex
+
+  See also: {PSET}  {POINT}
+
+.topic RANDOMIZE
+  RANDOMIZE - a statement that starts a new series of random numbers
+
+  RANDOMIZE [seed]
+
+  Without RANDOMIZE, {RND} returns the same numbers each time the program
+  runs. RANDOMIZE TIMER gives a different series every time.
+
+.ex
+RANDOMIZE TIMER
+PRINT INT(RND * 6) + 1
+.endex
+
+  See also: {RND}  {TIMER}
+
+.topic REM,'
+  REM - a statement that adds a comment to the program
+
+  REM remark
+  ' remark
+
+  Everything after REM or the apostrophe up to the end of the line is
+  ignored. The apostrophe can follow a statement on the same line.
+
+.ex
+REM The high score table
+Score = 0      ' reset the score
+.endex
+
+  See also: {Keywords by Task}
+
+.topic RND
+  RND - a function that returns a random number
+
+  RND[(n)]
+
+  Returns a random number from 0 up to (but not including) 1. INT(RND * n)
+  + 1 is a whole number from 1 to n. Use {RANDOMIZE} to get a different
+  series of numbers each time the program runs.
+
+.ex
+RANDOMIZE TIMER
+FOR I = 1 TO 5
+  PRINT INT(RND * 6) + 1;       ' dice
+NEXT
+.endex
+
+  See also: {RANDOMIZE}  {INT}
+
+.topic SCREEN
+  SCREEN - a statement that sets the screen mode
+
+  SCREEN mode%
+
+  mode%   0   text, 80 x 25 characters, 16 colours
+          1   graphics, 320 x 200 pixels, 4 colours (40 x 25 text)
+          2   graphics, 640 x 200 pixels, 2 colours (80 x 25 text)
+          13  graphics, 320 x 200 pixels, 256 colours (40 x 25 text)
+
+  Changing the mode clears the screen. The pixel (0,0) is at the top left.
+  Other screen modes are not available (see {Differences}).
+
+.ex
+SCREEN 13
+FOR C = 0 TO 255: LINE (C + 32, 0)-(C + 32, 199), C: NEXT
+SLEEP
+SCREEN 0
+.endex
+
+  See also: {COLOR}  {PALETTE}  {PSET}  {LINE}  {CLS}
+
+.topic SELECT CASE,SELECT,CASE,END SELECT,IS
+  SELECT CASE - executes one of several blocks, depending on a value
+
+  SELECT CASE testexpression
+  CASE expressionlist1
+      [statementblock-1]
+  [CASE expressionlist2
+      [statementblock-2]] ...
+  [CASE ELSE
+      [statementblock-n]]
+  END SELECT
+
+  expressionlist is one or more of:  expression  |  expression TO
+  expression  |  IS relational-operator expression, separated by commas.
+  The block of the first matching CASE is executed; CASE ELSE if none
+  matches.
+
+.ex
+INPUT "Score"; S
+SELECT CASE S
+  CASE 100: PRINT "Perfect!"
+  CASE 80 TO 99: PRINT "Very good"
+  CASE IS < 0, IS > 100: PRINT "Invalid"
+  CASE ELSE: PRINT "Keep trying"
+END SELECT
+.endex
+
+  See also: {IF}
+
+.topic SGN
+  SGN - a math function that returns the sign of a number
+
+  SGN(numeric-expression)
+
+  Returns 1 if the number is positive, 0 if it is zero and -1 if it is
+  negative.
+
+.ex
+PRINT SGN(-7), SGN(0), SGN(3.2)
+.endex
+
+  See also: {ABS}
+
+.topic SIN
+  SIN - a math function that returns the sine of an angle
+
+  SIN(angle)
+
+  The angle is in radians. To convert degrees to radians, multiply by
+  PI / 180 (PI = 3.141593).
+
+.ex
+PI = 4 * ATN(1)
+PRINT SIN(PI / 2), SIN(30 * PI / 180)
+.endex
+
+  See also: {COS}  {TAN}  {ATN}
+
+.topic SOUND
+  SOUND - a statement that sounds a tone on the speaker
+
+  SOUND frequency, duration
+
+  frequency is in hertz (37 to 32767); duration is in clock ticks (18.2
+  ticks are one second). SOUND waits until the tone ends.
+
+.ex
+FOR F = 200 TO 1000 STEP 100
+  SOUND F, 2
+NEXT
+.endex
+
+  See also: {PLAY}  {BEEP}
+
+.topic SPACE$
+  SPACE$ - a string function that returns a string of spaces
+
+  SPACE$(n%)
+
+  Returns n% spaces (0-32767).
+
+.ex
+PRINT "A"; SPACE$(10); "B"
+.endex
+
+  See also: {STRING$}  {TAB}
+
+.topic SQR
+  SQR - a math function that returns the square root of a number
+
+  SQR(numeric-expression)
+
+  The number must not be negative ("Illegal function call").
+
+.ex
+A = 3: B = 4
+PRINT "The hypotenuse is"; SQR(A ^ 2 + B ^ 2)
+.endex
+
+  See also: {Operators}
+
+.topic STOP
+  STOP - a statement that stops the program for debugging
+
+  STOP
+
+  Stops the program like a breakpoint: the next statement is highlighted,
+  and you can look at variables in the Immediate window. Press F5 to
+  continue or F8 to step.
+
+  See also: {END}  {Debugging}  {Debug Menu}
+
+.topic STR$
+  STR$ - a function that converts a number to a string
+
+  STR$(numeric-expression)
+
+  Positive numbers get a leading space (for the sign); use LTRIM$ to
+  remove it. {VAL} does the opposite.
+
+.ex
+N = 42
+PRINT "[" + STR$(N) + "]", "[" + LTRIM$(STR$(N)) + "]"
+.endex
+
+  See also: {VAL}  {LTRIM$}  {PRINT USING}
+
+.topic STRING$
+  STRING$ - a function that returns a string of repeated characters
+
+  STRING$(n%, code%)
+  STRING$(n%, stringexpression)
+
+  Returns n% copies of the character with the ASCII code code%, or of the
+  first character of the string.
+
+.ex
+PRINT STRING$(20, "*")
+PRINT STRING$(20, 205)
+.endex
+
+  See also: {SPACE$}  {CHR$}
+
+.topic SUB,END SUB,EXIT SUB,CALL,SHARED,STATIC,COMMON
+  SUB - a procedure: a named block of statements
+
+  SUB name [(parameterlist)]
+      [statementblock]
+      [EXIT SUB]
+  END SUB
+
+  [CALL] name [argumentlist]        or    CALL name(argumentlist)
+
+  A SUB is called by its name (with CALL, the arguments are enclosed in
+  parentheses). Put SUBs after the main program; press F2 to list them.
+
+  New SUB... (Edit menu) asks for the name of a new SUB, then adds "SUB
+  name" and "END SUB" at the end of the program and puts the cursor
+  between them. Type the statements of the SUB there.
+
+  In ARM QuickBASIC all variables are global: a SUB sees and changes the
+  main program's variables. Parameters are passed by value, so changing a
+  parameter does not change the caller's variable. SHARED, STATIC and
+  COMMON are accepted and ignored. See {Differences}.
+
+.ex
+Greet "World", 3
+CALL Greet("ARM-DOS", 1)
+
+SUB Greet (Who$, Times)
+  FOR I = 1 TO Times
+    PRINT "Hello, "; Who$
+  NEXT
+END SUB
+.endex
+
+  See also: {FUNCTION}  {DECLARE}  {GOSUB}  {View Menu}
+
+.topic SYSTEM
+  SYSTEM - a statement that ends the program and leaves BASIC
+
+  SYSTEM
+
+  Like END, but when QB was started with /RUN, SYSTEM returns to ARM-DOS
+  instead of to the editor.
+
+  See also: {END}  {Command Line}
+
+.topic TAB,SPC
+  TAB, SPC - functions used with PRINT to move the cursor
+
+  TAB(column%)
+  SPC(n%)
+
+  In a PRINT statement, TAB moves to the column (if the cursor is already
+  past it, to that column on the next line); SPC prints n% spaces.
+
+.ex
+PRINT "Name"; TAB(20); "Score"
+PRINT "Ada"; TAB(20); 99
+PRINT "A"; SPC(5); "B"
+.endex
+
+  See also: {PRINT}  {LOCATE}  {SPACE$}
+
+.topic TAN
+  TAN - a math function that returns the tangent of an angle
+
+  TAN(angle)
+
+  The angle is in radians. To convert degrees to radians, multiply by
+  PI / 180.
+
+.ex
+PI = 4 * ATN(1)
+PRINT TAN(PI / 4)
+.endex
+
+  See also: {ATN}  {SIN}  {COS}
+
+.topic TIMER
+  TIMER - a function that returns the seconds since midnight
+
+  TIMER
+
+  Returns the number of seconds since midnight, with fractions (18.2
+  steps per second). Use it to measure time, to wait, and with RANDOMIZE.
+
+.ex
+Start = TIMER
+DO: LOOP UNTIL TIMER - Start >= 2   ' wait 2 seconds
+PRINT "Two seconds passed"
+.endex
+
+  See also: {RANDOMIZE}  {SLEEP}  {DATE$}  {TIME$}
+
+.topic VAL
+  VAL - a function that converts a string to a number
+
+  VAL(stringexpression)
+
+  Reads the number at the beginning of the string (leading spaces are
+  skipped); stops at the first character that cannot be part of a number.
+  Returns 0 if there is no number. &H and &O prefixes are understood.
+
+.ex
+PRINT VAL("42 apples"), VAL("3.5E2"), VAL("abc"), VAL("&HFF")
+.endex
+
+  See also: {STR$}  {ASC}
+
+.topic WHILE,WEND
+  WHILE...WEND - statements that repeat a block while a condition is true
+
+  WHILE condition
+      [statementblock]
+  WEND
+
+  The condition is tested before each pass. {DO}...LOOP is more flexible.
+
+.ex
+N = 1
+WHILE N < 1000
+  PRINT N;: N = N * 3
+WEND
+.endex
+
+  See also: {DO}  {FOR}
+
+.topic WIDTH
+  WIDTH - a statement that sets the width of output lines
+
+  WIDTH columns%
+  WIDTH #filenumber, columns%
+
+  PRINT starts a new line after columns% characters. 0 means lines are
+  never broken. With #filenumber it applies to an open file.
+
+.ex
+WIDTH 40
+PRINT STRING$(60, "=")
+WIDTH 80
+.endex
+
+  See also: {PRINT}  {SCREEN}
+
+; ---- Files ----------------------------------------------------------------
+.topic OPEN,OUTPUT,APPEND,AS
+  OPEN - a statement that opens a file
+
+  OPEN file$ FOR mode AS [#]filenumber
+
+  mode    INPUT    reads the file (it must exist)
+          OUTPUT   creates the file (an old file is replaced)
+          APPEND   adds to the end of the file (created if missing)
+
+  filenumber is 1-255; use it with PRINT #, WRITE #, INPUT #, LINE INPUT
+  #, EOF and CLOSE. Files are text files. File names relative to no
+  directory are in the current directory ({Options Menu}, Help Path).
+
+.ex
+OPEN "SCORES.TXT" FOR OUTPUT AS #1
+PRINT #1, "Ada"; ","; 99
+CLOSE #1
+OPEN "SCORES.TXT" FOR INPUT AS #1
+DO UNTIL EOF(1)
+  LINE INPUT #1, L$: PRINT L$
+LOOP
+CLOSE #1
+.endex
+
+  See also: {CLOSE}  {PRINT #}  {INPUT #}  {EOF}  {KILL}  {FILES}
+
+.topic CLOSE
+  CLOSE - a statement that closes files
+
+  CLOSE [[#]filenumber [, [#]filenumber] ...]
+
+  Closes the files; CLOSE without numbers closes all open files. END also
+  closes all files. Close a file you wrote before opening it again.
+
+  See also: {OPEN}
+
+.topic PRINT #
+  PRINT # - a statement that writes data to a file
+
+  PRINT #filenumber, [USING formatstring$;] expressionlist [; | ,]
+
+  Works like {PRINT}, but writes into a file opened FOR OUTPUT or APPEND.
+  To write values that INPUT # can read back, separate them with "," or
+  use {WRITE} #.
+
+.ex
+OPEN "LOG.TXT" FOR APPEND AS #1
+PRINT #1, DATE$; " "; TIME$
+CLOSE #1
+.endex
+
+  See also: {OPEN}  {WRITE}  {INPUT #}
+
+.topic WRITE,WRITE #
+  WRITE - a statement that writes data separated by commas
+
+  WRITE [#filenumber,] expressionlist
+
+  Writes the values separated by commas, with strings in quotation marks,
+  then a new line. INPUT # reads such lines back into variables.
+
+.ex
+OPEN "DATA.TXT" FOR OUTPUT AS #1
+WRITE #1, "Smith, John", 42
+CLOSE #1
+.endex
+
+  See also: {PRINT #}  {INPUT #}  {OPEN}
+
+.topic INPUT #
+  INPUT # - a statement that reads data from a file
+
+  INPUT #filenumber, variablelist
+
+  Reads values separated by commas (or line ends) from a file opened FOR
+  INPUT. Use {LINE INPUT} # to read whole lines, and {EOF} to test for the
+  end of the file ("Input past end of file").
+
+.ex
+OPEN "DATA.TXT" FOR INPUT AS #1
+INPUT #1, N$, Age
+PRINT N$, Age
+CLOSE #1
+.endex
+
+  See also: {OPEN}  {EOF}  {WRITE}
+
+.topic EOF
+  EOF - a file function that tests for the end of a file
+
+  EOF(filenumber)
+
+  Returns true (-1) when the end of a file opened FOR INPUT has been
+  reached, otherwise false (0).
+
+.ex
+OPEN "README.TXT" FOR INPUT AS #1
+WHILE NOT EOF(1)
+  LINE INPUT #1, L$: PRINT L$
+WEND
+CLOSE #1
+.endex
+
+  See also: {OPEN}  {INPUT #}  {LINE INPUT}
+
+.topic KILL
+  KILL - a statement that deletes files
+
+  KILL filespec$
+
+  Deletes the file; filespec$ can contain the wildcards * and ?. There is
+  no way to undo it.
+
+.ex
+KILL "TEMP.TXT"
+.endex
+
+  See also: {NAME}  {FILES}
+
+.topic NAME
+  NAME - a statement that renames a file
+
+  NAME oldname$ AS newname$
+
+  The new name must not exist.
+
+.ex
+NAME "SCORES.TXT" AS "SCORES.OLD"
+.endex
+
+  See also: {KILL}  {FILES}
+
+.topic FILES
+  FILES - a statement that lists files
+
+  FILES [filespec$]
+
+  Prints the names of the files in the current directory, or of the files
+  matching filespec$ (wildcards * and ? allowed).
+
+.ex
+FILES
+FILES "*.BAS"
+.endex
+
+  See also: {CHDIR}  {KILL}  {NAME}
+
+.topic CHDIR
+  CHDIR - a statement that changes the current directory
+
+  CHDIR pathspec$
+
+  Files named without a directory are then found in this directory.
+
+.ex
+CHDIR "C:\QB"
+FILES "*.BAS"
+.endex
+
+  See also: {MKDIR}  {RMDIR}  {FILES}
+
+.topic MKDIR
+  MKDIR - a statement that creates a directory
+
+  MKDIR pathspec$
+
+.ex
+MKDIR "C:\GAMES"
+.endex
+
+  See also: {CHDIR}  {RMDIR}
+
+.topic RMDIR
+  RMDIR - a statement that removes a directory
+
+  RMDIR pathspec$
+
+  The directory must be empty.
+
+.ex
+RMDIR "C:\GAMES"
+.endex
+
+  See also: {CHDIR}  {MKDIR}  {KILL}
+
+.topic SHELL
+  SHELL - a statement that runs an ARM-DOS command
+
+  SHELL [commandstring$]
+
+  Runs the command, then continues the program. SHELL without a command
+  starts the ARM-DOS command interpreter; type EXIT to return.
+
+.ex
+SHELL "DIR /W"
+.endex
+
+  See also: {FILES}  {CHDIR}
+
+.topic ERASE
+  ERASE - a statement that clears or frees arrays
+
+  ERASE arrayname [, arrayname] ...
+
+  Frees the arrays; a later DIM can declare them again with other bounds.
+
+.ex
+DIM A(100)
+ERASE A
+DIM A(500)
+.endex
+
+  See also: {DIM}
+
+.topic LBOUND,UBOUND
+  LBOUND, UBOUND - functions that return the bounds of an array
+
+  LBOUND(array [, dimension%])
+  UBOUND(array [, dimension%])
+
+  Return the lowest and highest subscript of the array's dimension (the
+  first one by default).
+
+.ex
+DIM A(5 TO 20)
+FOR I = LBOUND(A) TO UBOUND(A): A(I) = I * I: NEXT
+PRINT LBOUND(A), UBOUND(A)
+.endex
+
+  See also: {DIM}
+
+.topic SLEEP
+  SLEEP - a statement that pauses the program
+
+  SLEEP [seconds]
+
+  Waits the number of seconds. SLEEP without a number waits for a key.
+
+.ex
+PRINT "Wait..."
+SLEEP 2
+PRINT "Done"
+.endex
+
+  See also: {TIMER}  {INKEY$}
+
+.topic ON,ON GOTO,ON GOSUB
+  ON...GOTO, ON...GOSUB - jump to one of several lines
+
+  ON expression GOTO | GOSUB line [, line] ...
+
+  The expression is rounded; if it is 1, the program jumps to the first
+  line, if 2 to the second, and so on. If it is 0 or greater than the
+  number of lines, the program continues with the next statement.
+  For error handling, see {ON ERROR}.
+
+.ex
+INPUT "Choice (1-3)"; C
+ON C GOSUB One, Two, Three
+END
+One: PRINT "one": RETURN
+Two: PRINT "two": RETURN
+Three: PRINT "three": RETURN
+.endex
+
+  See also: {GOSUB}  {GOTO}  {SELECT CASE}
+
+.topic ON ERROR,RESUME,ERR,ERL,ERROR
+  ON ERROR - a statement that handles run-time errors
+
+  ON ERROR GOTO line
+  RESUME [NEXT | line]
+
+  After ON ERROR GOTO, a run-time error jumps to the line instead of
+  stopping the program. There, ERR is the error number and ERL the line
+  number. RESUME retries the statement, RESUME NEXT continues after it.
+  ON ERROR GOTO 0 turns error handling off.
+
+.ex
+ON ERROR GOTO Oops
+OPEN "NOFILE.TXT" FOR INPUT AS #1
+PRINT "Opened"
+END
+Oops:
+  PRINT "Error"; ERR
+  RESUME NEXT
+.endex
+
+  See also: {Run-Time Errors}  {ON}

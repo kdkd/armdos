@@ -1,0 +1,15 @@
+@X0F  HOW TO DOWNLOAD WITH ZMODEM@X07
+
+  1. From the Main Menu press F for the File Menu.
+  2. Press L to list files, A to change areas.
+  3. Press D, type the file name, and pick Z for ZMODEM.
+  4. That's it - TERM notices the ZMODEM start and receives the file
+     by itself (it goes to C:\TERM\DOWNLOAD).  Other programs: press
+     PgDn and choose ZMODEM.
+
+  ZMODEM checks every block with a 32-bit CRC and resends what line noise
+  eats.  If the line drops, call back and download again: the transfer
+  resumes where it stopped (crash recovery).
+
+  At 2400 baud you get about 230 characters per second.  A 40K file takes
+  three minutes.  Be patient.  Get a snack.

@@ -1,0 +1,12 @@
+New file
+*i
+       1:*first line
+       2:*second line
+       3:*^Z
+*l
+       1: first line
+       2: second line
+*1
+       1:*first line
+       1:*
+*e

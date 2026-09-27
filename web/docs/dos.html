@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ARM-DOS 4.00 Internals</title>
+<meta name="description" content="How ARM-DOS 4.00 follows MS-DOS 4.00 on an ARM processor: the kernel, COMMAND.COM, the commands, and how programs are written for it.">
+<meta name="theme-color" content="#16130f">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="./">ARM-DOS <span>4.00</span></a>
+  <nav aria-label="Documentation">
+    <a href="./">Manual</a>
+    <a href="machine.html">The machine</a>
+    <a href="dos.html" aria-current="page">The DOS</a>
+    <a href="elbow.html">ELBOW</a>
+    <a href="https://github.com/kdkd/armdos">GitHub</a>
+  </nav>
+  <a class="play-small" href="../">Play it</a>
+</header>
+
+<main class="sheet">
+<div class="prose">
+
+<p class="kicker">Technical reference</p>
+<h1>ARM-DOS 4.00</h1>
+<p class="lede">MS-DOS 4.00, as Microsoft might have ported it to an ARM over a long weekend in 1988.</p>
+
+<p>Type <code>VER</code> and the machine says <code>ARM-DOS Version 4.00</code>, because it follows MS-DOS 4.00 command for command. Microsoft released the MS-DOS 4.00 source under the MIT licence, which made it possible to check every message, every column of a <code>DIR</code> listing and every error code against the real thing. The genuine MS-DOS 4.00, running in DOSBox-X, was the yardstick throughout: the same keystrokes were typed into both, and the screens compared.</p>
+
+<nav class="toc" aria-label="On this page">
+  <b>On this page</b>
+  <ol>
+    <li><a href="#boot">From power switch to prompt</a></li>
+    <li><a href="#kernel">The kernel</a></li>
+    <li><a href="#command">COMMAND.COM</a></li>
+    <li><a href="#commands">The commands</a></li>
+    <li><a href="#programs">Ports, natives and x86 guests</a></li>
+    <li><a href="#writing">Writing programs for ARM-DOS</a></li>
+    <li><a href="#faults">When things go wrong</a></li>
+  </ol>
+</nav>
+
+<h2 id="boot"><span class="num">1</span>From power switch to prompt</h2>
+
+<p>The same division of labour as MS-DOS 4.00, for the same reasons:</p>
+
+<ol>
+  <li><strong>The ROM BIOS</strong> (ARM code and C) runs the power-on self test: it counts the memory, identifies the processor, finds the drives and fitted cards, and beeps. It loads the first sector of the boot disk to <code>7C00h</code>, checks for <code>55AAh</code> and jumps there in ARM state.</li>
+  <li><strong>The boot sector</strong>, in ARM assembly, moves itself out of the way, checks that the first two root directory entries are <code>IO.SYS</code> and <code>ARMDOS.SYS</code>, and loads all of IO.SYS to <code>0070:0000</code>, where DOS has always loaded it. If they are missing, it says DOS 4's own <code>Non-System disk or disk error</code>.</li>
+  <li><strong>IO.SYS</strong> holds the resident device drivers (<code>CON</code>, <code>AUX</code>, <code>PRN</code>, <code>CLOCK$</code> and the disk driver) and SYSINIT, which loads the kernel, processes <code>CONFIG.SYS</code> line by line, loads the <code>DEVICE=</code> drivers and starts the shell. On a clean boot it prints nothing, like DOS 4.</li>
+  <li><strong>ARMDOS.SYS</strong> is the kernel proper: <code>INT 20h</code>-<code>2Fh</code>, the FAT file system, file handles, processes and memory. It is a relocatable ARM image that SYSINIT places right after IO.SYS and fixes up, the way SYSINIT once moved the DOS kernel to its final address.</li>
+  <li><strong>COMMAND.COM</strong> runs <code>AUTOEXEC.BAT</code> and gives you the prompt.</li>
+</ol>
+
+<p>The machine's <code>CONFIG.SYS</code> loads <code>HIMEM.SYS</code> for extended memory and the CD-ROM driver; <code>AUTOEXEC.BAT</code> sets the <code>BLASTER</code> variable, initialises the Sound Blaster's mixer and starts <code>ARMCDEX</code> for drive D:.</p>
+
+<h2 id="kernel"><span class="num">2</span>The kernel</h2>
+
+<p>The kernel is new C code, with a little ARM assembly, written to behave the way the MS-DOS 4.00 source does and to say what it says. It is compiled to Thumb code to keep it small. DOS itself takes about 60 KB of conventional memory, much as DOS 4.00 did on a PC.</p>
+
+<p>It implements nearly all of the DOS 4 <code>INT 21h</code> functions: console input with the DOS line editor and its function-key template, files and directories through handles and FCBs, IOCTL, memory allocation, EXEC and terminate-and-stay-resident, country information and code pages. The file system reads and writes FAT12 and FAT16 with a write-back buffer cache, extended partitions become logical drives, and <code>SUBST</code> and <code>JOIN</code> work through the current directory structure the way DOS 4 did. The in-memory structures keep their DOS 4 layouts (the system file table, the list of lists, the memory control blocks), widened only where a far pointer has to hold a 32-bit address.</p>
+
+<p><strong>Device drivers</strong> follow DOS's model: a header with strategy and interrupt entry points, and request packets with DOS's layout. The entry points are ARM functions, and each far pointer becomes a flat 32-bit one.</p>
+
+<p><strong>HIMEM.SYS</strong> provides XMS 2.0. On this machine the 32-bit address that "lock block" returns is directly usable, and the C runtime every program is built with uses it to grow its heap past 640 KB. Big programs just work: ARM-DOS's C runtime is its own DOS extender.</p>
+
+<h2 id="command"><span class="num">3</span>COMMAND.COM</h2>
+
+<p>COMMAND.COM is a C re-creation of the DOS 4.00 shell, following the MIT-released assembly source routine by routine, with every message taken from it. Like the original, it splits into a small <strong>resident part</strong> (the Ctrl-C and critical-error handlers, program loading, and the state that must survive a program run) and a <strong>transient part</strong> (the command processor) that sits at the top of memory. When a program needs that memory, the transient part is dropped and read back from disk afterwards, with DOS 4's <code>Insert disk with \COMMAND.COM in drive A</code> when the disk is not there.</p>
+
+<p>Batch files, <code>FOR</code>, <code>IF</code>, <code>GOTO</code>, <code>CALL</code>, pipes, redirection, <code>PROMPT</code>, <code>PATH</code> and the internal commands all behave like the original. The test suite types commands into both shells and compares the screens.</p>
+
+<h2 id="commands"><span class="num">4</span>The commands</h2>
+
+<p>The DOS 4 commands reached the ARM by three routes.</p>
+
+<div class="table-wrap"><table>
+  <tr><th>Route</th><th>Commands</th></tr>
+  <tr><td>Microsoft's own C source, compiled for the ARM</td><td><code>FC</code>, <code>MEM</code>, <code>ATTRIB</code>, <code>FDISK</code>, <code>JOIN</code>, <code>SUBST</code></td></tr>
+  <tr><td>Microsoft's own source, assembled</td><td><code>KEYBOARD.SYS</code> (plus a Dvorak layout), <code>COUNTRY.SYS</code></td></tr>
+  <tr><td>Re-created in C from Microsoft's assembly source, step by step</td><td><code>ANSI.SYS</code>, <code>CHKDSK</code>, <code>COMP</code>, <code>DEBUG</code>, <code>DISKCOMP</code>, <code>DISKCOPY</code>, <code>DISPLAY.SYS</code>, <code>EDLIN</code>, <code>FIND</code>, <code>FORMAT</code>, <code>KEYB</code>, <code>LABEL</code>, <code>MODE</code>, <code>MORE</code>, <code>NLSFUNC</code>, <code>PRINT</code>, <code>REPLACE</code>, <code>SORT</code>, <code>SYS</code>, <code>TREE</code>, <code>XCOPY</code></td></tr>
+</table></div>
+
+<p>When <code>FDISK</code> writes a partition table here, it is the table the real FDISK writes, byte for byte, because it is the same code.</p>
+
+<p><strong>DOSSHELL</strong>, the DOS 4.00 Shell, is not part of Microsoft's source release, so it is new code written from the real Shell's screens, captured character by character, with its menus, the File System, colour schemes, help and the mouse.</p>
+
+<p><strong>DEBUG</strong> keeps DOS 4's prompt, one-letter commands and output layouts, with an ARM register set, an ARM and Thumb disassembler, a line-by-line ARM assembler and ARM breakpoints underneath:</p>
+
+<pre><b>C:\&gt;DEBUG</b>
+-<b>A 100</b>
+00027490 <b>mov r0,#0x900</b>          <i>AH=09h: print a string</i>
+00027494 <b>adr r3,120</b>             <i>DS:DX, now one flat pointer in r3</i>
+00027498 <b>svc 21</b>                 <i>INT 21h</i>
+0002749C <b>svc 20</b>                 <i>INT 20h: end the program</i>
+000274A0
+-<b>E 120 "Hello, world!$"</b>
+-<b>G</b>
+Hello, world!
+Program terminated normally</pre>
+
+<p><strong>International support</strong> works as in DOS 4: <code>KEYB</code> with sixteen national layouts besides US, plus Dvorak, code pages through <code>DISPLAY.SYS</code>, <code>MODE</code> and <code>NLSFUNC</code>, and <code>COUNTRY=</code> for dates, times and sorting. The page's on-screen keyboard relabels its keys to follow <code>KEYB</code>.</p>
+
+<h2 id="programs"><span class="num">5</span>Ports, natives and x86 guests</h2>
+
+<p>The programs on the disk come in three kinds.</p>
+
+<p><strong>Ports</strong> are existing programs whose source code was released, compiled for the ARM with a platform layer that talks to the hardware the way the original DOS versions did. DOOM sets VGA mode 13h through the BIOS, loads its palette through the DAC ports, hooks <code>INT 9</code> to read scan codes from port <code>60h</code>, reprograms the timer to 140 Hz while chaining the BIOS tick, and plays its effects through the Sound Blaster's DMA and its music on the OPL3 or General MIDI. Quake does its floating point on the VFP. The ports include DOOM, Wolfenstein 3D, Quake, Duke Nukem 3D with Ken Silverman's Build engine, Keen Dreams, the Hexen II engine, Zork I to III, Colossal Cave, Bywater BASIC, TinyCC and Digital Research's GEM/3, whose 8086 assembly and screen driver were rewritten in C and ARM code.</p>
+
+<p><strong>Native programs</strong> were written for ARM-DOS: the ARM Commander file manager, EDIT, ARM Turbo C and ARM QuickBASIC (on Turbo Vision), TERM, ONLINE, ARM Paint and Banner, the CD player and CD-ROM extensions, ARMINFO, the talking Dr. ARMitso, POPUP, the demo, The ARM Pit BBS and its door game, and ELBOW. Their looks are homages to programs of the era, with none of those programs' code.</p>
+
+<p><strong>x86 guests</strong> are genuine IBM PC programs, byte for byte as released, run by <a href="elbow.html">ELBOW</a>.</p>
+
+<p><code>FILE</code> tells them apart: <code>FILE C:\DOS\*.EXE</code> shows which files are ARM programs and which are x86.</p>
+
+<h2 id="writing"><span class="num">6</span>Writing programs for ARM-DOS</h2>
+
+<h3>On the machine</h3>
+<p><code>TC</code> is ARM Turbo C, a blue-screen IDE with the TinyCC compiler built in: <kbd>F9</kbd> builds, <kbd>Ctrl</kbd>+<kbd>F9</kbd> runs, and errors land in the Message window. <code>TCC</code> is the same compiler on the command line. Every program it produces is real ARM code, and TCC can compile its own source code on ARM-DOS. <code>QB</code> is ARM QuickBASIC with the Bywater BASIC interpreter inside; <code>BASIC</code> is a GW-BASIC-style interpreter; <code>DEBUG</code> assembles ARM instructions directly.</p>
+
+<pre><b>C:\&gt;TCC SQUARES.C</b>
+<b>C:\&gt;SQUARES</b>
+1 squared is 1
+...</pre>
+
+<h3>With the SDK</h3>
+<p>The source repository has an SDK for building ARM-DOS programs on your own computer with <code>arm-none-eabi-gcc</code> and newlib: start-up code, the DOS system calls behind the C library, Microsoft C style headers (<code>dos.h</code>, <code>conio.h</code>, <code>bios.h</code> and friends), a linker script and <code>elf2exe</code>, which wraps an ELF file in the <code>MZ</code> and <code>AR1</code> headers. Programs that want hardware floating point can opt into the VFP. The SDK also has helpers for the Sound Blaster and General MIDI.</p>
+
+<p>A DOS call from C looks the way it did with Microsoft C, and underneath it is one <code>SVC</code> instruction:</p>
+
+<pre><i>/* INT 21h AH=02h: write the character in DL */</i>
+<b>union REGS r;</b>
+<b>r.h.ah = 0x02;</b>
+<b>r.h.dl = 'A';</b>
+<b>intdos(&amp;r, &amp;r);</b>          <i>r0 = 0x0200, r3 = 65, then svc #0x21</i></pre>
+
+<h2 id="faults"><span class="num">7</span>When things go wrong</h2>
+
+<p>A division by zero prints DOS's <code>Divide overflow</code> and ends the program. An ARM exception in a program (an undefined instruction, or a data or prefetch abort) prints the exception, the address and the program's name with a register dump, ends the program and returns to its parent. A fault inside the kernel or an interrupt handler goes to the BIOS's crash screen. <code>CRASH</code> is a guided tour of all of these.</p>
+
+<div class="buttons">
+  <a class="btn btn-play" href="../"><span class="sw" aria-hidden="true"></span>Switch it on</a>
+  <a class="btn btn-ghost" href="elbow.html">Next: ELBOW</a>
+</div>
+
+</div>
+</main>
+
+<footer class="foot">
+  <span>ARM-DOS 1.0. Copyright &copy; 2026 Kevin Day, with lots of help from Europa.</span>
+  <span class="contact">Contact: <a href="mailto:kevin@your.org">kevin@your.org</a></span>
+</footer>
+
+</body>
+</html>

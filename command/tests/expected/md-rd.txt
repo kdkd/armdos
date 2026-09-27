@@ -1,0 +1,25 @@
+C:\T\NEWDIR>cd ..
+
+C:\T>rd newdir
+
+C:\T>rd newdir
+Invalid path, not directory,
+or directory not empty
+
+C:\T>rd \t\sub
+Invalid path, not directory,
+or directory not empty
+
+C:\T>md
+Required parameter missing
+
+C:\T>rd
+Required parameter missing
+
+C:\T>cd \nodir
+Invalid directory
+
+C:\T>cd q:
+Invalid drive specification
+
+C:\T>

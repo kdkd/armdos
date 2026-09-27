@@ -1,0 +1,21 @@
+End of input file
+*l
+       1:*tab	here
+       2: bell^G esc^[
+       3: plain
+*3
+       3:*plain
+       3:*x^VGy^V[z
+*l
+       1: tab	here
+       2: bell^G esc^[
+       3:*x^Gy^[z
+*i
+       3:*q^VV^VAw
+       4:*^Z
+*l
+       1: tab	here
+       2: bell^G esc^[
+       3: q^V^Aw
+       4:*x^Gy^[z
+*e

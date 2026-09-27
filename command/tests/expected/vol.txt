@@ -1,0 +1,15 @@
+
+C>vol
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+
+C>vol c:
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+
+C>vol q:
+Invalid drive specification
+
+C>

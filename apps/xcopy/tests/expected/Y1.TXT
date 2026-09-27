@@ -1,0 +1,7 @@
+Reading source file(s)...
+\L\F1.DAT
+\L\F2.DAT
+Reading source file(s)...
+\L\F3.DAT
+\L\F4.DAT
+        4 File(s) copied

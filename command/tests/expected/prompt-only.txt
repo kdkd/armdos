@@ -1,0 +1,25 @@
+
+C:\T>echo c:LOOP.BAT
+c:LOOP.BAT
+
+C:\T>echo c:NOEOL.BAT
+c:NOEOL.BAT
+
+C:\T>echo c:PARAMS.BAT
+c:PARAMS.BAT
+
+C:\T>echo c:PAUSER.BAT
+c:PAUSER.BAT
+
+C:\T>echo c:VARS.BAT
+c:VARS.BAT
+
+C:\T>echo c:WAITER.BAT
+c:WAITER.BAT
+
+C:\T>for %a in (c*.txt) do if exist %a echo %a exists
+
+C:\T>if exist CTRLZ.TXT echo CTRLZ.TXT exists
+CTRLZ.TXT exists
+
+C:\T>

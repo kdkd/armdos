@@ -1,0 +1,34 @@
+@X0F  SFARM - THE SOUTH FLORIDA ARM USERS' GROUP@X07
+
+  Second Tuesday of every month, 7:30 PM, in the back room of Sal's Pizza
+  on Hollywood Blvd.  Bring your machine, your questions, and five dollars
+  for the pie fund.  Newcomers welcome.  Nobody will make you give a talk
+  (Maria might).
+
+@X0EEvery meeting@X07
+  * Disk of the Month: a 5 1/4" floppy of the best freeware and shareware
+    we found, one dollar, or free if you bring a blank.  Also in the Files
+    section here, for those who prefer to stay home in their pajamas.
+  * Show and Tell: somebody always brings something.  Last month it was
+    Harold's model railroad signal controller, run by an ARM/AT.  The
+    trains ran on time.  The sysop took notes.
+  * The Help Table: bring a sick computer, leave with a well one (usually).
+    Karen Whitfield has fixed four power supplies and one marriage there.
+
+@X0EThe Barrel Shifter@X07
+  Our newsletter, edited by Maria Delgado.  Four pages, photocopied, more
+  opinions than a Flame Pit thread.  Past issues had "Your First Batch
+  File", "What the TURBO Button Really Does" (Karen), "A Beginner's Guide
+  to Getting Eaten by a Grue" (Lenny Szabo) and the sysop's column,
+  "Notes from the Spare Bedroom".
+
+@X0EComing up@X07
+  * Susan Oyelaran: "ARM Assembly in 30 Minutes (or Your Pizza is Free)"
+  * Bill Tran, by speakerphone from California: "9600 Baud and Beyond"
+  * Gordon Kessler of The 386 Fortress has been invited to present "Why
+    the 386 Wins".  He has accepted.  Please be kind.  Please bring
+    earplugs.
+
+  Officers: Maria Delgado (newsletter, and the one who actually organizes
+  everything), Karen Whitfield (hardware), Harold Pruitt (treasurer, since
+  he's the only one who balances a checkbook), Europa (whatever's left).

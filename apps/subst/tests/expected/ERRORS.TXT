@@ -1,0 +1,13 @@
+Invalid parameter - X:
+Path not found - \NODIR
+Invalid parameter - E:
+Invalid parameter - \WORK
+Invalid parameter - E:
+Invalid parameter - C:
+Invalid parameter - C:\WORK\A.TXT
+Incorrect number of parameters - /D
+Incorrect number of parameters - X
+Invalid switch - /X
+Invalid parameter - E:
+Invalid switch - /D
+Invalid parameter - C:

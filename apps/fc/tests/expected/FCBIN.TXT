@@ -1,0 +1,3 @@
+00000005: 05 FF
+00000020: 20 41
+fc: \T\B1.BIN longer than \T\B2.BIN

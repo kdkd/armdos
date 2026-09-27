@@ -1,0 +1,69 @@
+/* The inspector's ELBOW view (web/js/elbow-panel.js): x86 source next to the ARM code made of it */
+.eb-cap .eb-state { color: #6d5a3a; font: 600 9px/1 var(--mono); letter-spacing: .04em; text-transform: none; }
+.eb-cap .eb-state.lit { color: var(--amber); text-shadow: var(--amber-glow); }
+.win.eb { padding: 8px 8px 9px; font-size: 11px; box-sizing: border-box; width: 0; min-width: 100%; }  /* (its long lines must not widen the inspector) */
+.eb-status { display: flex; align-items: baseline; gap: 7px; min-height: 1.5em; color: #fff0cc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.eb-status b { color: #6fc6ff; font-weight: 600; text-shadow: 0 0 6px rgba(90,180,255,.45); }
+.eb-dim { color: #6d5a3a; text-shadow: none; }
+.eb-status > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.eb-lamp { flex: none; align-self: center; width: 8px; height: 8px; border-radius: 50%; background: #2a2622; box-shadow: inset 0 1px 2px #000; }
+.eb-lamp.x { background: #ffb340; box-shadow: 0 0 7px #ff9a1e; }
+.eb-lamp.h { background: #d98a3a; box-shadow: 0 0 6px rgba(217,138,58,.7); }
+.eb-lamp.i { background: #6fc6ff; box-shadow: 0 0 7px rgba(90,180,255,.8); }
+.eb-lamp.n { background: #8a8f96; }
+
+/* where the time went, last ~2 s */
+.eb-bar { margin: 6px 0 2px; }
+.eb-bar-track { display: flex; height: 5px; border-radius: 2px; overflow: hidden; background: #141516; box-shadow: inset 0 1px 2px #000; }
+.eb-bar-track i { display: block; min-width: 2px; }
+.eb-bar i.x, .eb-legend .x::before { background: #ffb340; box-shadow: 0 0 5px #ff9a1e; }
+.eb-bar i.h, .eb-legend .h::before { background: #b86a28; }
+.eb-bar i.i, .eb-legend .i::before { background: #3ea6ea; box-shadow: 0 0 5px rgba(90,180,255,.6); }
+.eb-bar i.n, .eb-legend .n::before { background: #5d6269; }
+.eb-legend { display: flex; flex-wrap: wrap; gap: 3px 10px; margin-top: 5px; font: 700 8.5px/1.2 var(--sans); letter-spacing: .12em; color: #9aa1aa; text-shadow: none; }
+.eb-legend span::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 1px; vertical-align: 0; }
+.eb-legend span.off { color: #4a4e54; }
+.eb-legend span.off::before { opacity: .3; box-shadow: none; }
+
+.eb-head { margin: 8px 0 6px; padding-top: 6px; border-top: 1px solid #1c1e21; color: #d9b070; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.45em; }
+.eb-head b { color: #fff0cc; font-weight: 600; }
+
+.eb-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.eb-col { min-width: 0; }
+.eb-vcap { margin: 0 0 4px; font: 700 8.5px/1 var(--sans); letter-spacing: .16em; color: #7d838b; text-shadow: none; white-space: nowrap; overflow: hidden; }
+.eb-list { position: relative; height: 18.5em; overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; scrollbar-color: #3a3530 transparent; white-space: pre; border-radius: 3px; background: rgba(255,255,255,.012); }
+.eb-list .ln { display: flex; gap: 5px; padding: 0 3px; border-radius: 2px; line-height: 1.5; }
+.eb-list .ad { flex: none; color: #6d5a3a; }
+.eb-list .mn { flex: none; width: 5.5ch; overflow: hidden; }
+.eb-arm .mn { width: 5ch; }
+.eb-list .tx { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.eb-list .tx em { font-style: normal; color: #7a8a6a; }
+
+/* x86: the program's own code, in the VGA's blue */
+.eb-x86 .mn, .eb-x86 .tx { color: #8fd2ff; text-shadow: 0 0 5px rgba(90,180,255,.3); }
+.eb-x86 .ln.eb-br .mn { color: #c4e6ff; }
+.eb-x86 .ln.follow { border-top: 1px dashed #2a3a48; margin-top: 2px; padding-top: 1px; }
+.eb-x86 .ln.cur { background: rgba(90,180,255,.16); }
+.eb-x86 .ln.cur .mn, .eb-x86 .ln.cur .tx { color: #eaf6ff; text-shadow: 0 0 6px rgba(140,210,255,.8); }
+
+/* ARM: what ELBOW made of it; lines the PC was sampled on glow */
+.eb-arm .mn, .eb-arm .tx { color: var(--amber); }
+.eb-arm .ln.lit .mn, .eb-arm .ln.lit .tx { color: #7d6a4a; text-shadow: none; }
+.eb-arm .ln.h1 { background: rgba(255,179,64,.06); }
+.eb-arm .ln.h2 { background: rgba(255,179,64,.11); }
+.eb-arm .ln.h3 { background: rgba(255,179,64,.17); }
+.eb-arm .ln.h4 { background: rgba(255,179,64,.24); }
+.eb-arm .ln.cur { box-shadow: inset 2px 0 0 #fff0cc; }
+.eb-arm .ln.cur .mn, .eb-arm .ln.cur .tx { color: #fff0cc; text-shadow: 0 0 6px rgba(255,210,120,.8); }
+.eb-arm .ln.cur.call { box-shadow: inset 2px 0 0 #d98a3a; }
+
+.eb-note { white-space: normal; padding: 6px 4px; color: #9a7334; text-shadow: none; font: 11px/1.5 var(--sans); }
+.eb-note b { color: var(--amber); font-weight: 600; }
+.eb-foot { margin-top: 6px; color: #6d5a3a; text-shadow: none; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* phones: one column above the other */
+@media (max-width: 480px) {
+  .eb-cols { grid-template-columns: minmax(0, 1fr); }
+  .eb-list { height: 12em; }
+  .eb-status, .eb-head, .eb-foot { white-space: normal; }
+}

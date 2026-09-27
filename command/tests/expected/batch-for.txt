@@ -1,0 +1,12 @@
+
+C:\T>fors
+item a
+item b
+item c
+file A.TXT
+file B.TXT
+file CTRLZ.TXT
+file FRUIT.TXT
+path \t\sub\X.TXT
+Syntax error
+C:\T>

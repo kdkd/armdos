@@ -1,0 +1,9 @@
+ARM-DOS Multimedia Sampler '93
+Compilation (C) 1993 Europa Micro Systems Inc.
+
+The programs, pictures, texts and music on this disc are distributed under
+their own licences; see CREDITS.TXT. The music tracks are licensed under
+the Creative Commons Attribution 4.0 International licence. The pictures
+and texts are in the public domain.
+
+ARM-DOS is not a Microsoft product.

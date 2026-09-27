@@ -1,0 +1,15 @@
+
+Volume TEST        created 09-24-2026 12:54p
+Volume Serial Number is 3A48-1420
+
+   1457664 bytes total disk space
+     71168 bytes in 3 hidden files
+     37888 bytes in 1 user files
+   1348608 bytes available on disk
+
+       512 bytes in each allocation unit
+      2847 total allocation units on disk
+      2634 available allocation units on disk
+
+    655360 total bytes memory
+    585936 bytes free

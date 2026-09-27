@@ -1,0 +1,391 @@
+/*------------------------------------------------------------*/
+/* filename -       tvwrite.cpp                               */
+/*                                                            */
+/* function(s)                                                */
+/*                  TView write member functions              */
+/*------------------------------------------------------------*/
+/*
+ *      Turbo Vision - Version 2.0
+ *
+ *      Copyright (c) 1994 by Borland International
+ *      All Rights Reserved.
+ *
+ */
+
+#define Uses_TView
+#define Uses_TGroup
+#define Uses_TScreen
+#define Uses_THardwareInfo
+#define Uses_TText
+#include <tvision/tv.h>
+
+#if !defined( __FLAT__ )
+#error The 16-bit version of this file is in TVWRITE.ASM
+#else
+
+#include <string.h>
+#include <stdlib.h>
+#include <malloc.h>
+
+extern TPoint shadowSize;
+extern TColorAttr shadowAttr;
+
+struct TVWrite {
+
+    short X, Y, Count, wOffset;
+    const void _FAR *Buffer;
+    TView *Target;
+    int edx, esi;
+
+    void L0( TView *, short, short, short, const void _FAR* ) noexcept;
+    void L10( TView * ) noexcept;
+    void L20( TView * ) noexcept;
+    void L30( TView * ) noexcept;
+    void L40( TView * ) noexcept;
+    void L50( TGroup * ) noexcept;
+#ifdef __BORLANDC__
+    void copyShort( TScreenCell *, const TScreenCell * );
+    void copyShort2CharInfo( CHAR_INFO *, const TScreenCell * );
+#else
+    void copyCell( TScreenCell *, const TScreenCell * ) noexcept;
+    void copyShort2Cell( TScreenCell *, const ushort * ) noexcept;
+
+    bool bufIsShort;
+
+    TVWrite(bool b=true) noexcept :
+        bufIsShort(b)
+    {
+    }
+#endif
+
+    static TColorAttr applyShadow(TColorAttr attr) noexcept
+    {
+#ifdef __BORLANDC__
+        // Because we can't know if the cell has already been shadowed,
+        // we compare against the shadow attributes. This may yield some false positives.
+        TColorAttr shadowAttrInv = (shadowAttr << 4) | (shadowAttr >> 4);
+        if (attr == shadowAttr || attr == shadowAttrInv)
+            return attr;
+        else
+            return attr & 0xF0 ? shadowAttr : shadowAttrInv;
+#else
+        // Here TColorAttr is a struct, so we use a dedicated style flag
+        // to determine whether the shadow has been applied.
+        auto style = attr.getStyle();
+        if (!(style & slWindowShadow))
+        {
+            if (attr.getBackground().toBIOS(false) == 0)
+                // Reverse the shadow attribute on black areas.
+                attr = shadowAttr.reversed();
+            else
+                attr = shadowAttr;
+            attr.setStyle(style | slWindowShadow);
+        }
+        return attr;
+#endif
+    }
+
+};
+
+void TView::writeView( short x, short y, short count, const void _FAR* b ) noexcept
+{
+    TVWrite().L0(this, x, y, count, b);
+}
+
+#ifndef __BORLANDC__
+void TView::writeView( short x, short y, short count, const TScreenCell* b ) noexcept
+{
+    TVWrite(false).L0(this, x, y, count, b);
+}
+#endif
+
+void TVWrite::L0( TView *dest, short x, short y, short count, const void _FAR* b ) noexcept
+{
+    X = x; Y = y; Count = count; Buffer = b;
+    wOffset = X;
+    Count += X;
+    edx = 0;
+    if (0 <= Y && Y < dest->size.y)
+    {
+        if (X < 0)
+            X = 0;
+        if (Count > dest->size.x)
+            Count = dest->size.x;
+        if (X < Count)
+            L10(dest);
+    }
+}
+
+void TVWrite::L10( TView *dest ) noexcept
+{
+    TGroup *owner = dest->owner;
+    if ((dest->state & sfVisible) && owner)
+    {
+        Target = dest;
+        Y += dest->origin.y;
+        X += dest->origin.x;
+        Count += dest->origin.x;
+        wOffset += dest->origin.x;
+        if (owner->clip.a.y <= Y && Y < owner->clip.b.y)
+        {
+            if (X < owner->clip.a.x)
+                X = owner->clip.a.x;
+            if (Count > owner->clip.b.x)
+                Count = owner->clip.b.x;
+            if (X < Count)
+                L20(owner->last);
+        }
+    }
+}
+
+void TVWrite::L20( TView *dest ) noexcept
+{
+    TView *next = dest->next;
+    if (next == Target)
+        L40(next);
+    else
+    {
+        if ((next->state & sfVisible) && next->origin.y <= Y)
+        do {
+            esi = next->origin.y + next->size.y;
+            if (Y < esi)
+            {
+                esi = next->origin.x;
+                if (X < esi)
+                {
+                    if (Count > esi)
+                        L30(next);
+                    else break;
+                }
+                esi += next->size.x;
+                if (X < esi)
+                {
+                    if (Count > esi)
+                        X = esi;
+                    else return;
+                }
+                if ((next->state & sfShadow) && next->origin.y + shadowSize.y <= Y)
+                    esi += shadowSize.x;
+                else break;
+            }
+            else if ((next->state & sfShadow) && Y < esi + shadowSize.y)
+            {
+                esi = next->origin.x + shadowSize.x;
+                if (X < esi)
+                {
+                    if (Count > esi)
+                        L30(next);
+                    else break;
+                }
+                esi += next->size.x;
+            }
+            else break;
+            if (X < esi)
+            {
+                edx++;
+                if (Count > esi)
+                {
+                    L30(next);
+                    edx--;
+                }
+            }
+        } while (0);
+        L20(next);
+    }
+}
+
+void TVWrite::L30( TView *dest ) noexcept
+{
+    TView *_Target = Target;
+    int _wOffset = wOffset, _esi = esi, _edx = edx,
+        _count = Count, _y = Y;
+    Count = esi;
+
+    L20(dest);
+
+    Y = _y; Count = _count; edx = _edx; esi = _esi;
+    wOffset = _wOffset; Target = _Target;
+    X = esi;
+}
+
+void TVWrite::L40( TView *dest ) noexcept
+{
+    TGroup *owner = dest->owner;
+    if (owner->buffer)
+        L50(owner);
+    if (owner->lockFlag == 0)
+        L10(owner);
+}
+
+void TVWrite::L50( TGroup *owner ) noexcept
+{
+#ifdef __BORLANDC__
+    const TScreenCell *src = &((const TScreenCell *) Buffer)[X - wOffset];
+    if (owner->buffer != TScreen::screenBuffer)
+    {
+        TScreenCell *dst = &owner->buffer[Y*owner->size.x + X];
+        copyShort(dst, src);
+    }
+    else
+    {
+        CHAR_INFO *dst = &((CHAR_INFO *) owner->buffer)[Y*owner->size.x + X];
+        copyShort2CharInfo(dst, src);
+        THardwareInfo::screenWrite(X, Y, dst, Count - X);
+    }
+#else
+    TScreenCell *dst = &owner->buffer[Y*owner->size.x + X];
+    if (bufIsShort)
+    {
+        auto *src = &((const ushort *) Buffer)[X - wOffset];
+        copyShort2Cell(dst, src);
+    }
+    else
+    {
+        auto *src = &((const TScreenCell *) Buffer)[X - wOffset];
+        copyCell(dst, src);
+    }
+    if (owner->buffer == TScreen::screenBuffer)
+        THardwareInfo::screenWrite(X, Y, dst, Count - X);
+#endif // __BORLANDC__
+}
+
+#ifdef __BORLANDC__
+// On Windows and DOS, Turbo Vision stores a byte of text and a byte of
+// attributes for every cell. On Windows, all TGroup buffers follow this schema
+// except the topmost one, which interfaces with the Win32 Console API.
+
+void TVWrite::copyShort( TScreenCell *dst, const TScreenCell *src )
+{
+    int i;
+    if (edx == 0)
+        memcpy(dst, src, 2*(Count - X));
+    else
+    {
+        for (i = 0; i < Count - X; ++i)
+        {
+            dst[i].character = src[i].character;
+            dst[i].attribute = applyShadow(src[i].attribute);
+        }
+    }
+}
+
+void TVWrite::copyShort2CharInfo( CHAR_INFO *dst, const TScreenCell *src )
+{
+    int i;
+    if (edx == 0)
+        // Expand character/attribute pair
+        for (i = 0; i < Count - X; ++i)
+        {
+            dst[i].Char.AsciiChar = src[i].character;
+            dst[i].Attributes = src[i].attribute;
+        }
+    else
+        // Mix in shadow attribute
+        for (i = 0; i < Count - X; ++i)
+        {
+            dst[i].Char.AsciiChar = src[i].character;
+            dst[i].Attributes = applyShadow(src[i].attribute);
+        }
+}
+
+#else
+void TVWrite::copyCell(TScreenCell *dst, const TScreenCell *src) noexcept
+{
+    int i;
+    if (edx == 0)
+        memcpy(dst, src, sizeof(TScreenCell)*(Count - X));
+    else
+        for (i = 0; i < Count - X; ++i)
+        {
+            auto c = src[i];
+            c.attribute = applyShadow(c.attribute);
+            dst[i] = c;
+        }
+}
+
+void TVWrite::copyShort2Cell( TScreenCell *dst, const ushort *src ) noexcept
+{
+    int i;
+    if (edx == 0)
+        // Expand character/attribute pair
+        for (i = 0; i < Count - X; ++i)
+        {
+            dst[i] = TScreenCell {src[i]};
+        }
+    else
+        // Mix in shadow attribute
+        for (i = 0; i < Count - X; ++i)
+        {
+            TScreenCell c {src[i]};
+            c.attribute = applyShadow(c.attribute);
+            dst[i] = c;
+        }
+}
+
+void TView::writeBuf( short x, short y, short w, short h, const TScreenCell* b ) noexcept
+{
+    while (h-- > 0)
+    {
+        writeView(x, y++, w, b);
+        b += w;
+    }
+}
+
+#endif // __BORLANDC__
+
+void TView::writeBuf( short x, short y, short w, short h, const void _FAR* b ) noexcept
+{
+    while (h-- > 0)
+    {
+        writeView(x, y++, w, b);
+        b = ((const ushort *) b) + w;
+    }
+}
+
+void TView::writeChar( short x, short y, char c, uchar color, short count ) noexcept
+{
+    if (count > size.x)
+        count = size.x;
+    if (count > 0)
+    {
+        TScreenCell *buf = (TScreenCell *) alloca(count * sizeof(TScreenCell));
+        TSpan<TScreenCell> cells(buf, count);
+        TText::drawChar(cells, c, mapColor(color));
+        writeView(x, y, count, buf);
+    }
+}
+
+void TView::writeLine( short x, short y, short w, short h, const void _FAR *b ) noexcept
+{
+    while (h-- > 0)
+    {
+        writeView(x, y++, w, b);
+    }
+}
+
+#ifndef __BORLANDC__
+void TView::writeLine( short x, short y, short w, short h, const TScreenCell *b ) noexcept
+{
+    while (h-- > 0)
+    {
+        writeView(x, y++, w, b);
+    }
+}
+#endif
+
+void TView::writeStr( short x, short y, const char *str, uchar color ) noexcept
+{
+    TStringView text(str);
+    int count = strwidth(text);
+    if (count > size.x)
+        count = size.x;
+    if (count > 0)
+    {
+        TScreenCell *buf = (TScreenCell *) alloca(count * sizeof(TScreenCell));
+        TSpan<TScreenCell> cells(buf, count);
+        TText::drawStr(cells, text, mapColor(color));
+        writeView(x, y, count, buf);
+    }
+}
+
+#endif // __FLAT__

@@ -1,0 +1,5 @@
+{
+  "dirs": ["BASIC"],
+  "tree": [ { "src": "apps/basic/disk/BASIC", "dst": "BASIC" } ],
+  "files": [ { "src": "apps/basic/src/COPYING", "dst": "BASIC\\LICENSE.TXT" } ]
+}

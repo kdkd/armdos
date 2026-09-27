@@ -1,0 +1,8 @@
+Resync failed.  Files are too different\n***** \T\R1.TXT
+alpha 0
+alpha 1
+***** \T\R2.TXT
+beta 0
+beta 1
+*****
+

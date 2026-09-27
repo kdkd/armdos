@@ -1,0 +1,11 @@
+10 REM COLORS.BAS - the 16 text colours and 8 backgrounds
+20 CLS
+30 FOR B = 0 TO 7
+40   FOR F = 0 TO 15
+50     COLOR F, B: PRINT USING "##"; F;: PRINT " ";
+60   NEXT F
+70   COLOR 7, 0: PRINT
+80 NEXT B
+90 COLOR 15, 1: LOCATE 12, 30: PRINT " Hello from COLOR 15,1 "
+100 COLOR 30, 4: LOCATE 14, 30: PRINT " Blinking: COLOR 30,4 "
+110 COLOR 7, 0: LOCATE 20, 1

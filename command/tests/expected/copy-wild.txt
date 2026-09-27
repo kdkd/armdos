@@ -1,0 +1,25 @@
+CTRLZ.TXT
+FRUIT.TXT
+OUT1.TXT
+EMPTY.TXT
+UP.TXT
+C.TXT
+AB.TXT
+        8 File(s) copied
+
+C:\T>dir cdir /w
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T\CDIR
+
+.               ..              A        TXT    B        TXT    CTRLZ    TXT
+FRUIT    TXT    OUT1     TXT    UP       TXT    C        TXT    AB       TXT
+       10 File(s)   31520768 bytes free
+
+C:\T>copy cdir\a.txt+cdir\b.txt cdir\ab2.txt
+CDIR\A.TXT
+CDIR\B.TXT
+        1 File(s) copied
+
+C:\T>

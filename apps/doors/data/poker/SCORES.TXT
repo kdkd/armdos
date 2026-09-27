@@ -1,0 +1,6 @@
+Pit Poker - biggest bankrolls
+ 1. Bill Tran                4,655  best hand: Royal Flush
+ 2. Maria Delgado            2,310  best hand: Straight Flush
+ 3. Karen Whitfield          1,180  best hand: Four of a Kind
+ 4. Gordon Kessler             905  best hand: Four of a Kind
+ 5. Doc Mantissa               718  best hand: Flush

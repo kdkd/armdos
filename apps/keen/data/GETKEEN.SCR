@@ -1,0 +1,103 @@
+; ---------------------------------------------------------------------------
+;  GETKEEN.SCR - TERM script: call The ARM Pit BBS and download the
+;  shareware Commander Keen in Keen Dreams (KEENDRMS.ZIP).
+;
+;  Run by GETKEEN.BAT as   C:\TERM\TERM.EXE /S:GETKEEN.SCR
+;  from C:\GAMES\KEEN; the file lands in the current directory.
+;
+;  Errorlevels for the batch file:
+;     0  got KEENDRMS.ZIP        2  could not connect
+;     1  stopped with Esc        3  logon or download failed
+;
+;  Sit back and watch - or press Esc to take over the keyboard.
+; ---------------------------------------------------------------------------
+
+        CLEAR
+        MESSAGE "GETKEEN - automatic download of Commander Keen in Keen Dreams"
+        MESSAGE ""
+        MESSAGE "Calling The ARM Pit BBS (555-1989) to download Commander Keen in"
+        MESSAGE "Keen Dreams (shareware)... this script does the typing for you."
+        MESSAGE "Connecting at 14400 to save you time..."
+        MESSAGE ""
+
+; The modem card can train at 14400 if asked (AT&B14400, the same as
+; ATS37=11).  The serial port must run faster than the line, so 19200.
+        SET BAUDRATE 19200
+        SET INIT "AT&C1&D2&B14400"
+        SET DOWNLOAD "."
+        SET DIALATTEMPTS 5
+        PAUSE 2
+
+        DIAL "555-1989" "The ARM Pit BBS"
+        IF FAILURE GOTO NOCALL
+
+; ---- log on as the guest ------------------------------------------------
+        WAITFOR "FIRST name?" 60
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "GUEST^M"
+        WAITFOR "LAST name?" 20
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "^M"
+        WAITFOR "Password?" 20
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "GUEST^M"
+
+; the welcome screen, then "View the bulletins?" - not today, thanks
+        WAITFOR "to continue" 30
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "^M"
+        WAITFOR "View the bulletins" 30
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "N"
+
+; ---- Files, area 2 (Games) ----------------------------------------------
+        WAITFOR "Main Menu" 30
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "F"
+        WAITFOR "File Menu" 30
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "A"
+        WAITFOR "Area #" 20
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "2^M"
+        WAITFOR "File Menu" 30
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "D"
+        WAITFOR "Filename to download" 20
+        IF FAILURE GOTO NOLOGON
+        TRANSMIT "KEENDRMS.ZIP^M"
+        WAITFOR "Protocol:" 20
+        IF FAILURE GOTO NOFILE
+        TRANSMIT "Z"
+        WAITFOR "to cancel." 20
+        IF FAILURE GOTO NOFILE
+
+; ---- the ZMODEM download (a few minutes at 14400, 25 at 2400) ------------
+        DOWNLOAD ZMODEM
+        IF FAILURE GOTO NOFILE
+        MESSAGE "Got KEENDRMS.ZIP!"
+
+; ---- log off politely -----------------------------------------------------
+        WAITFOR "to continue" 30
+        TRANSMIT "^M"
+        WAITFOR "File Menu" 30
+        TRANSMIT "Q"
+        WAITFOR "Main Menu" 30
+        TRANSMIT "G"
+        WAITFOR "Log off now" 30
+        TRANSMIT "Y"
+        WAITFOR "NO CARRIER" 30
+        IF FAILURE HANGUP
+        EXIT 0
+
+NOCALL:
+        MESSAGE "Could not connect to The ARM Pit BBS."
+        PAUSE 3
+        EXIT 2
+
+NOLOGON:
+NOFILE:
+        MESSAGE "Something went wrong on the BBS - hanging up."
+        HANGUP
+        PAUSE 3
+        EXIT 3

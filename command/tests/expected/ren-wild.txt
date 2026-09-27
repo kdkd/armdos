@@ -1,0 +1,25 @@
+        9 File(s) copied
+
+C:\T>ren *.bak *.old
+
+C:\T>dir *.old /w
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+A        OLD    B        OLD    CTRLZ    OLD    FRUIT    OLD    OUT1     OLD
+UP       OLD    AB       OLD    AB3      OLD    CC       OLD
+        9 File(s)   31516672 bytes free
+
+C:\T>del *.old
+
+C:\T>dir *.old
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+File not found
+
+C:\T>

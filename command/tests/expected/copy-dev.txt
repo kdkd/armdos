@@ -1,0 +1,17 @@
+
+C:\T>copy a.txt con
+This is file A.
+It has two lines.
+        1 File(s) copied
+
+C:\T>copy /b a.txt+b.txt con
+A.TXT
+This is file A.
+It has two lines.
+B.TXT
+File B, line one
+line two
+line three
+        1 File(s) copied
+
+C:\T>

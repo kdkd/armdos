@@ -1,0 +1,7 @@
+{
+  "dirs": ["ADVENT"],
+  "files": [
+    { "src": "build/ADVENT.EXE", "dst": "ADVENT\\" },
+    { "src": "apps/advent/src/COPYING", "dst": "ADVENT\\LICENSE.TXT" }
+  ]
+}

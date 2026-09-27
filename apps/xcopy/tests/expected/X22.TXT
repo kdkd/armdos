@@ -1,0 +1,3 @@
+Reading source file(s)...
+\S\A.TXT
+        1 File(s) copied

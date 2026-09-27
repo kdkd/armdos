@@ -1,0 +1,47 @@
+-W
+(W)rite error, no destination defined
+-L
+-N NOPE.COM
+-L
+
+-N NOPE.EXE
+-L
+
+-H 1
+    ^ Error
+-D 200 100
+          ^ Error
+-R CX
+CX 0000
+:XYZ
+ ^ Error
+-E 200
+1A0C:0200  41.
+ 
+-D 100 10F
+1A0C:0100  01 39 19 E8 00 00 5B 50-8C C0 05 10 00 8B 0E 1E   .9....[P........
+-U 100 L2
+1A0C:0100 0139          ADD	[BX+DI],DI                         
+-U
+1A0C:0102 19E8          SBB	AX,BP                              
+1A0C:0104 0000          ADD	[BX+SI],AL                         
+1A0C:0106 5B            POP	BX                                 
+1A0C:0107 50            PUSH	AX                                 
+1A0C:0108 8CC0          MOV	AX,ES                              
+1A0C:010A 051000        ADD	AX,0010                            
+1A0C:010D 8B0E1E01      MOV	CX,[011E]                          
+1A0C:0111 03C8          ADD	CX,AX                              
+1A0C:0113 894FFB        MOV	[BX-05],CX                         
+1A0C:0116 8B0E2601      MOV	CX,[0126]                          
+1A0C:011A 03C8          ADD	CX,AX                              
+1A0C:011C 894FF7        MOV	[BX-09],CX                         
+1A0C:011F 8B0E2001      MOV	CX,[0120]                          
+-A 100
+1A0C:0100 MOV AX,
+                 ^ Error
+1A0C:0100 JMP 200
+1A0C:0103 
+-L 100 2 0 1
+-D 2FE L2
+1A0C:02F0                                            55 AA                 U.
+-Q

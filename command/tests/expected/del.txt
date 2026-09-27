@@ -1,0 +1,25 @@
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T\CDIR
+
+.               ..              A        TXT    B        TXT    CTRLZ    TXT
+FRUIT    TXT    OUT1     TXT    UP       TXT    C        TXT    AB       TXT
+AB2      TXT
+       11 File(s)   31516672 bytes free
+
+C:\T>del cdir\*.*
+All files in directory will be deleted!
+Are you sure (Y/N)?y
+
+C:\T>dir cdir
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T\CDIR
+
+.            <DIR>     09-24-26   3:20p
+..           <DIR>     09-24-26   3:20p
+        2 File(s)   31535104 bytes free
+
+C:\T>

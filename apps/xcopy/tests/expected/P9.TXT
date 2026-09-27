@@ -1,0 +1,7 @@
+Does NUL specify a file name
+or directory name on the target
+(F = file, D = directory)?f
+Reading source file(s)...
+\S\A.TXT
+Cannot XCOPY to a reserved device
+        0 File(s) copied

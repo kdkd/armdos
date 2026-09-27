@@ -1,0 +1,11 @@
+{
+  "dirs": ["PAINT", "PAINT\\SAMPLES"],
+  "files": [
+    { "src": "build/PAINT.EXE", "dst": "PAINT\\" },
+    { "src": "apps/paint/data/PAINT.BAT", "dst": "DOS\\PAINT.BAT" },
+    { "src": "apps/paint/samples/SPLASH.PCX", "dst": "PAINT\\SAMPLES\\" },
+    { "src": "apps/paint/samples/SUNSET.PCX", "dst": "PAINT\\SAMPLES\\" },
+    { "src": "apps/paint/samples/ARMAT.PCX", "dst": "PAINT\\SAMPLES\\" }
+  ],
+  "excludeFromDos": ["PAINT.EXE"]
+}

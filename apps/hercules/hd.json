@@ -1,0 +1,6 @@
+{
+  "files": [
+    { "src": "build/HERCULES.EXE", "dst": "DEMO\\" }
+  ],
+  "excludeFromDos": ["HERCULES.EXE"]
+}

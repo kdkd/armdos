@@ -1,0 +1,55 @@
+ARM-DOS MULTIMEDIA SAMPLER '93 - CREDITS
+════════════════════════════════════════
+
+Disc produced by Europa Micro Systems for the ARM-DOS project.
+Everything on this disc may be copied and given away under the licence
+named next to it.
+
+CD AUDIO TRACKS
+───────────────
+
+@TRACKCREDITS@
+  Creative Commons Attribution 4.0 International:
+  http://creativecommons.org/licenses/by/4.0/
+  You may share and adapt these tracks for any purpose, as long as you
+  credit the composer as shown above.
+
+PROGRAMS
+────────
+
+  DEMO\DEMO.EXE      "ARM-DOS 4.00: the demo" - original code and music by
+                     the ARM-DOS project.
+  ZORK\ZORK?.DAT     ZORK I, II and III story files, from Infocom's
+                     original source released by Microsoft under the MIT
+                     License (2025). See ZORK\LICENSE.TXT.
+  ZORK\ZORK?.EXE     MojoZork Z-machine interpreter by Ryan C. Gordon,
+                     zlib licence (ZORK\MOJOZORK.TXT); ported to ARM-DOS.
+  ADVENT\ADVENT.EXE  Open Adventure 1.22 by Eric S. Raymond, a forward port
+                     of Crowther and Woods' Adventure 2.5, BSD-2-Clause
+                     licence (ADVENT\LICENSE.TXT).
+  BASIC\*.BAS        demo programs for ARM-DOS BASIC (Bywater BASIC 3.40,
+                     GNU GPL v2 - BASIC\LICENSE.TXT).
+  UTILS\ARMINFO.EXE  ARM/AT system information - original ARM-DOS program.
+  ANSI\ANSI.ART      original ANSI art by the ARM-DOS project.
+
+PICTURES
+────────
+
+  All four pictures are NASA photographs, which are in the public domain
+  (NASA media usage guidelines). Reduced to 320x200 in 256 colours.
+
+  EARTHRSE.GIF  "Earthrise", Apollo 8, 24 December 1968 (NASA AS08-14-2383)
+  BLUEMARB.GIF  "The Blue Marble", Apollo 17, 7 December 1972
+                (NASA AS17-148-22727)
+  ALDRIN.GIF    Edwin Aldrin on the Moon, Apollo 11, 20 July 1969
+                (NASA AS11-40-5903)
+  MOON.GIF      The Moon from the Galileo spacecraft on its way to
+                Jupiter, 7 December 1992 (NASA/JPL/USGS, PIA00405)
+
+TEXTS
+─────
+
+  TIMEMACH.TXT  H. G. Wells, "The Time Machine" (1895)    public domain
+  RAVEN.TXT     Edgar Allan Poe, "The Raven" (1845)       public domain
+  CONSTITU.TXT  The Constitution of the United States (1787)
+                                                          public domain

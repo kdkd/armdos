@@ -1,0 +1,8 @@
+
+
+    655360 bytes total memory
+    655360 bytes available
+    585920 largest executable program size
+
+   3145728 bytes total extended memory
+   3145728 bytes available extended memory

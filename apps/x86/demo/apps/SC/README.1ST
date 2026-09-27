@@ -1,0 +1,121 @@
+This is the third round of work on the Spreadsheet Calculator for OS/2
+and DOS, and consists of bugfixes only. A (fatal) problem in using
+the regex routines has been corrected, and a number of fixes have
+been made for various problems with dates, including work-arounds for
+Microsoft C deficiencies.
+
+Files:
+  ./
+    README      the readme from the original 6.21 distribution
+    README.1st  this file
+    sc.exe      OS/2 1.x-2.x and DOS 16-bit executable
+    psc.exe    
+    scqref.exe 
+    sc32.exe    OS/2 2.x and DOS 32-bit executable.
+    *.man       formatted man pages (to be read with the "less" pager)
+  src/          sources and patches
+
+The 32-bit executable is created with Mattes' GNU emx tools, and 
+has "emx.exe integrated". It will run under OS/2 2.x or DOS (with a
+386 or better), but will not run in a dos-box under OS/2 or Windows.
+OS/2 users will need the emx runtime, available from ftp.cdrom.com
+in pub/os2/2_x/unix/gnu/emx08h/emxrt.zip.
+
+Additional work should probably be directed towards GNU Oleo, or
+towards the new sc:
+
+  Date: Wed, 2 Feb 1994 11:09:53 -0500
+  From: jeff@amesbvap.ci.in.ameritech.com (Jeff Buhrt)
+  Subject: Your sc status....
+
+  I have a set of patches just about ready for a new version.
+  Right now, except for the copyright (attached below) on the X part,
+  sc and Xspread are the same. At the moment you either compile as xspread
+  or sc depending on a flag (DOINGX), a merged version (auto selection-like
+  emacs/oleo/etc.) would be the next step. [text deleted]
+
+			   -Jeff Buhrt
+			   Ameritech Services, Inc.
+			   317-265-7426
+		   I-net:  jeff@amesbvap.ci.in.ameritech.com
+
+
+Preface to the second edition
+-----------------------------
+
+This is the second round of work on the Spreadsheet Calculator for OS/2
+and DOS. The man pages *.man are intended to be read with the "less"
+pager, available for OS/2, DOS, and Unix.
+
+Major changes: Support '!' shell commands, /s sort, external
+functions, regular-expression searching, and fixes and additions for
+the Write and Tbl filenames.  Filename mangling is performed if the
+filesystem is not HPFS.
+
+Executables can be created for OS/2 and DOS with emx/gcc or msc. The
+enclosed executables will run under OS/2 1.x--2.x and DOS, but memory
+will be limited under DOS. A DOS-only version could save a few bytes.
+
+See the update history below for the changes from the earlier port.
+
+--
+Darrel Hankerson hankedr@mail.auburn.edu
+
+
+Update history
+--------------
+
+** 14-May-94 Darrel Hankerson hankedr@mail.auburn.edu
+
+Bugfixes for regex and date problems. Using regex with certain
+"illegal" expressions could cause an access violation (gawk 2.15.3 had
+the same problem). Problems with date calculations were reported by
+Janusz S. Bie/n <JSBIEN%PLEARN.BITNET@SEARN.SUNET.SE>. Some of the
+original code was never implemented or integrated properly, and
+brain-dead MSC required additional changes (the time routines from
+Mattes' emx/gcc are used as replacements).
+
+
+** 21-Nov-93 Darrel Hankerson hankedr@mail.auburn.edu
+
+Added support for the usual '!' shell commands, /s sort, external
+functions, regular-expression searching, and fixes and additions for
+the Write file and Tbl filenames.  Filename mangling is performed if
+the filesystem is not HPFS.
+
+Mark Hessling's very nice PDCurses 2.1 was used for this port. In
+limited testing, I could not get the BSD curses from the emx
+distribution to work correctly. It appears that PDCurses is more
+complete and faster, and it compiles easily with emx/gcc or msc.
+
+I've used the GNU awk 2.15.2 regular expression routine regex.[ch]
+mainly because I'm somewhat familiar with it. It is likely that some
+bytes could be saved here. The popen.[ch] routines are also
+from the gawk distribution (with minor changes). See COPYING
+and COPYING.EMX for the appropriate copyright information.
+
+sc has a lengthy history, and some questionable coding practices. 
+In particular, there are some comparison of doubles in interp.c which
+will break under optimization in emx/gcc (hence the -ffloat-store for
+this module). The problem compare is 
+	    if ((p->cellerror = cellerror) || (v != p->v)) {
+in RealEvalOne().
+
+The context diffs are from the June-92 archive--this appears to have
+some minor changes over the original post of sc-6.21.
+
+
+** 15-Nov-92 Darrel Hankerson hankedr@mail.auburn.edu
+
+PDCurses 2.0. Use bison on gram.y due to syntax problems.
+
+
+**29-Oct-92 
+
+PDCurses 2.0 beta
+
+
+**27-Oct-92
+
+Original port, adapted from Walter's port
+

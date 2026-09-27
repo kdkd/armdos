@@ -1,0 +1,21 @@
+{
+  "comment": "Drive C: - build/hd.img. Paths are relative to the project root (base). Missing optional files are skipped, so the image builds before the kernel exists.",
+  "base": "..",
+  "format": "hd",
+  "sizeMB": 128,
+  "heads": 16,
+  "sectorsPerTrack": 63,
+  "label": "ARM-DOS",
+  "date": "1988-06-17 12:00:00",
+  "boot": { "src": "build/bootsect.bin", "optional": true },
+  "files": [
+    { "src": "build/IO.SYS",      "attr": "HSR", "first": 1, "optional": true },
+    { "src": "build/ARMDOS.SYS",  "attr": "HSR", "first": 2, "optional": true },
+    { "src": "build/COMMAND.COM", "optional": true },
+    { "src": "build/*.EXE", "dst": "DOS\\", "optional": true },
+    { "src": "build/*.COM", "dst": "DOS\\", "exclude": ["COMMAND.COM"], "optional": true },
+    { "src": "build/*.SYS", "dst": "DOS\\", "exclude": ["IO.SYS", "ARMDOS.SYS"], "optional": true }
+  ],
+  "tree": [ { "src": "disk/c", "optional": true } ],
+  "dirs": [ "DOS" ]
+}

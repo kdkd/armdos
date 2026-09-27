@@ -1,0 +1,6 @@
+Reading source file(s)...
+\S\A.TXT
+\S\D1\B.TXT
+\S\D1\NEW.TXT
+\S\D1\D2\C.TXT
+        4 File(s) copied

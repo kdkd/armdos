@@ -1,0 +1,24 @@
+
+A>c:
+
+C>cd \t
+
+C>trash
+
+Not ready reading drive A
+Insert disk with \COMMAND.COM in drive A
+Press any key to continue . . .
+
+C>ver
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C>
+
+
+
+
+
+

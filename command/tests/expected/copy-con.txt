@@ -1,0 +1,12 @@
+
+C:\T>copy con cc.txt
+first line
+second line
+^Z
+        1 File(s) copied
+
+C:\T>type cc.txt
+first line
+second line
+
+C:\T>

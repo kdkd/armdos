@@ -1,0 +1,7 @@
+
+C:\T>pauser
+before
+Press any key to continue . . .
+
+after
+C:\T>

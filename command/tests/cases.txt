@@ -1,0 +1,509 @@
+# COMMAND.COM test cases: each case starts with CLS, then the lines are typed
+# (Enter after each unless {NOCR}); the screen is compared with expected/NAME.txt.
+# The same keystrokes were run on the real MS-DOS 4.00 (ref/capture.py).
+# ARM-DOS additions on top of the captures: VER's two copyright lines (added to
+# ver, batch-echo, secondary, trash, editing, reload-floppy - nothing else
+# changed there) and the hidden commands (case "eggs").
+# Cases run in order in one session: later cases see earlier cases' files.
+
+=== cd-t
+cd \t
+cd
+
+=== ver
+ver
+ver x
+ver /x
+
+=== vol
+vol
+vol c:
+vol q:
+
+=== echo
+echo
+echo hello world
+echo.
+echo  two spaces
+echo off
+echo
+echo on
+echo=on
+echo on and on
+echo,comma
+
+=== break-verify
+break
+break on
+break
+break off
+verify
+verify on
+verify
+verify off
+break x
+verify x
+
+=== set-path
+set
+path
+path c:\dos;c:\bin
+path
+set
+path ;
+path
+set
+
+=== set-vars
+set foo=bar
+set Mixed Case=Some Value
+set
+set foo=
+set mixed case=
+set =x
+set a=b=c
+set
+
+=== prompt
+prompt $p$g
+prompt [$p] $v$_$q$$$b$l$h$g
+prompt $n$g
+prompt
+prompt =$p$g
+
+=== dir
+dir
+
+=== dir-w
+dir /w
+dir /w/w
+
+=== dir-args
+dir sub
+dir a
+dir *.bat
+dir nofile
+
+=== dir-errors
+dir /x
+dir a b
+dir q:
+dir \nodir\*.*
+dir sub\
+
+=== dir-dotdot
+cd sub
+dir ..
+cd \
+dir ..
+cd \t
+
+=== type
+type a.txt
+type ctrlz.txt
+type nofile.txt
+type \t\nofile.txt
+type *.txt
+type
+
+=== bad-command
+xyzzq
+q:
+*.bat
+c:\t\nocmd.exe
+a.txt
+ver/x
+cls /x
+
+=== truename
+truename
+truename a.txt
+truename \t\sub\..\b.txt
+truename c:
+
+=== chcp
+chcp
+chcp 850
+
+=== date-time
+date 13-45-88
+{ENTER}{NOCR}
+time 25:99
+{ENTER}{NOCR}
+
+=== args
+args
+args one two
+args c:x.y d:z
+args /a /b
+args one,two;three=four
+args.com hello
+
+=== errorlevel
+ret 3
+if errorlevel 3 echo three
+if errorlevel 4 echo four
+if not errorlevel 4 echo not four
+ret 0
+if errorlevel 1 echo one
+
+=== batch-echo
+e1 arg
+e1
+
+=== batch-params
+params a b c d e f g h i j k
+params
+loop x y z
+
+=== batch-vars
+vars hello
+
+=== batch-for
+fors
+
+=== batch-if
+ifs yes
+ifs no
+
+=== batch-call
+caller
+
+=== batch-goto
+badgoto
+labels
+
+=== batch-echoon
+echoon
+
+=== for-prompt
+echo on
+for %a in (1 2) do echo %a
+for %a in (a*.txt b*.txt) do type %a
+for %a in (x) echo bad
+for %a in (y) do for %b in (z) do echo nested
+
+=== if-prompt
+if a==a echo equal
+if a==b echo equal
+if not a==b echo not equal
+if exist a.txt echo exists
+if exist nofile echo exists
+if
+if a
+if a==
+if a===a echo triple
+
+=== redir-out
+echo hello > out1.txt
+echo more>>out1.txt
+type out1.txt
+rem > empty.txt
+dir empty.txt
+type a.txt>con
+echo x >
+echo y <
+
+=== redir-in
+upcase < a.txt
+upcase<b.txt>up.txt
+type up.txt
+upcase < nofile.txt
+
+=== pipes
+type fruit.txt | upcase
+type a.txt|upcase|upcase
+echo piped | upcase
+dir sub | upcase
+echo x |
+echo x || upcase
+
+=== copy-basic
+copy a.txt c.txt
+type c.txt
+copy a.txt+b.txt ab.txt
+type ab.txt
+copy c.txt \t
+copy nofile.txt z.txt
+copy \t\nofile.txt z.txt
+
+=== copy-wild
+md cdir
+copy *.txt cdir
+dir cdir /w
+copy cdir\a.txt+cdir\b.txt cdir\ab2.txt
+
+=== copy-errors
+copy
+copy a b c
+copy a.txt+
+copy /x a.txt b.txt
+copy a.txt \nodir\x\
+copy a.txt+nofile.txt ab3.txt
+
+=== copy-con
+copy con cc.txt
+first line
+second line
+{F6}
+type cc.txt
+
+=== copy-dev
+copy a.txt con
+copy /b a.txt+b.txt con
+
+=== ren
+ren c.txt d.txt
+dir d.txt
+ren nofile.txt x.txt
+ren d.txt a.txt
+ren a.txt \x.txt
+ren a.txt c:x.txt
+ren
+ren a.txt
+
+=== del
+del d.txt
+dir d.txt
+del nofile.txt
+del
+del cdir
+n
+dir cdir /w
+del cdir\*.*
+y
+dir cdir
+
+=== md-rd
+md newdir
+md newdir
+md \nodir\sub
+cd newdir
+cd
+cd ..
+rd newdir
+rd newdir
+rd \t\sub
+md
+rd
+cd \nodir
+cd q:
+
+=== pause
+pause
+{ENTER}{NOCR}
+echo done
+
+=== batch-pause
+pauser
+x{NOCR}
+
+=== batch-ctrlc refwait=3
+pauser
+{CTRL+C}{NOCR}
+y{NOCR}
+
+=== secondary
+\command /c echo hi
+\command /c ret 5
+if errorlevel 1 echo el1
+\command /e:100 /c ver
+\command /x /c ver
+\command
+set
+exit
+
+=== trash
+trash
+ver
+dir sub /w
+
+=== dir-p refwait=3
+dir many /p
+{ENTER}{NOCR}
+
+=== dir-wp
+dir many /w/p
+
+=== dir-noext
+dir *.
+dir noext
+type noext
+
+=== path-search
+path c:\t
+cd \
+ret 2
+if errorlevel 2 echo two
+args x y
+path q:\;c:\t
+args z
+path
+path ;
+args
+cd \t
+
+=== paths-prompt
+echo %path%
+c:\t\params x
+cd sub
+..\params y
+cd ..
+cd..
+cd\
+cd t\sub
+cd ..\..
+cd t
+
+=== batch-more
+noeol
+callret z
+forcall
+
+=== copy-more
+copy a.txt nul
+type nul
+copy nul empty2.txt
+copy a.txt+b.txt
+type a.txt
+copy b.txt a.txt
+copy a.txt con > nul
+
+=== ren-wild
+copy *.txt *.bak
+ren *.bak *.old
+dir *.old /w
+del *.old
+dir *.old
+
+=== truename-dev
+truename nul
+truename con
+truename prn
+
+=== editing
+dir sub{ESC}ver
+{F3}
+echo abc
+{F1}{F1}{F3}
+
+=== ctrlc-program refwait=3
+echo on
+waitkey
+{CTRL+C}{NOCR}
+waiter
+{CTRL+C}{NOCR}
+n{NOCR}
+waiter
+{CTRL+C}{NOCR}
+y{NOCR}
+
+=== date-time-set
+date 1-2-89
+date
+{ENTER}{NOCR}
+date 2-30-89
+{ENTER}{NOCR}
+time 1:2:3.4
+time 13:45
+time 25
+{ENTER}{NOCR}
+
+=== copy-modes
+copy /a a.txt ca.txt
+dir ca.txt
+copy /b a.txt+b.txt cb.txt
+dir cb.txt
+copy a.txt/a+b.txt/a cc2.txt
+dir cc2.txt
+copy /v a.txt cv.txt
+verify
+del c?.txt
+del cc2.txt
+
+=== too-many
+type a.txt b.txt
+md x y
+cd x y
+vol c: d:
+path x y
+break on off
+ren a b c
+del a b
+
+=== prompt-only
+goto x
+shift
+call ret 4
+if errorlevel 4 echo four
+if exist \t\sub echo dir
+if exist \t\sub\nul echo nul trick
+for %a in (c:*.bat) do echo %a
+for %a in (c*.txt) do if exist %a echo %a exists
+
+# a failed GOTO in a CALLed batch file leaves the caller's batch segment
+# behind, still counted in NEST; the next "Terminate batch job" then runs
+# into DOS 4's bogus-segment path ("Batch file missing") - last, as it
+# spoils the batch state for the rest of the session
+=== callfail-leak refwait=3
+callfail
+pauser
+{CTRL+C}{NOCR}
+y{NOCR}
+waiter
+{CTRL+C}{NOCR}
+y{NOCR}
+
+# ---- ARM-DOS only (machine actions, or not in DOS 4.00 at all)
+
+# the hidden commands (eggs.c; README.md "Spoilers")
+=== eggs armonly
+msd
+win /3
+deltree \
+memmaker
+intel
+xyzzy
+
+=== eggs2 armonly
+iddqd
+idkfa
+hal
+42
+ret 7
+sudo del *.*
+if not errorlevel 1 echo errorlevel 0
+=== eggs-uname armonly
+uname
+uname -a
+uname -snrm
+uname --kernel-release -o
+uname -x
+uname --foo
+uname bar
+
+=== eggs-uname-help armonly
+uname --help
+uname --version
+
+=== eggs-ls armonly
+plugh
+ls sub /w
+eliza
+
+# (machine actions; expected screens written from the
+# 4.0 source: COMMAND2.ASM LOADCOM/GETCOMDSK and RUCODE.ASM DSKERR)
+=== reload-floppy armonly boot=fd
+c:
+cd \t
+{EJECT}
+trash
+{INSERT}
+x{NOCR}
+ver
+
+# start-up without AUTOEXEC.BAT: date and time prompts, then the banner
+# (COMMAND.md V.1, verified on the real 4.00; branding substituted)
+=== boot-noautoexec armonly boot=fdn nocls from=Current_date
+{ENTER}{NOCR}
+{ENTER}{NOCR}

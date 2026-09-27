@@ -1,0 +1,24 @@
+
+C:\T>iddqd
+Degreelessness mode on. (It doesn't do anything here, but it feels good.)
+
+C:\T>idkfa
+Very happy ammo added. Now go and find a keyboard with DOOM on it.
+
+C:\T>hal
+I'm sorry, Dave. I'm afraid I can't do that.
+
+C:\T>42
+42. Now, what was the question?
+
+C:\T>ret 7
+
+C:\T>sudo del *.*
+It's 1988. Nobody has heard of sudo. Besides, this is DOS: you are
+already root.
+
+C:\T>if not errorlevel 1 echo errorlevel 0
+errorlevel 0
+
+C:\T>
+

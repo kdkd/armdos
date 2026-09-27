@@ -1,0 +1,25 @@
+
+C:\T>copy nul empty2.txt
+        0 File(s) copied
+
+C:\T>copy a.txt+b.txt
+A.TXT
+B.TXT
+        1 File(s) copied
+
+C:\T>type a.txt
+This is file A.
+It has two lines.
+File B, line one
+line two
+line three
+
+C:\T>copy b.txt a.txt
+        1 File(s) copied
+
+C:\T>copy a.txt con > nul
+File B, line one
+line two
+line three
+
+C:\T>

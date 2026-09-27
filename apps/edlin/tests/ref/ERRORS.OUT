@@ -1,0 +1,42 @@
+End of input file
+*5,1l
+Entry error
+*0l
+Entry error
+*x
+Entry error
+*1,2,3,4,5l
+Entry error
+*1,2i
+Entry error
+*1,2,3,.c
+Entry error
+*99999l
+Entry error
+*1,2,3,4d
+Entry error
+*70000
+Entry error
+*l ; 2d ; l
+       1:*e1
+       2: e2
+       3: e3
+       4: e4
+       5: e5
+       1: e1
+       2:*e3
+       3: e4
+       4: e5
+*2d;1d;l
+       1:*e4
+       2: e5
+*z
+Entry error
+*q
+Abort edit (Y/N)? 
+
+Abort edit (Y/N)? n
+*
+       2:*e5
+       2:*l
+*e3

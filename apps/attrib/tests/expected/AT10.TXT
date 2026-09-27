@@ -1,0 +1,5 @@
+  A          C:\AT\SUB\DEEP\F4.TXT
+  A    R     C:\AT\SUB\G5.BIN
+  A    R     C:\AT\SUB\F3.TXT
+  A          C:\AT\F2.DAT
+  A          C:\AT\F1.TXT

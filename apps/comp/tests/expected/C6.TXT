@@ -1,0 +1,7 @@
+
+
+C:\T\E1.TXT and C:E1.TXT
+
+EOF mark not found
+Files compare OK
+n

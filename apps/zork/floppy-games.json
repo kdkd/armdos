@@ -1,0 +1,14 @@
+{
+  "dirs": ["ZORK"],
+  "files": [
+    { "src": "build/ZORK1.EXE", "dst": "ZORK\\" },
+    { "src": "build/ZORK2.EXE", "dst": "ZORK\\" },
+    { "src": "build/ZORK3.EXE", "dst": "ZORK\\" },
+    { "src": "apps/zork/data/ZORK1.DAT", "dst": "ZORK\\" },
+    { "src": "apps/zork/data/ZORK2.DAT", "dst": "ZORK\\" },
+    { "src": "apps/zork/data/ZORK3.DAT", "dst": "ZORK\\" },
+    { "src": "apps/zork/data/LICENSE.TXT", "dst": "ZORK\\LICENSE.TXT" },
+    { "src": "apps/zork/src/LICENSE-MOJOZORK.TXT", "dst": "ZORK\\MOJOZORK.TXT" }
+  ],
+  "excludeFromDos": ["ZORK1.EXE", "ZORK2.EXE", "ZORK3.EXE"]
+}

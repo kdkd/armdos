@@ -1,0 +1,18 @@
+{
+  "comment": "C:\\GAMES\\HEXEN2: the Hexen II engine (uHexen2, GPL-2) WITHOUT its data - Activision's demo licence forbids redistributing PAK0.PAK. The player adds DATA1\\PAK0.PAK (README.TXT, INSTALL.BAT, GETPAK.BAT). PROGS.DAT is the GPL game code compiled from gamecode/h2, HEXEN.RC uHexen2's.",
+  "dirs": ["GAMES", "GAMES\\HEXEN2", "GAMES\\HEXEN2\\DATA1"],
+  "files": [
+    { "src": "build/H2.EXE", "dst": "GAMES\\HEXEN2\\H2.EXE" },
+    { "src": "build/H2CHECK.EXE", "dst": "GAMES\\HEXEN2\\H2CHECK.EXE" },
+    { "src": "apps/hexen2/data/README.TXT", "dst": "GAMES\\HEXEN2\\README.TXT" },
+    { "src": "apps/hexen2/data/HOWTO.TXT", "dst": "GAMES\\HEXEN2\\HOWTO.TXT" },
+    { "src": "apps/hexen2/data/INSTALL.BAT", "dst": "GAMES\\HEXEN2\\INSTALL.BAT" },
+    { "src": "apps/hexen2/data/HEXEN2.BAT", "dst": "GAMES\\HEXEN2\\HEXEN2.BAT" },
+    { "src": "apps/hexen2/data/HEXEN2.BAT", "dst": "DOS\\HEXEN2.BAT" },
+    { "src": "apps/hexen2/data/GETPAK.BAT", "dst": "GAMES\\HEXEN2\\GETPAK.BAT" },
+    { "src": "apps/hexen2/data/GETPAK.SCR", "dst": "GAMES\\HEXEN2\\GETPAK.SCR" },
+    { "src": "apps/hexen2/data/DATA1/PROGS.DAT", "dst": "GAMES\\HEXEN2\\DATA1\\PROGS.DAT" },
+    { "src": "apps/hexen2/data/DATA1/HEXEN.RC", "dst": "GAMES\\HEXEN2\\DATA1\\HEXEN.RC" }
+  ],
+  "excludeFromDos": ["H2.EXE", "H2CHECK.EXE"]
+}

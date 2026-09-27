@@ -1,0 +1,37 @@
+{
+  "comment": "The CD audio tracks of the ARM-DOS Multimedia Sampler '93, in disc order (track 2 first). The .mp3 files here are the originals as downloaded from incompetech.com on 2026-09-24 (sha256 below). Licence verified on each track's incompetech.com page: 'Licensed under Creative Commons: By Attribution 4.0 License'.",
+  "tracks": [
+    {
+      "file": "cipher.mp3", "title": "Cipher", "artist": "Kevin MacLeod",
+      "originalName": "Cipher2.mp3", "isrc": "USUAN1100844",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100844",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Cipher2.mp3",
+      "licence": "CC BY 4.0", "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "downloaded": "2026-09-24", "sha256": "d3d0614535a61d748e2fd8d5117fc4d781022a7624794802a2462d8af3fdd522"
+    },
+    {
+      "file": "local-forecast-elevator.mp3", "title": "Local Forecast - Elevator", "artist": "Kevin MacLeod",
+      "originalName": "Local Forecast - Elevator.mp3", "isrc": "USUAN1300012",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300012",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Local%20Forecast%20-%20Elevator.mp3",
+      "licence": "CC BY 4.0", "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "downloaded": "2026-09-24", "sha256": "8c46b44e65324bc339fbbc3e770611d671f6c74a40f3ec8dd50332c082b25cc9"
+    },
+    {
+      "file": "funkorama.mp3", "title": "Funkorama", "artist": "Kevin MacLeod",
+      "originalName": "Funkorama.mp3", "isrc": "USUAN1100474",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100474",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Funkorama.mp3",
+      "licence": "CC BY 4.0", "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "downloaded": "2026-09-24", "sha256": "6be229815d85a0b99382b944d31098b882702c04ac7ad899e44ab7f8ba89b5ad"
+    },
+    {
+      "file": "eighties-action.mp3", "title": "Eighties Action", "artist": "Kevin MacLeod",
+      "originalName": "Eighties Action.mp3", "isrc": "USUAN1100243",
+      "source": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100243",
+      "download": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Eighties%20Action.mp3",
+      "licence": "CC BY 4.0", "licenceUrl": "http://creativecommons.org/licenses/by/4.0/",
+      "downloaded": "2026-09-24", "sha256": "ae418a7f7e1b4ed77b0b3edb9ae416b34936777fd262e4c30cfe7483a8da45dd"
+    }
+  ]
+}

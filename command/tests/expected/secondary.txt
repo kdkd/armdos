@@ -1,0 +1,25 @@
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C:\T>\command /x /c ver
+Invalid switch
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C:\T>\command
+
+
+ARM-DOS(R) Version 4.00
+             (C)Copyright Europa Micro Systems 1988
+
+C:\T>set
+COMSPEC=C:\COMMAND.COM
+PATH=
+PROMPT=$p$g
+
+C:\T>exit
+
+C:\T>

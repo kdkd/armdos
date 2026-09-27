@@ -1,0 +1,39 @@
+                    ARM-DOS 4.00 TIPS AND TRICKS
+                    compiled by the users of The ARM Pit BBS, 1989
+
+ 1. PROMPT $P$G shows the current directory in the prompt.  Put it in
+    AUTOEXEC.BAT and never get lost again.
+
+ 2. MEM tells you how much of your 640K is left.  MEM /PROGRAM shows who
+    ate the rest.
+
+ 3. The TURBO button on the ARM/AT really matters: 100 MHz with it on,
+    12 MHz with it off (for old games that run too fast).
+
+ 4. F3 at the prompt repeats the last command.  F1 repeats it one letter
+    at a time, which is useful for fixing typos.
+
+ 5. DIR /W lists files across the screen, DIR /P stops at each page.
+
+ 6. COPY CON: FILE.TXT lets you type a file straight from the keyboard.
+    End it with F6 (Ctrl-Z) and Enter.
+
+ 7. TERM keys: Alt-D dial, Alt-H hang up, PgUp upload, PgDn download,
+    Alt-B scrollback, Alt-L capture to a file, Alt-S setup, Alt-X exit.
+
+ 8. ZMODEM downloads start by themselves in TERM.  If a download breaks
+    off, start it again - TERM keeps the partial file and ZMODEM resumes
+    where it stopped.
+
+ 9. Programs for ARM-DOS are EXE files with an ARM inside.  Run one on a
+    real IBM PC and it politely says "This program requires an ARM
+    processor."  No harm done.
+
+10. Back up your hard disk.  You have been told.  (BACKUP, or a stack of
+    floppies and COPY.)
+
+11. The modem speaker is annoying at 2 AM.  ATM0 turns it off, ATM1 turns
+    it on only while dialling.  Your family will thank you.
+
+12. Line noise looks like {@#$%&*.  It is not a virus.  It is your family
+    picking up the extension.

@@ -1,0 +1,15 @@
+
+Volume TESTDISK    created 09-24-2026 12:47p
+Volume Serial Number is 1234-5678
+
+   1457664 bytes total disk space
+       512 bytes in 1 directories
+     10752 bytes in 5 user files
+   1446400 bytes available on disk
+
+       512 bytes in each allocation unit
+      2847 total allocation units on disk
+      2825 available allocation units on disk
+
+    655360 total bytes memory
+    585936 bytes free

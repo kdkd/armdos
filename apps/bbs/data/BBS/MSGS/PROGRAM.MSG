@@ -1,0 +1,434 @@
+@@1
+From: Susan Oyelaran
+To: All
+Subj: Hello, world, the ARM way
+Date: 07-12-88 21:10
+
+Since this is Programmers' Corner and nobody has posted any code yet,
+here's the smallest useful thing: printing a string through DOS, from C
+with inline ARM assembler (works in the C compilers for ARM-DOS).
+
+On an ARM PC, "INT 21h" is the instruction  svc #0x21.  The registers
+map straight across: AX is r0, BX r1, CX r2, DX r3.  A pointer that
+would be DS:DX on a PC is just a flat 32-bit address in r3.
+
+  static void dos_print(const char *s)
+  {
+      __asm__ volatile (
+          "mov r3, %0\n\t"          /* DS:DX -> the string  */
+          "mov r0, #0x0900\n\t"     /* AH = 09h             */
+          "svc #0x21"               /* INT 21h              */
+          : : "r" (s) : "r0", "r1", "r2", "r3", "memory");
+  }
+
+  dos_print("Hello from svc #0x21!\r\n$");
+
+Yes, the string ends in a dollar sign.  Function 09h prints until it
+sees one.  Don't ask me why.  It was like that when I got here.
+
+Susan
+@@2
+From: Marcus Feld
+To: Susan Oyelaran
+Subj: Re: Hello, world, the ARM way
+Date: 07-13-88 16:20
+
+> Yes, the string ends in a dollar sign.
+
+So how do you print a dollar sign???
+
+Also how do you tell if the DOS call worked?
+@@3
+From: Susan Oyelaran
+To: Marcus Feld
+Subj: Re: Hello, world, the ARM way
+Date: 07-13-88 22:05
+
+> So how do you print a dollar sign???
+
+With a different function (02h prints one character from DL, which is
+the low byte of r3), or with printf like a civilised person.
+
+> Also how do you tell if the DOS call worked?
+
+Same as on a PC: the carry flag.  The ARM has a real carry flag in the
+CPSR, and DOS sets it on an error, so right after the svc:
+
+      svc   #0x21
+      bcs   failed          @ carry set: r0 holds the error code
+
+That's the whole trick.  The ARM version is actually tidier, because
+every instruction can test the flags, not just the jumps.
+
+Susan
+@@4
+From: Europa Sysop
+To: All
+Subj: Writing straight to the screen
+Date: 08-20-88 23:40
+
+The BBS's sysop screen doesn't go through DOS at all; it writes to the
+video memory directly.  In text mode the screen is 80 x 25 cells at
+address 0xB8000, each cell a 16-bit value: the character in the low
+byte, the colour attribute in the high byte.
+
+  static void putcell(int x, int y, int ch, int attr)
+  {
+      unsigned short *vram = (unsigned short *)0xB8000;
+      vram[y * 80 + x] = (unsigned short)((attr << 8) | ch);
+  }
+
+  putcell(79, 0, 'A', 0x1F);    /* white A on blue, top right */
+
+The attribute is background * 16 + foreground: 0x1F is bright white
+(15) on blue (1), 0x4E is yellow on red, 0x07 is plain grey on black.
+Add 0x80 and it blinks, which you should use exactly once in your life.
+
+On a PC you'd need a far pointer and the segment B800h.  Here it's a
+pointer.  I still smile every time.
+
+-- Europa
+@@5
+From: Karen Whitfield
+To: All
+Subj: How fast is my machine?  Ask it.
+Date: 09-30-88 07:15
+
+Every ARM/AT has a little system-board port that answers questions
+about itself.  I/O ports live at 0x10000000 + the port number, so you
+read them with a plain load:
+
+  #define PORT(p) (*(volatile unsigned char *)(0x10000000 + (p)))
+
+  printf("MHZ=%u TURBO=%u ID=%c\n", PORT(0xF1), PORT(0xF2), PORT(0xF0));
+
+Port F1h is the clock in MHz (the same number as on the front panel),
+F2h is 1 when TURBO is on, and F0h reads the letter 'A', for ARM.  With
+TURBO on, mine prints
+
+  MHZ=100 TURBO=1 ID=A
+
+And in assembler, the same port read is two instructions:
+
+      ldr   r1, =0x100000F1
+      ldrb  r0, [r1]            @ r0 = MHz
+
+The volatile matters: without it the compiler may decide it already
+knows the answer and never ask the hardware again.
+
+KW
+@@6
+From: Susan Oyelaran
+To: All
+Subj: Branchless code: conditional execution
+Date: 01-21-89 22:40
+
+My favourite thing about the ARM: EVERY instruction can be conditional,
+not just jumps.  Four condition bits on top of every instruction.  So
+small decisions don't need a branch at all:
+
+  absolute value of r0:
+      cmp   r0, #0
+      rsblt r0, r0, #0          @ if negative, r0 = 0 - r0
+
+  clamp r0 to 0..255 (colour values, sound samples):
+      cmp   r0, #0
+      movlt r0, #0
+      cmp   r0, #255
+      movgt r0, #255
+
+No jumps, so nothing to mispredict and no pipeline refill.  From C:
+
+  static int clamp255(int x)
+  {
+      __asm__ ("cmp %0, #0\n\t"   "movlt %0, #0\n\t"
+               "cmp %0, #255\n\t" "movgt %0, #255"
+               : "+r" (x) : : "cc");
+      return x;
+  }
+
+clamp255(-3) is 0, clamp255(100) is 100, clamp255(999) is 255.  The
+compiler does this by itself a lot of the time, but it's nice to know
+why the code it makes is so short.
+
+Susan
+... ARM-DOS: because RISC is its own reward.
+@@7
+From: Gordon Kessler
+To: Susan Oyelaran
+Subj: Re: Branchless code: conditional execution
+Date: 01-22-89 01:15
+
+> EVERY instruction can be conditional, not just jumps.
+
+Cute.  My 386 does it with a jump, and the prefetch queue doesn't even
+notice.  Four bits on every instruction that are "always" 95% of the
+time is what I call a waste of perfectly good opcode space.
+
+Gordon Kessler, sysop, The 386 Fortress, 555-0386
+@@8
+From: Rick Lambert
+To: Gordon Kessler
+Subj: Re: Branchless code: conditional execution
+Date: 01-22-89 08:30
+
+> is what I call a waste of perfectly good opcode space.
+
+Gordon, the sysop opened The Flame Pit (area 7) for exactly this.  I
+say that as a neutral party.  I use a PCjr.  I'm neutral in every war.
+@@9
+From: Susan Oyelaran
+To: All
+Subj: CLZ: log2 in one instruction
+Date: 03-08-89 21:55
+
+ARMv5 added CLZ, Count Leading Zeros: how many zero bits come before
+the first 1, from the top.  CLZ of 1 is 31, CLZ of 0x80000000 is 0,
+CLZ of 0 is 32.  Which means the integer log2 of a number is free:
+
+  static int log2i(unsigned x)
+  {
+      unsigned n;
+      __asm__ ("clz %0, %1" : "=r" (n) : "r" (x));
+      return 31 - (int)n;
+  }
+
+log2i(1) = 0, log2i(1000) = 9, log2i(0x80000000) = 31.
+
+Uses: "how many bits do I need", rounding up to a power of two for a
+memory allocator, normalising numbers in software floating point, and
+impressing people at Sal's Pizza.
+
+Susan
+@@10
+From: Doc Mantissa
+To: Susan Oyelaran
+Subj: Re: CLZ: log2 in one instruction
+Date: 03-09-89 23:30
+
+> and impressing people at Sal's Pizza.
+
+It worked on me.  In exchange, a gift from The Floating Point
+(555-7734): 16.16 fixed-point multiply for fractals, without floats.
+A number is stored times 65536.  Multiply two of them with SMULL,
+which gives the full 64-bit product in two registers, and take the
+middle 32 bits:
+
+  static int fixmul(int a, int b)       /* (a * b) >> 16 */
+  {
+      int r;
+      __asm__ ("smull r2, r3, %1, %2\n\t"
+               "mov   %0, r2, lsr #16\n\t"
+               "orr   %0, %0, r3, lsl #16"
+               : "=&r" (r) : "r" (a), "r" (b) : "r2", "r3");
+      return r;
+  }
+
+3.5 is 229376, -2.25 is -147456.  fixmul(229376, -147456) = -516096,
+which is -7.875 times 65536.  Correct, and not a float in sight.
+
+(UMULL is the unsigned twin.  0x87654321 * 1000 has a high word of 528,
+if you want to check your work.)
+
+My Mandelbrot got four times faster.  I'm told I shouted.
+
+Doc Mantissa
+... There are 10 kinds of people.  I'm the one with the fractal.
+@@11
+From: Susan Oyelaran
+To: Doc Mantissa
+Subj: Re: CLZ: log2 in one instruction
+Date: 03-10-89 07:20
+
+> My Mandelbrot got four times faster.
+
+Then here's one more for the collection: moving memory 32 bytes at a
+time.  LDM loads eight registers from consecutive addresses in one
+instruction, STM stores them, and the "!" moves the pointer along:
+
+  static void copy32(void *dst, const void *src, unsigned blocks)
+  {
+      __asm__ volatile (
+          "1: ldmia %1!, {r3-r10}\n\t"
+          "   stmia %0!, {r3-r10}\n\t"
+          "   subs  %2, %2, #1\n\t"
+          "   bne   1b"
+          : "+r" (dst), "+r" (src), "+r" (blocks)
+          : : "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10",
+              "cc", "memory");
+  }
+
+blocks is the count of 32-byte blocks, at least 1; both pointers
+should be word aligned.  Copying a 256-byte table is copy32(b, a, 8).
+
+Susan
+@@12
+From: Marcus Feld
+To: All
+Subj: How do I get the date?
+Date: 06-05-89 18:10
+
+I'm writing a program that tells you how many days until summer
+vacation ends (it's a very sad program).  How do I get today's date
+without printf'ing the output of the DATE command?
+@@13
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: How do I get the date?
+Date: 06-05-89 23:10
+
+> How do I get today's date
+
+INT 21h function 2Ah.  It returns the year in CX, the month in DH and
+the day in DL.  On the ARM: CX is r2, DX is r3, so the month is the
+second byte of r3 and the day the first:
+
+  static void getdate(int *y, int *m, int *d)
+  {
+      unsigned cx, dx;
+      __asm__ volatile (
+          "mov r0, #0x2A00\n\t"         /* AH = 2Ah */
+          "svc #0x21\n\t"
+          "mov %0, r2\n\t"
+          "mov %1, r3"
+          : "=r" (cx), "=r" (dx) : : "r0", "r1", "r2", "r3", "cc");
+      *y = cx & 0xFFFF;
+      *m = (dx >> 8) & 0xFF;
+      *d = dx & 0xFF;
+  }
+
+(AL comes back with the day of the week, 0 = Sunday, if you want to be
+even sadder about Mondays.)  Or in plain C, time() and localtime() work
+too; they end up asking DOS the same question.
+
+-- Europa
+@@14
+From: Europa Sysop
+To: All
+Subj: Writing your own door
+Date: 11-03-89 19:45
+
+People ask how the door game works.  It's just a program: the BBS writes
+a DOOR.SYS file with your name, COM port and time left, keeps the modem
+line up, and runs DRAGON.EXE.  The door opens COM2 itself, talks to you,
+and exits back to the BBS.  Any ARM-DOS C compiler can do it.
+
+If you write one, upload it!
+@@15
+From: Bill Tran
+To: All
+Subj: Timing without the timer chip
+Date: 11-19-89 02:20
+
+For anyone writing a door or a game: you don't have to program the
+timer to measure time.  The BIOS counts timer ticks, 18.2 of them a
+second, in a 32-bit word at address 0x46C (same place as on a PC, only
+here it's just an address):
+
+  volatile unsigned long *ticks = (volatile unsigned long *)0x46C;
+  unsigned long t0 = *ticks;
+  while (*ticks - t0 < 18)       /* about one second */
+      ;
+
+The subtraction keeps working when the counter wraps at midnight, as
+long as you use unsigned.  My "modem training" animation now runs at the
+same speed with TURBO on or off.  My cat is unimpressed.
+
+Bill
+@@16
+From: Dave Morgan
+To: All
+Subj: DOS tips from a Lotus guy
+Date: 12-02-89 21:50
+
+I'm not a programmer, but this area has taught me enough DOS to be
+dangerous.  Here are the ones I use every day, all tried on my ARM/AT:
+
+  PROMPT $P$G          shows the directory in the prompt: C:\LOTUS>
+                       (put it in AUTOEXEC.BAT)
+  DIR | SORT           the directory in alphabetical order
+  DIR | FIND /C "EXE"  counts the lines with EXE in them
+  TREE C:\ /F | MORE   every directory and file, a page at a time
+  MEM /PROGRAM         who is using my 640K
+  DIR /W               wide listing, five names across
+  COPY CON NOTE.TXT    type a file straight in, end with F6 and Enter
+
+The vertical bar is a "pipe".  It hands one program's output to the
+next one.  Linda asked what I was doing and I said "piping".  She said
+"that's what the plumber said, and then he charged us $300".
+
+Dave
+@@17
+From: Harold Pruitt
+To: Dave Morgan
+Subj: Re: DOS tips from a Lotus guy
+Date: 12-03-89 09:30
+
+> COPY CON NOTE.TXT    type a file straight in, end with F6 and Enter
+
+This one works.  I made a file called TRAINS.TXT listing every engine
+number I ever signalled for, from memory.  It took me all morning.  Then
+I learned that you can't go back and fix a line with COPY CON.  Then I
+learned about EDIT.  It's been a morning.
+
+Harold
+@@18
+From: Susan Oyelaran
+To: All
+Subj: TCC -run: C with no waiting
+Date: 02-20-90 22:10
+
+For quick experiments I've stopped building EXE files at all.  The
+little C compiler that lives in C:\DOS (TCC) can compile a program into
+memory and run it straight away:
+
+  TCC -run HELLO.C
+
+No EXE left behind, no link step to wait for, and it takes the inline
+ARM assembler in all the snippets in this area.  Look in C:\TC\SAMPLES
+for ASMDEMO.C, which reads the CPU's ID register, uses CLZ and UMULL,
+and calls svc #0x21, all in one page.
+
+When the experiment works, TCC HELLO.C makes a real HELLO.EXE.
+
+Susan
+... Compile, run, repeat.  Coffee optional.
+@@19
+From: Marcus Feld
+To: All
+Subj: Making the speaker beep
+Date: 03-15-90 19:25
+
+Figured this out from a PC book and it works on the ARM too, because
+the ports are the same, they just live at 0x10000000 + port.  The
+speaker is driven by timer channel 2:
+
+  #define PORT(p) (*(volatile unsigned char *)(0x10000000 + (p)))
+
+  static void beep(unsigned hz)
+  {
+      unsigned div = 1193182 / hz;  /* the timer runs at 1.193182 MHz */
+      PORT(0x43) = 0xB6;            /* channel 2, square wave */
+      PORT(0x42) = div & 0xFF;
+      PORT(0x42) = div >> 8;
+      PORT(0x61) |= 3;              /* gate on, speaker on */
+  }
+  static void quiet(void) { PORT(0x61) &= ~3; }
+
+beep(880), wait a few ticks (see Bill's message about 0x46C), quiet().
+My program now plays the first four notes of a song I can't name
+because my mother is reading over my shoulder.
+@@20
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: Making the speaker beep
+Date: 03-16-90 00:40
+
+> My program now plays the first four notes of a song
+
+Lovely code, Marcus, and exactly right.  One request from the sysop:
+please don't test it at 2 AM.  The last time a speaker went off in this
+house at 2 AM, Parity spent the night under the bed and the 2:10 freight
+got blamed for it.
+
+-- Europa

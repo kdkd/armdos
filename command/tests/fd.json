@@ -1,0 +1,14 @@
+{
+  "comment": "A 1.44 MB system diskette for command/tests (the transient-reload tests boot from it).",
+  "base": "../..",
+  "format": "fd1440",
+  "label": "ARMDOS",
+  "date": "1988-06-17 12:00:00",
+  "boot": { "src": "build/bootsect.bin" },
+  "files": [
+    { "src": "build/IO.SYS", "attr": "HSR", "first": 1 },
+    { "src": "build/ARMDOS.SYS", "attr": "HSR", "first": 2 },
+    { "src": "build/COMMAND.COM" },
+    { "src": "command/tests/disk/AUTOEXEC.BAT" }
+  ]
+}

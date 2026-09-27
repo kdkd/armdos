@@ -1,0 +1,25 @@
+quiet
+
+C:\T>ver
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C:\T>
+C:\T>e1
+
+C:\T>rem first
+
+C:\T>echo hello
+hello
+quiet
+
+C:\T>ver
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C:\T>
+C:\T>

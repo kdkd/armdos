@@ -1,0 +1,106 @@
+End of input file
+*1,#ralpha^Zomega
+       1:*omega beta 1 alpha
+       1:*omega beta 1 omega
+       2: omega beta 2 alpha
+       2:*omega beta 2 omega
+       3: omega beta 3 alpha
+       3:*omega beta 3 omega
+       4: omega beta 4 alpha
+       4:*omega beta 4 omega
+       5: omega beta 5 alpha
+       5:*omega beta 5 omega
+       6: omega beta 6 alpha
+       6:*omega beta 6 omega
+       7: omega beta 7 alpha
+       7:*omega beta 7 omega
+       8: omega beta 8 alpha
+       8:*omega beta 8 omega
+*l
+       1: omega beta 1 omega
+       2: omega beta 2 omega
+       3: omega beta 3 omega
+       4: omega beta 4 omega
+       5: omega beta 5 omega
+       6: omega beta 6 omega
+       7: omega beta 7 omega
+       8:*omega beta 8 omega
+*?1,3romega^ZA
+Entry error
+*y
+Entry error
+*n
+Entry error
+*y
+Entry error
+*n
+Entry error
+*y
+Entry error
+*y
+Entry error
+*l
+       1: omega beta 1 omega
+       2: omega beta 2 omega
+       3: omega beta 3 omega
+       4: omega beta 4 omega
+       5: omega beta 5 omega
+       6: omega beta 6 omega
+       7: omega beta 7 omega
+       8:*omega beta 8 omega
+*1,#rbeta^Z
+       1: omega  1 omega
+       2: omega  2 omega
+       3: omega  3 omega
+       4: omega  4 omega
+       5: omega  5 omega
+       6: omega  6 omega
+       7: omega  7 omega
+       8: omega  8 omega
+*l
+       1: omega  1 omega
+       2: omega  2 omega
+       3: omega  3 omega
+       4: omega  4 omega
+       5: omega  5 omega
+       6: omega  6 omega
+       7: omega  7 omega
+       8:*omega  8 omega
+*1,#romega
+       1:   1 omega
+       1:*  1 
+       2:   2 omega
+       2:*  2 
+       3:   3 omega
+       3:*  3 
+       4:   4 omega
+       4:*  4 
+       5:   5 omega
+       5:*  5 
+       6:   6 omega
+       6:*  6 
+       7:   7 omega
+       7:*  7 
+       8:   8 omega
+       8:*  8 
+*l
+       1:   1 
+       2:   2 
+       3:   3 
+       4:   4 
+       5:   5 
+       6:   6 
+       7:   7 
+       8:*  8 
+*5rA^Zdouble A
+Not found
+*l
+       1:   1 
+       2:   2 
+       3:   3 
+       4:   4 
+       5:   5 
+       6:   6 
+       7:   7 
+       8:*  8 
+*e

@@ -1,0 +1,25 @@
+hello
+more
+
+C:\T>rem > empty.txt
+
+C:\T>dir empty.txt
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+EMPTY    TXT         0 09-24-26   3:19p
+        1 File(s)   31545344 bytes free
+
+C:\T>type a.txt>con
+This is file A.
+It has two lines.
+
+C:\T>echo x >
+File creation error
+
+C:\T>echo y <
+File not found
+
+C:\T>

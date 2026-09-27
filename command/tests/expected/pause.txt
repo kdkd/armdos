@@ -1,0 +1,9 @@
+
+C:\T>pause
+Press any key to continue . . .
+
+
+C:\T>echo done
+done
+
+C:\T>

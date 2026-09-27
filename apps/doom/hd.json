@@ -1,0 +1,8 @@
+{
+  "dirs": ["GAMES", "GAMES\\DOOM"],
+  "files": [
+    { "src": "build/DOOM.EXE", "dst": "GAMES\\DOOM\\" },
+    { "src": "3rdparty/doom/DOOM1.WAD", "dst": "GAMES\\DOOM\\" }
+  ],
+  "excludeFromDos": ["DOOM.EXE"]
+}

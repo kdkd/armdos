@@ -1,0 +1,20 @@
+
+C:\T>ifs yes
+said yes
+a.txt exists
+nofile.txt missing
+level 5 or more
+level below 6
+Syntax error
+Syntax error
+after syntax error
+C:\T>ifs no
+did not say yes
+a.txt exists
+nofile.txt missing
+level 5 or more
+level below 6
+Syntax error
+Syntax error
+after syntax error
+C:\T>

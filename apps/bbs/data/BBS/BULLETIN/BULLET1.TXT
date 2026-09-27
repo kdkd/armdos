@@ -1,0 +1,13 @@
+@X0F  RULES OF THE ARM PIT@X07
+
+  1. Real names only.  "The Byte Bandit" is on probation.
+  2. No flames in the Main Board.  Take the RISC vs CISC war to
+     The Flame Pit (message area 7), where it belongs.
+  3. No commercial software in the upload area.  Freeware, shareware,
+     public domain and your own programs are welcome.
+  4. Upload/download ratio: we don't have one.  Don't make us.
+  5. Don't tie up the line.  One hour per call, and hang up properly
+     (Alt-H in TERM) - don't just switch off your modem.
+  6. The sysop's word is final.  The sysop's cat's word is also final.
+
+                                        -- Europa, sysop, 555-1989

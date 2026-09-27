@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The ARM/AT Machine</title>
+<meta name="description" content="What ARM-DOS emulates: the ARM PC/AT design, the ARM926 processor and its JIT, and every device from the VGA to the modem.">
+<meta name="theme-color" content="#16130f">
+<link rel="stylesheet" href="docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="./">ARM-DOS <span>4.00</span></a>
+  <nav aria-label="Documentation">
+    <a href="./">Manual</a>
+    <a href="machine.html" aria-current="page">The machine</a>
+    <a href="dos.html">The DOS</a>
+    <a href="elbow.html">ELBOW</a>
+    <a href="https://github.com/kdkd/armdos">GitHub</a>
+  </nav>
+  <a class="play-small" href="../">Play it</a>
+</header>
+
+<main class="sheet">
+<div class="prose">
+
+<p class="kicker">Technical reference</p>
+<h1>The ARM/AT</h1>
+<p class="lede">What is emulated, and the agreement that turns an ARM processor into an IBM PC compatible.</p>
+
+<p>A PC was never really its processor. It was a pile of agreements: the interrupt table sits at address zero, the text screen lives at <code>B800h</code>, <code>INT 21h</code> with <code>AH=3Dh</code> opens a file, and a failed call sets the carry flag. Programs were written against those agreements, and the chip under them changed several times without most programs noticing. The ARM/AT keeps the agreements and swaps the chip.</p>
+
+<nav class="toc" aria-label="On this page">
+  <b>On this page</b>
+  <ol>
+    <li><a href="#design">The ARM PC/AT design</a></li>
+    <li><a href="#cpu">The processor and its JIT</a></li>
+    <li><a href="#memory">The memory map</a></li>
+    <li><a href="#devices">The devices</a></li>
+    <li><a href="#video">Video</a></li>
+    <li><a href="#sound">Sound</a></li>
+    <li><a href="#phone">The modem and the phone exchange</a></li>
+    <li><a href="#disks">Disks</a></li>
+    <li><a href="#page">The page around it</a></li>
+  </ol>
+</nav>
+
+<h2 id="design"><span class="num">1</span>The ARM PC/AT design</h2>
+
+<p>The design rule for the whole machine is "what would IBM and Microsoft have done in 1988 if the PC had shipped with an ARM?" Every PC and DOS interface that makes sense on an ARM is kept, and only what the processor forces is changed. That leaves four real changes.</p>
+
+<h3>INT n becomes SVC #n</h3>
+<p>On a PC, <code>INT 21h</code> makes the processor fetch a handler address from the vector table at <code>0000:0084</code>. Here a program executes <code>SVC #0x21</code>. The ARM traps into the ROM, the ROM reads the number out of the instruction itself and fetches the handler from the same table at the same address: 256 vectors of four bytes each, vector <var>n</var> at <code>n*4</code>. Programs hook interrupts with <code>INT 21h AH=25h</code> and chain to the old handler, exactly as on a PC. Hardware interrupts arrive the same way, as <code>INT 08h</code>-<code>0Fh</code> for IRQ 0-7 and <code>INT 70h</code>-<code>77h</code> for IRQ 8-15, and handlers send their own end-of-interrupt to port <code>20h</code>.</p>
+
+<h3>x86 registers live in ARM registers</h3>
+<div class="table-wrap"><table>
+  <tr><th>x86</th><th>ARM</th><th>Notes</th></tr>
+  <tr><td><code>AX</code>, <code>AH</code>, <code>AL</code></td><td><code>r0</code>, bits 15-8, bits 7-0</td><td><code>AH=09h</code> is <code>mov r0, #0x900</code></td></tr>
+  <tr><td><code>BX</code>, <code>CX</code>, <code>DX</code></td><td><code>r1</code>, <code>r2</code>, <code>r3</code></td><td></td></tr>
+  <tr><td><code>SI</code>, <code>DI</code>, <code>BP</code></td><td><code>r4</code>, <code>r5</code>, <code>r6</code></td><td></td></tr>
+  <tr><td><code>DS</code>, <code>ES</code> (as values)</td><td><code>r7</code>, <code>r8</code></td><td>only where DOS takes a segment number, such as freeing memory</td></tr>
+  <tr><td>carry flag</td><td>the ARM's C flag</td><td>after a DOS call, <code>bcs error</code> is the translation of <code>jc error</code></td></tr>
+  <tr><td>zero flag</td><td>the ARM's Z flag</td><td></td></tr>
+</table></div>
+
+<h3>Segments become flat pointers</h3>
+<p>An ARM has one flat address space, so wherever DOS expects a <code>DS:DX</code> pair, the ARM version passes a single 32-bit pointer in the offset register. Where DOS hands out or takes a segment (memory blocks, PSPs, environments), ARM-DOS still uses a paragraph number, the address divided by 16, exactly as DOS does. All of DOS's own memory is still in the first 640 KB, so every segment still fits in 16 bits and <code>MEM</code> looks the way it did in 1989.</p>
+
+<h3>EXE files carry ARM code</h3>
+<p>Every <code>.EXE</code> on this machine starts with a genuine DOS <code>MZ</code> header and a tiny 8086 program. Copy one to a real 1989 PC and it runs, and prints <code>This program requires an ARM processor.</code> At the usual offset <code>3Ch</code>, the header points to an ARM header (signature <code>AR1</code>) that describes the ARM image, its size, stack, entry point and relocation table. Programs are linked at address zero and relocated when they load, at PSP + <code>100h</code>, the same place a <code>.COM</code> file goes. A plain <code>.COM</code> is a flat ARM image loaded at the same spot.</p>
+
+<p>Even the floppy boot sector follows the rule. On a PC its first bytes jump over the BIOS parameter block; here they are an ARM branch over it, because the parameter block must stay at offset <code>0Bh</code>.</p>
+
+<h2 id="cpu"><span class="num">2</span>The processor and its JIT</h2>
+
+<p>The processor is an <strong>ARM926EJ-S</strong>: the ARMv5TE instruction set in both ARM and Thumb states, with the DSP multiplies and saturating arithmetic, and a <strong>VFP9-S</strong> floating-point coprocessor (VFPv2) that programs can opt into. There is no MMU, as on the simple ARM systems of the time; DOS and its programs run in a privileged mode with no protection, just like real mode. Jazelle is left out. When DOS has nothing to do, it executes the ARM's wait-for-interrupt instruction, so the processor sleeps until the next interrupt and your browser tab stays cool.</p>
+
+<p>The emulator, written in JavaScript, has two tiers. An interpreter runs everything, counting how often each entry address is reached. After sixteen visits, the block from there (up to 64 instructions, continuing past conditional branches as side exits) is compiled into a JavaScript function, with the guest registers in local variables, constants folded, memory accesses inlined and a branch back to the block's start turned into a native loop. The browser's JavaScript engine then compiles that into machine code. Stores into memory that holds compiled code throw exactly the affected functions away, so self-modifying code and program loading just work.</p>
+
+<div class="table-wrap"><table>
+  <tr><th>Benchmark (Chromium)</th><th class="num">JIT</th><th class="num">Interpreter</th></tr>
+  <tr><td>mixed C benchmark, ARM, bare processor</td><td class="num">~880 MIPS</td><td class="num">~155 MIPS</td></tr>
+</table></div>
+
+<p>At the nominal 100 MHz that is several times faster than the machine needs on a modern computer, so the real-time driver holds it back to its clock and lets the rest of the time go idle. Instruction timing is one cycle per instruction, which keeps emulated time exact: DOOM's timedemo gives the same 77 frames per second at 100 MHz on every computer.</p>
+
+<p>Busy-wait loops (waiting for the vertical retrace, polling the BIOS tick) are fast-forwarded. The emulator single-steps one iteration of a suspected loop, proves it changes nothing but time, and then charges the skipped iterations up to the next moment anything could change. The result is exactly the same as running every iteration.</p>
+
+<p><strong>How we know it is right.</strong> The processor was checked against QEMU's ARM926 with more than half a million random instructions across every instruction class, with and without the JIT, and the floating-point unit with over 150,000 more cases covering rounding modes, NaNs, denormals and infinities. Every result matched.</p>
+
+<h2 id="memory"><span class="num">3</span>The memory map</h2>
+
+<div class="table-wrap"><table>
+  <tr><th>Address</th><th>What is there</th></tr>
+  <tr><td><code>00000000</code></td><td>the interrupt vector table, 256 four-byte vectors</td></tr>
+  <tr><td><code>00000400</code></td><td>the BIOS data area, at the PC's offsets (equipment word, keyboard buffer, video mode, tick count ...)</td></tr>
+  <tr><td><code>00000500</code>-<code>0009FFFF</code></td><td>640 KB of conventional memory: DOS, its buffers, the memory control blocks and programs</td></tr>
+  <tr><td><code>000A0000</code>-<code>000BFFFF</code></td><td>video memory: VGA graphics at <code>A0000h</code>, text and CGA at <code>B8000h</code></td></tr>
+  <tr><td><code>000C0000</code>-<code>000FFFFF</code></td><td>the adapter and ROM hole, empty (except in video mode 62h)</td></tr>
+  <tr><td><code>00100000</code>-<code>0010FFFF</code></td><td>the first 64 KB of extended memory, used by the BIOS for its data and stacks</td></tr>
+  <tr><td><code>00110000</code>-<code>00FFFFFF</code></td><td>extended memory, handed out by HIMEM.SYS through XMS</td></tr>
+  <tr><td><code>10000000</code>-<code>1000FFFF</code></td><td>the ISA I/O space: x86 port <var>p</var> is at <code>10000000h + p</code></td></tr>
+  <tr><td><code>FFF00000</code>-<code>FFFFFFFF</code></td><td>the BIOS ROM, with the ARM exception vectors at the top</td></tr>
+</table></div>
+
+<p>ARM programs have no <code>IN</code> and <code>OUT</code> instructions, so the I/O ports are memory-mapped: <code>outb(0x20, 0x20)</code> is a byte store to <code>10000020h</code>. Every port number is the PC's.</p>
+
+<h2 id="devices"><span class="num">4</span>The devices</h2>
+
+<div class="table-wrap"><table>
+  <tr><th>Port</th><th>Device</th></tr>
+  <tr><td><code>20h</code>, <code>A0h</code></td><td>interrupt controller, 16 lines (timer, keyboard, serial, floppy, Sound Blaster, clock, MIDI, mouse, disks)</td></tr>
+  <tr><td><code>40h</code>-<code>43h</code>, <code>61h</code></td><td>8254 timer at 1.193182 MHz, driving the timer tick and the PC speaker</td></tr>
+  <tr><td><code>60h</code>, <code>64h</code></td><td>8042 keyboard controller, scan code set 1, with a PS/2 mouse</td></tr>
+  <tr><td><code>70h</code>, <code>71h</code></td><td>CMOS clock and battery RAM (kept in your browser) for BIOS SETUP</td></tr>
+  <tr><td><code>00h</code>-<code>0Fh</code>, <code>C0h</code>-<code>DFh</code></td><td>the AT's pair of 8237 DMA controllers, with page registers</td></tr>
+  <tr><td><code>1F0h</code>, <code>170h</code></td><td>IDE: the hard disk (ATA) and the CD-ROM drive (ATAPI)</td></tr>
+  <tr><td><code>300h</code>-<code>307h</code></td><td>the floppy controller: a simplified ARM-PC design with its own DMA, on the port range of IBM's old prototype card</td></tr>
+  <tr><td><code>3C0h</code>-<code>3DFh</code></td><td>VGA (or a Hercules card at <code>3B0h</code>-<code>3BFh</code>)</td></tr>
+  <tr><td><code>220h</code>, <code>388h</code></td><td>Sound Blaster 16 with its OPL3 FM chip</td></tr>
+  <tr><td><code>330h</code></td><td>MPU-401 MIDI interface with a General MIDI synthesiser behind it</td></tr>
+  <tr><td><code>201h</code></td><td>game port for two joysticks</td></tr>
+  <tr><td><code>3F8h</code></td><td>COM1, a serial console shown on the page</td></tr>
+  <tr><td><code>2F8h</code></td><td>COM2, a 16550A with an internal Hayes modem</td></tr>
+  <tr><td>LPT1</td><td>an Epson FX-80 style dot-matrix printer</td></tr>
+  <tr><td><code>F0h</code>-<code>FFh</code></td><td>the ARM-PC system board: board ID, clock speed, TURBO, the X86 lamp, and small mailboxes the page reads</td></tr>
+</table></div>
+
+<p>Each device is modelled closely enough for DOS programs of the time to drive it directly, the way they did. The timer can be reprogrammed and counted, the keyboard controller can be hooked at <code>INT 9</code>, and the game port's one-shots take real (emulated) time to settle, so the counting loops old games used give the numbers they expect at any clock speed.</p>
+
+<p>The <strong>game port</strong> takes real game controllers through the browser's Gamepad API, or the on-screen pad's JOY mode, as analogue PC joysticks.</p>
+
+<p>Opening the case lets you change the hardware: VGA or Hercules, Sound Blaster 16 or an AdLib-only card or nothing, 1 to 16 MB of SIMMs, the modem card, the CD-ROM drive, the MIDI daughterboard, the mouse and the clock jumper. The BIOS finds out what is fitted at the next power-on, as a real one did.</p>
+
+<h2 id="video"><span class="num">5</span>Video</h2>
+
+<p>The VGA renders from the machine's memory at 70 frames per second; it is not a terminal. It supports:</p>
+<ul>
+  <li>text modes (80x25 with 9x16 cells, 40x25), with real blinking text and cursor;</li>
+  <li>CGA modes 4, 5 and 6;</li>
+  <li>the EGA and VGA planar modes <code>0Dh</code>, <code>0Eh</code>, <code>10h</code> and <code>12h</code>, with 256 KB of video memory in four planes and the full register model: the sequencer, the graphics controller with its latches, rotate and logic operations and all write modes, the CRTC with split screen and panning, the attribute controller;</li>
+  <li>mode <code>13h</code> (320x200, 256 colours) and the unchained "Mode X" and "Mode Y" variants that demos and games program straight into the registers;</li>
+  <li>mode <code>62h</code>, the ARM/AT's own addition: 640x480 in 256 colours, linear from <code>A0000h</code>. GEM uses it for <code>GEM /V</code>.</li>
+</ul>
+<p>Register writes are placed on the scan line they happen on, so palette changes per scan line (the "copper" effects of the demo scene) are displayed as they would be on a real card.</p>
+<p>A <strong>Hercules Graphics Card</strong> with a green, amber or paper-white monochrome monitor can be fitted instead, with MDA text and 720x348 graphics. On the page, a WebGL shader draws the picture tube: curvature, scan lines, a shadow mask, bloom, warm-up, the dot when it switches off, and the afterglow of the monochrome phosphors.</p>
+
+<h2 id="sound"><span class="num">6</span>Sound</h2>
+
+<ul>
+  <li><strong>Sound Blaster 16</strong> at <code>220h</code>, IRQ 7, DMA 1 and 5: DSP version 4.05, 8- and 16-bit DMA playback with exact interrupt timing, and the CT1745 mixer. It sits on IRQ 7 because on this machine <code>INT 0Dh</code>, IRQ 5's vector, is also the ARM data-abort exception.</li>
+  <li><strong>OPL3</strong> FM synthesis (YMF262), emulated by a JavaScript port of the Nuked OPL3 core, with working timers so the classic AdLib detection passes.</li>
+  <li><strong>MPU-401</strong> at <code>330h</code> with a General MIDI and GS wavetable daughterboard: a SoundFont player built for ARM-DOS, using a reduced GeneralUser GS sound set, with 64 voices, reverb and chorus. It is downloaded only the first time a program uses it.</li>
+  <li><strong>The PC speaker</strong>, the fan, the power supply hum, the floppy and hard disk, the printer and the modem are all synthesised as they happen. There are no recordings anywhere.</li>
+</ul>
+<p>All of the machine's audio is rendered in emulated time and played through an AudioWorklet in the browser.</p>
+
+<h2 id="phone"><span class="num">7</span>The modem and the phone exchange</h2>
+
+<p>COM2 is a full 16550A UART with FIFOs and interrupts, and behind it sits a Hayes-compatible modem with the AT command set, S-registers, result codes and the <code>+++</code> escape with its guard time. The speed switch on its front sets the card to 2400, 14,400, 33,600 or 56,000 bits per second, and the data is paced to that rate. The modem's speaker plays the dial tone, the touch-tone digits, the ringback and the handshake of each modulation, generated from real carrier signals. The 56K handshake was tuned against a real call.</p>
+
+<p>The page runs a small telephone exchange that the modem dials into:</p>
+<ul>
+  <li><strong>555-1989</strong> rings a <strong>second ARM PC</strong>, running in a Web Worker in the background of the page, that boots ARM-DOS and runs The ARM Pit, a bulletin board in the style of the late 1980s with message bases, file areas, ZMODEM transfers and a door game, Legend of the RISC Dragon. It is ARM code from top to bottom, like your machine.</li>
+  <li><strong>555-0199</strong> is ARM-DOS Online, a service written in JavaScript on the page. It fetches live Wikipedia and Wiktionary text, Open-Meteo weather and Hacker News stories, lays them out for 76 columns, converts pictures into interlaced GIFs and sends it all down the line in a framed protocol to the <code>ONLINE</code> client.</li>
+  <li><strong>555-0100</strong> is the Host Link, which sends and receives files from your real computer with ZMODEM.</li>
+  <li>The rest (WOPR, the talking clock, a support line with hold music, a fax machine, KREMVAX in Moscow) are small scripted endpoints.</li>
+</ul>
+
+<h2 id="disks"><span class="num">8</span>Disks</h2>
+
+<ul>
+  <li><strong>Drive C:</strong> a 128 MB ATA hard disk with a partition table and a FAT16 partition. The site cuts the disk image into 256 KB chunks named by their content hash, and the disk fetches each chunk the first time DOS reads from it. While a chunk is on its way the drive simply stays busy. About 0.4 MB is enough to reach the <code>C:\&gt;</code> prompt. Sectors that DOS writes are kept in your browser's IndexedDB.</li>
+  <li><strong>Drive A:</strong> 1.44 MB diskettes, FAT12, with the DOS 4 boot sector layout.</li>
+  <li><strong>Drive D:</strong> a double-speed ATAPI CD-ROM drive on the secondary IDE channel, with CD audio mixed into the Sound Blaster's CD input, a headphone jack and a volume knob. DOS reaches it through <code>ARMCD.SYS</code> and <code>ARMCDEX</code>, ARM-DOS's own CD-ROM extensions. The drive takes the Multimedia Sampler '93 disc or any ISO image you drop onto the page, read from your computer on demand.</li>
+</ul>
+
+<h2 id="page"><span class="num">9</span>The page around it</h2>
+
+<p>The whole computer is drawn in CSS and a few small SVGs, and scales as one object. The page is a progressive web app: it can be installed to a home screen and works offline once loaded. A new release downloads in the background, complete or not at all, and takes over the next time the page loads, never under a running machine. Nothing runs until you press the power switch, and nothing plays a sound before you have touched the page.</p>
+
+<p>The <strong>ARM inspector</strong> beside the machine is a real debugger. It shows the registers under their x86 names, disassembles around the program counter, pauses and single-steps, sets breakpoints (which turn the JIT off while they exist), logs every interrupt with its DOS function, and dumps memory. The <strong>memory map</strong> draws all 16 MB as a heat map of execution, reads and writes, with each DOS memory block named after its owner; it costs only a percent or two while open and nothing while closed. The <strong>ELBOW view</strong> is described on the <a href="elbow.html#watch">ELBOW page</a>.</p>
+
+<figure>
+  <img src="img/boot.jpg" width="1100" height="833" alt="The ARM-DOS machine just after booting: the monitor lists HIMEM, the CD-ROM driver and ARM-DOS Version 4.00 messages, and the ARM inspector beside it shows the registers under their x86 names, the flags, a disassembly and a log of INT 21h calls.">
+  <figcaption>Just after boot. The inspector shows the registers under their x86 names and the last few <code>INT 21h</code> calls.</figcaption>
+</figure>
+
+<div class="buttons">
+  <a class="btn btn-play" href="../"><span class="sw" aria-hidden="true"></span>Switch it on</a>
+  <a class="btn btn-ghost" href="dos.html">Next: the DOS</a>
+</div>
+
+</div>
+</main>
+
+<footer class="foot">
+  <span>ARM-DOS 1.0. Copyright &copy; 2026 Kevin Day, with lots of help from Europa.</span>
+  <span class="contact">Contact: <a href="mailto:kevin@your.org">kevin@your.org</a></span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+.            <DIR>     09-24-26   3:12p
+..           <DIR>     09-24-26   3:12p
+MANY         <DIR>     09-24-26   3:12p
+NOEXT               14 09-24-26   3:12p
+SUB          <DIR>     09-24-26   3:12p
+CDIR         <DIR>     09-24-26   3:20p
+        6 File(s)   31535104 bytes free
+
+C:\T>dir noext
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+NOEXT               14 09-24-26   3:12p
+        1 File(s)   31535104 bytes free
+
+C:\T>type noext
+no extension
+
+C:\T>

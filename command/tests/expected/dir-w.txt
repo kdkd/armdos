@@ -1,0 +1,20 @@
+
+C:\T>dir /w
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+.               ..              A        TXT    B        TXT    BADGOTO  BAT
+CALLEE   BAT    CALLER   BAT    CALLFAIL BAT    CALLRET  BAT    CHAIN    BAT
+CTRLZ    TXT    E1       BAT    ECHOON   BAT    FORCALL  BAT    FORS     BAT
+FRUIT    TXT    IFS      BAT    LABELS   BAT    LOOP     BAT    MANY
+NOEOL    BAT    NOEXT           PARAMS   BAT    PAUSER   BAT    SUB
+VARS     BAT    WAITER   BAT    RET      COM    ARGS     COM    UPCASE   COM
+TRASH    COM    WAITKEY  COM
+       32 File(s)   31547392 bytes free
+
+C:\T>dir /w/w
+Too many parameters - /w
+
+C:\T>

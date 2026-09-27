@@ -1,0 +1,24 @@
+
+C:\T>plugh
+A hollow voice says "Plugh".
+
+C:\T>ls sub /w
+This is not Unix. Did you mean DIR? Running DIR.
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 1988-0617
+ Directory of  C:\T\SUB
+
+.               ..              X        TXT
+        3 File(s)   33648640 bytes free
+
+C:\T>eliza
+ELIZA has retired. Her colleague will see you now.
+Bad command or file name
+
+C:\T>
+
+
+
+
+

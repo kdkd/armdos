@@ -1,0 +1,25 @@
+C:\T>type a.txt|upcase|upcase
+THIS IS FILE A.
+IT HAS TWO LINES.
+
+C:\T>echo piped | upcase
+PIPED
+
+C:\T>dir sub | upcase
+
+ VOLUME IN DRIVE C IS ARMDOS
+ VOLUME SERIAL NUMBER IS 4069-12FF
+ DIRECTORY OF  C:\T\SUB
+
+.            <DIR>     09-24-26   3:12P
+..           <DIR>     09-24-26   3:12P
+X        TXT        22 09-24-26   3:12P
+        3 FILE(S)   31541248 BYTES FREE
+
+C:\T>echo x |
+Syntax error
+
+C:\T>echo x || upcase
+Syntax error
+
+C:\T>

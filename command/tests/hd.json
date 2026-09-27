@@ -1,0 +1,22 @@
+{
+  "comment": "The test disk for command/tests (C:). Root and \\T come from command/tests/disk; the test programs are the ARM twins of command/tests/ref/x86.",
+  "base": "../..",
+  "format": "hd",
+  "sizeMB": 32,
+  "heads": 16,
+  "sectorsPerTrack": 63,
+  "label": "ARMDOS",
+  "date": "1988-06-17 12:00:00",
+  "boot": { "src": "build/bootsect.bin" },
+  "files": [
+    { "src": "build/IO.SYS", "attr": "HSR", "first": 1 },
+    { "src": "build/ARMDOS.SYS", "attr": "HSR", "first": 2 },
+    { "src": "build/COMMAND.COM" },
+    { "src": "build/cmdtest/CTRET.COM", "dst": "T\\RET.COM" },
+    { "src": "build/cmdtest/CTARGS.COM", "dst": "T\\ARGS.COM" },
+    { "src": "build/cmdtest/CTUPCASE.COM", "dst": "T\\UPCASE.COM" },
+    { "src": "build/cmdtest/CTTRASH.COM", "dst": "T\\TRASH.COM" },
+    { "src": "build/cmdtest/CTWAITKEY.COM", "dst": "T\\WAITKEY.COM" }
+  ],
+  "tree": [ { "src": "command/tests/disk" } ]
+}

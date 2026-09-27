@@ -1,0 +1,63 @@
+{
+  "dirs": [
+    "GEMAPPS",
+    "GEMAPPS\\GEMSYS"
+  ],
+  "files": [
+    {
+      "src": "build/GEMVDI.EXE",
+      "dst": "GEMAPPS\\GEMSYS\\"
+    },
+    {
+      "src": "build/GEM.EXE",
+      "dst": "GEMAPPS\\GEMSYS\\"
+    },
+    {
+      "src": "apps/gem/aes/gem.rsc",
+      "dst": "GEMAPPS\\GEMSYS\\GEM.RSC"
+    },
+    {
+      "src": "build/DESKTOP.EXE",
+      "dst": "GEMAPPS\\GEMSYS\\DESKTOP.APP"
+    },
+    {
+      "src": "apps/gem/desk/resource/desktop.rsc",
+      "dst": "GEMAPPS\\GEMSYS\\DESKTOP.RSC"
+    },
+    {
+      "src": "apps/gem/desk/icons/desklo.icn",
+      "dst": "GEMAPPS\\GEMSYS\\DESKLO.ICN"
+    },
+    {
+      "src": "apps/gem/desk/icons/deskhi.icn",
+      "dst": "GEMAPPS\\GEMSYS\\DESKHI.ICN"
+    },
+    {
+      "src": "apps/gem/dist/DESKTOP.INF",
+      "dst": "GEMAPPS\\GEMSYS\\DESKTOP.INF"
+    },
+    {
+      "src": "apps/gem/dist/GEM.BAT",
+      "dst": "DOS\\GEM.BAT"
+    },
+    {
+      "src": "build/CALCLOCK.EXE",
+      "dst": "GEMAPPS\\GEMSYS\\CALCLOCK.ACC"
+    },
+    {
+      "src": "build/GEMDEMO.EXE",
+      "dst": "GEMAPPS\\DEMO.APP"
+    },
+    {
+      "src": "apps/gem/demo/demo.rsc",
+      "dst": "GEMAPPS\\DEMO.RSC"
+    }
+  ],
+  "excludeFromDos": [
+    "GEMVDI.EXE",
+    "GEM.EXE",
+    "DESKTOP.EXE",
+    "CALCLOCK.EXE",
+    "GEMDEMO.EXE"
+  ]
+}

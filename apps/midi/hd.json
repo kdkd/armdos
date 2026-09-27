@@ -1,0 +1,14 @@
+{
+  "dirs": ["MIDI"],
+  "files": [
+    { "src": "apps/midi/data/BACH846.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/TOCCATA.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/BRANDBG2.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/NACHTMUS.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/FURELISE.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/MTNKING.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/ENTERTNR.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/MAPLELF.MID", "dst": "MIDI\\" },
+    { "src": "apps/midi/data/README.TXT", "dst": "MIDI\\" }
+  ]
+}

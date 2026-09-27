@@ -1,0 +1,3 @@
+Volume in drive C is ARMDOS     
+Volume Serial Number is 4069-12FF
+Volume label (11 characters, ENTER for none)? 

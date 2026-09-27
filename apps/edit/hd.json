@@ -1,0 +1,5 @@
+{
+  "files": [
+    { "src": "build/edit/EDIT.HLP", "dst": "DOS\\EDIT.HLP" }
+  ]
+}

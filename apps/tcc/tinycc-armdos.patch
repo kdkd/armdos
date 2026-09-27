@@ -1,0 +1,1811 @@
+TinyCC for ARM-DOS: changes against tinycc mob 3dc99dbc82f8e07308c5d398136803e62f9676df
+(src/config.h is new; see apps/tcc/README.md for what and why)
+
+--- a/arm-asm.c
++++ b/arm-asm.c
+@@ -251,6 +251,55 @@
+     }
+ }
+ 
++/* mrs Rd, cpsr|spsr   msr cpsr_<fields>|spsr_<fields>, Rm|#imm (ARM-DOS) */
++static void asm_psr_opcode(TCCState *s1, int token)
++{
++    Operand op;
++    int spsr = 0, mask = 0, t;
++
++    if (ARM_INSTRUCTION_GROUP(token) == TOK_ASM_mrseq) {
++        parse_operand(s1, &op);
++        if (op.type != OP_REG32)
++            expect("register");
++        skip(',');
++        if (tok == TOK_ASM_spsr)
++            spsr = 1;
++        else if (tok != TOK_ASM_cpsr && tok != TOK_ASM_apsr_nzcv)
++            expect("cpsr or spsr");
++        next();
++        asm_emit_opcode(token, 0x010F0000 | (spsr << 22) | (op.reg << 12));
++        return;
++    }
++    t = tok;
++    switch (t) {
++    case TOK_ASM_cpsr: case TOK_ASM_cpsr_fsxc: case TOK_ASM_cpsr_cxsf: mask = 15; break;
++    case TOK_ASM_cpsr_c: mask = 1; break;
++    case TOK_ASM_cpsr_f: case TOK_ASM_apsr_nzcv: mask = 8; break;
++    case TOK_ASM_cpsr_fc: case TOK_ASM_cpsr_cf: mask = 9; break;
++    case TOK_ASM_spsr: case TOK_ASM_spsr_fsxc: case TOK_ASM_spsr_cxsf: mask = 15, spsr = 1; break;
++    case TOK_ASM_spsr_c: mask = 1, spsr = 1; break;
++    case TOK_ASM_spsr_f: mask = 8, spsr = 1; break;
++    case TOK_ASM_spsr_fc: case TOK_ASM_spsr_cf: mask = 9, spsr = 1; break;
++    default: expect("cpsr_<fields> or spsr_<fields>");
++    }
++    next();
++    skip(',');
++    parse_operand(s1, &op);
++    if (op.type == OP_REG32) {
++        asm_emit_opcode(token, 0x0120F000 | (spsr << 22) | (mask << 16) | op.reg);
++    } else {
++        uint32_t v = op.e.v, r;
++        for (r = 0; r < 32; r += 2) {
++            uint32_t x = r ? (v << r) | (v >> (32 - r)) : v;
++            if (x < 256) {
++                asm_emit_opcode(token, 0x0320F000 | (spsr << 22) | (mask << 16) | ((r / 2) << 8) | x);
++                return;
++            }
++        }
++        tcc_error("immediate value cannot be encoded");
++    }
++}
++
+ static void asm_binary_opcode(TCCState *s1, int token)
+ {
+     Operand ops[2];
+@@ -2412,6 +2461,10 @@
+     case TOK_ASM_blxeq:
+         asm_branch_opcode(s1, token);
+         return;
++    case TOK_ASM_mrseq:
++    case TOK_ASM_msreq:
++        asm_psr_opcode(s1, token);
++        return;
+     case TOK_ASM_clzeq:
+     case TOK_ASM_sxtbeq:
+     case TOK_ASM_sxtheq:
+@@ -2673,6 +2726,19 @@
+     }
+ }
+ 
++/* The asm operand allocator works with hardware register numbers (r0-r8),
++   but load()/store() take code generator registers, where 4 is r12:
++   translate (0x20+n = raw hardware register n, see intr() in arm-gen.c).
++   ARM-DOS fix: operands in r4-r8 were loaded into the wrong register. */
++static int asm_treg(int hw)
++{
++    if (hw < 4)
++        return hw;
++    if (hw == 12)
++        return TREG_R12;
++    return 0x20 + hw;
++}
++
+ /* generate prolog and epilog code for asm statement */
+ ST_FUNC void asm_gen_code(ASMOperand *operands, int nb_operands,
+                           int nb_outputs, int is_output,
+@@ -2718,10 +2784,10 @@
+                     sv = *op->vt;
+                     sv.r = (sv.r & ~VT_VALMASK) | VT_LOCAL | VT_LVAL;
+                     sv.type.t = VT_PTR;
+-                    load(op->reg, &sv);
++                    load(asm_treg(op->reg), &sv);
+                 } else if (i >= nb_outputs || op->is_rw) { // not write-only
+                     /* load value in register */
+-                    load(op->reg, op->vt);
++                    load(asm_treg(op->reg), op->vt);
+                     if (op->is_llong)
+                         tcc_error("long long not implemented");
+                 }
+@@ -2738,14 +2804,14 @@
+                         sv = *op->vt;
+                         sv.r = (sv.r & ~VT_VALMASK) | VT_LOCAL;
+                         sv.type.t = VT_PTR;
+-                        load(out_reg, &sv);
++                        load(asm_treg(out_reg), &sv);
+ 
+                         sv = *op->vt;
+-                        sv.r = (sv.r & ~VT_VALMASK) | out_reg;
+-                        store(op->reg, &sv);
++                        sv.r = (sv.r & ~VT_VALMASK) | asm_treg(out_reg);
++                        store(asm_treg(op->reg), &sv);
+                     }
+                 } else {
+-                    store(op->reg, op->vt);
++                    store(asm_treg(op->reg), op->vt);
+                     if (op->is_llong)
+                         tcc_error("long long not implemented");
+                 }
+--- a/arm-gen.c
++++ b/arm-gen.c
+@@ -23,12 +23,19 @@
+ 
+ #ifdef TARGET_DEFS_ONLY
+ 
+-#if defined(TCC_ARM_EABI) && !defined(TCC_ARM_VFP)
++#if defined(TCC_ARM_EABI) && !defined(TCC_ARM_VFP) && !defined(TCC_ARM_SOFTFLOAT)
+ #error "Currently TinyCC only supports float computation with VFP instructions"
+ #endif
+ 
++/* ARM-DOS: TCC_ARM_SOFTFLOAT = the base AAPCS with no FPU at all. There are
++   no float registers: a float lives in one core register, a double in a pair
++   (like a long long), and every operation is a call to the run-time ABI's
++   __aeabi_* helpers (libgcc). */
++
+ /* number of available registers */
+-#ifdef TCC_ARM_VFP
++#ifdef TCC_ARM_SOFTFLOAT
++#define NB_REGS             5
++#elif defined TCC_ARM_VFP
+ #define NB_REGS            13
+ #else
+ #define NB_REGS             9
+@@ -42,7 +49,11 @@
+    sorted from more general to more precise (see gv2() code which does
+    assumptions on it). */
+ #define RC_INT     0x0001 /* generic integer register */
++#ifdef TCC_ARM_SOFTFLOAT
++#define RC_FLOAT   RC_INT /* floats are kept in core registers */
++#else
+ #define RC_FLOAT   0x0002 /* generic float register */
++#endif
+ #define RC_R0      0x0004
+ #define RC_R1      0x0008
+ #define RC_R2      0x0010
+@@ -60,7 +71,11 @@
+ #endif
+ #define RC_IRET    RC_R0  /* function return: integer register */
+ #define RC_IRE2    RC_R1  /* function return: second integer register */
++#ifdef TCC_ARM_SOFTFLOAT
++#define RC_FRET    RC_R0  /* function return: float in r0 (double in r0:r1) */
++#else
+ #define RC_FRET    RC_F0  /* function return: float register */
++#endif
+ 
+ /* pretty names for the registers */
+ enum {
+@@ -90,7 +105,11 @@
+ /* return registers for function */
+ #define REG_IRET TREG_R0 /* single word int return register */
+ #define REG_IRE2 TREG_R1 /* second word return register (for long long) */
++#ifdef TCC_ARM_SOFTFLOAT
++#define REG_FRET TREG_R0 /* float return register (soft-float: core) */
++#else
+ #define REG_FRET TREG_F0 /* float return register */
++#endif
+ 
+ #ifdef TCC_ARM_EABI
+ #define TOK___divdi3 TOK___aeabi_ldivmod
+@@ -149,12 +168,20 @@
+     "__arm_elf__\0"
+     "__arm_elf\0"
+     "arm_elf\0"
++#if CONFIG_TCC_CPUVER >= 5
++    "__ARM_ARCH_5TE__\0"
++    "__ARM_ARCH 5\0"
++#else
+     "__ARM_ARCH_4__\0"
++#endif
+     "__ARMEL__\0"
+     "__APCS_32__\0"
+ #if defined TCC_ARM_EABI
+     "__ARM_EABI__\0"
+ #endif
++#ifdef TCC_ARM_SOFTFLOAT
++    "__SOFTFP__\0"
++#endif
+     ;
+ 
+ ST_DATA const int reg_classes[NB_REGS] = {
+@@ -163,6 +190,7 @@
+     /* r2 */ RC_INT | RC_R2,
+     /* r3 */ RC_INT | RC_R3,
+     /* r12 */ RC_INT | RC_R12,
++#ifndef TCC_ARM_SOFTFLOAT
+     /* f0 */ RC_FLOAT | RC_F0,
+     /* f1 */ RC_FLOAT | RC_F1,
+     /* f2 */ RC_FLOAT | RC_F2,
+@@ -173,6 +201,7 @@
+ /* d6/s12 */ RC_FLOAT | RC_F6,
+ /* d7/s14 */ RC_FLOAT | RC_F7,
+ #endif
++#endif /* !TCC_ARM_SOFTFLOAT */
+ };
+ 
+ static int float_abi;
+@@ -237,7 +266,7 @@
+ 
+ /******************************************************/
+ 
+-void o(uint32_t i)
++void o(unsigned int i)
+ {
+   /* this is a good place to start adding big-endian support*/
+   int ind1;
+@@ -429,6 +458,8 @@
+     return 12;
+   if(r >= TREG_R0 && r <= TREG_R3)
+     return r - TREG_R0;
++  if(r >= 0x20 && r < 0x30) /* raw hardware register (inline asm operands) */
++    return r - 0x20;
+   if (!(r >= TREG_SP && r <= TREG_LR))
+     tcc_error("compiler error! register %i is no int register",r);
+   return r + (13 - TREG_SP);
+@@ -527,6 +558,14 @@
+   return TOK_NE;
+ }
+ 
++/* soft-float: every register is a core register; a float or a double half
++   is moved with plain integer loads and stores */
++#ifdef TCC_ARM_SOFTFLOAT
++#define is_softfloat_reg(r) 1
++#else
++#define is_softfloat_reg(r) 0
++#endif
++
+ /* Load value into register r.
+    Use relative/got addressing to avoid setting DT_TEXTREL */
+ static void load_value(SValue *sv, int r)
+@@ -623,7 +662,7 @@
+       v=VT_LOCAL;
+     }
+     if(v == VT_LOCAL) {
+-      if(is_float(ft)) {
++      if(is_float(ft) && !is_softfloat_reg(r)) {
+ 	calcaddr(&base,&fc,&sign,1020,2);
+ #ifdef TCC_ARM_VFP
+         op=0xED100A00; /* flds */
+@@ -695,7 +734,7 @@
+       o(0xE3A00000|(intr(r)<<12)|(t^1));
+       return;
+     } else if (v < VT_CONST) {
+-      if(is_float(ft))
++      if(is_float(ft) && !is_softfloat_reg(r))
+ #ifdef TCC_ARM_VFP
+         o(0xEEB00A40|(vfpr(r)<<12)|vfpr(v)|T2CPR(ft)); /* fcpyX */
+ #else
+@@ -756,7 +795,7 @@
+       v=VT_LOCAL;
+     }
+     if(v == VT_LOCAL) {
+-       if(is_float(ft)) {
++       if(is_float(ft) && !is_softfloat_reg(r)) {
+ 	calcaddr(&base,&fc,&sign,1020,2);
+ #ifdef TCC_ARM_VFP
+         op=0xED000A00; /* fsts */
+@@ -988,7 +1027,7 @@
+     case TOK___floatundidf:
+     case TOK___fixunssfdi:
+     case TOK___fixunsdfdi:
+-#ifndef TCC_ARM_VFP
++#if !defined TCC_ARM_VFP && !defined TCC_ARM_SOFTFLOAT
+     case TOK___fixunsxfdi:
+ #endif
+     case TOK___floatdisf:
+@@ -1067,6 +1106,17 @@
+     p->start = start, p->end = end, p->sval = v;
+ }
+ 
++/* long long, and with soft-float also double, occupy a core register pair */
++static int is_two_word(int t)
++{
++    t &= VT_BTYPE;
++#ifdef TCC_ARM_SOFTFLOAT
++    if (t == VT_DOUBLE || t == VT_LDOUBLE)
++        return 1;
++#endif
++    return t == VT_LLONG;
++}
++
+ /* Assign parameters to registers and stack with alignment according to the
+    rules in the procedure call standard for the ARM architecture (AAPCS).
+    The overall assignment is recorded in an array of per parameter structures
+@@ -1102,9 +1152,11 @@
+     align = (align + 3) & ~3;
+     switch(vtop[-i].type.t & VT_BTYPE) {
+       case VT_STRUCT:
++#ifndef TCC_ARM_SOFTFLOAT
+       case VT_FLOAT:
+       case VT_DOUBLE:
+       case VT_LDOUBLE:
++#endif
+       if (float_abi == ARM_HARD_FLOAT) {
+         int is_hfa = 0; /* Homogeneous float aggregate */
+ 
+@@ -1140,7 +1192,7 @@
+       continue;
+       default:
+       if (ncrn < 4) {
+-        int is_long = (vtop[-i].type.t & VT_BTYPE) == VT_LLONG;
++        int is_long = is_two_word(vtop[-i].type.t);
+ 
+         if (is_long) {
+           ncrn = (ncrn + 1) & -2;
+@@ -1217,10 +1269,14 @@
+             o(0xE28D0000|(intr(r)<<12)|padding); /* add r, sp, padding */
+             vset(&vtop->type, r | VT_LVAL, 0);
+             vswap();
++#ifdef TCC_ARM_SOFTFLOAT
++            vstore(); /* memcpy to current sp + potential padding */
++#else
+ 	    /* XXX: optimize. Save all register because memcpy can use them */
+ 	    o(0xED2D0A00|(0&1)<<22|(0>>1)<<12|16); /* vpush {s0-s15} */
+             vstore(); /* memcpy to current sp + potential padding */
+ 	    o(0xECBD0A00|(0&1)<<22|(0>>1)<<12|16); /* vpop {s0-s15} */
++#endif
+ 
+             /* Homogeneous float aggregate are loaded to VFP registers
+                immediately since there is no way of loading data in multiple
+@@ -1234,8 +1290,9 @@
+                  cannot be used for gcall_or_jmp */
+             }
+           } else {
+-            if (is_float(pplan->sval->type.t)) {
+-#ifdef TCC_ARM_VFP
++            if (is_float(pplan->sval->type.t) && !is_softfloat_reg(0)) {
++#ifdef TCC_ARM_SOFTFLOAT
++#elif defined TCC_ARM_VFP
+               r = vfpr(gv(RC_FLOAT)) << 12;
+               if ((pplan->sval->type.t & VT_BTYPE) == VT_FLOAT)
+                 size = 4;
+@@ -1263,7 +1320,7 @@
+               /* simple type (currently always same size) */
+               /* XXX: implicit cast ? */
+               size=4;
+-              if ((pplan->sval->type.t & VT_BTYPE) == VT_LLONG) {
++              if (is_two_word(pplan->sval->type.t)) {
+                 lexpand();
+                 size = 8;
+                 r = gv(RC_INT);
+@@ -1279,15 +1336,17 @@
+           break;
+ 
+         case VFP_CLASS:
++#ifndef TCC_ARM_SOFTFLOAT
+           gv(regmask(TREG_F0 + (pplan->start >> 1)));
+           if (pplan->start & 1) { /* Must be in upper part of double register */
+             o(0xEEF00A40|((pplan->start>>1)<<12)|(pplan->start>>1)); /* vmov.f32 s(n+1), sn */
+             vtop->r = VT_CONST; /* avoid being saved on stack by gv for next float */
+           }
++#endif
+           break;
+ 
+         case CORE_CLASS:
+-          if ((pplan->sval->type.t & VT_BTYPE) == VT_LLONG) {
++          if (is_two_word(pplan->sval->type.t)) {
+             lexpand();
+             gv(regmask(pplan->end));
+             pplan->sval->r2 = vtop->r;
+@@ -1784,7 +1843,60 @@
+   }
+ }
+ 
+-#ifdef TCC_ARM_VFP
++#ifdef TCC_ARM_SOFTFLOAT
++/* call a run-time ABI helper with the 'nargs' values on top of the stack;
++   the result (of type 't') is left in r0 (r0:r1 for a double/long long) */
++static void sf_call(int func, int nargs, int t)
++{
++    vpush_helper_func(func);
++    vrott(nargs + 1);
++    gfunc_call(nargs);
++    vpushi(0);
++    vtop->type.t = t;
++    vtop->r = REG_IRET;
++    if ((t & VT_BTYPE) == VT_LLONG || (t & VT_BTYPE) == VT_DOUBLE
++        || (t & VT_BTYPE) == VT_LDOUBLE)
++        vtop->r2 = REG_IRE2;
++}
++
++/* generate a floating point operation 'v = t1 op t2'. The two operands
++   are guaranteed to have the same floating point type. */
++void gen_opf(int op)
++{
++    int dbl = (vtop->type.t & VT_BTYPE) != VT_FLOAT;
++    int func, cmp = 0, t = vtop->type.t;
++
++    tcc_state->uses_float = 1;
++    switch (op) {
++    case '+': func = dbl ? TOK___aeabi_dadd : TOK___aeabi_fadd; break;
++    case '-': func = dbl ? TOK___aeabi_dsub : TOK___aeabi_fsub; break;
++    case '*': func = dbl ? TOK___aeabi_dmul : TOK___aeabi_fmul; break;
++    case '/': func = dbl ? TOK___aeabi_ddiv : TOK___aeabi_fdiv; break;
++    /* the comparison helpers return 1/0, false when unordered (NaN) */
++    case TOK_EQ: func = dbl ? TOK___aeabi_dcmpeq : TOK___aeabi_fcmpeq; cmp = TOK_NE; break;
++    case TOK_NE: func = dbl ? TOK___aeabi_dcmpeq : TOK___aeabi_fcmpeq; cmp = TOK_EQ; break;
++    case TOK_LT: case TOK_ULT:
++        func = dbl ? TOK___aeabi_dcmplt : TOK___aeabi_fcmplt; cmp = TOK_NE; break;
++    case TOK_LE: case TOK_ULE:
++        func = dbl ? TOK___aeabi_dcmple : TOK___aeabi_fcmple; cmp = TOK_NE; break;
++    case TOK_GT: case TOK_UGT:
++        func = dbl ? TOK___aeabi_dcmpgt : TOK___aeabi_fcmpgt; cmp = TOK_NE; break;
++    case TOK_GE: case TOK_UGE:
++        func = dbl ? TOK___aeabi_dcmpge : TOK___aeabi_fcmpge; cmp = TOK_NE; break;
++    default:
++        tcc_error("unknown fp op %x!", op);
++        return;
++    }
++    if (cmp) {
++        sf_call(func, 2, VT_INT);
++        vpushi(0);
++        gen_op(cmp);
++    } else {
++        sf_call(func, 2, t);
++    }
++}
++
++#elif defined TCC_ARM_VFP
+ static int is_zero(int i)
+ {
+   if((vtop[i].r & (VT_VALMASK | VT_LVAL | VT_SYM)) != VT_CONST)
+@@ -2139,6 +2251,24 @@
+   uint32_t r, r2;
+   int bt;
+   bt=vtop->type.t & VT_BTYPE;
++#ifdef TCC_ARM_SOFTFLOAT
++  {
++    int u = vtop->type.t & VT_UNSIGNED, dbl = (t & VT_BTYPE) != VT_FLOAT, func;
++    tcc_state->uses_float = 1;
++    if (bt == VT_LLONG)
++      func = dbl ? (u ? TOK___floatundidf : TOK___floatdidf)
++                 : (u ? TOK___floatundisf : TOK___floatdisf);
++    else {
++      if (bt != VT_INT)
++        u = 0; /* char/short/bool are converted to int first */
++      func = dbl ? (u ? TOK___aeabi_ui2d : TOK___aeabi_i2d)
++                 : (u ? TOK___aeabi_ui2f : TOK___aeabi_i2f);
++    }
++    (void)r; (void)r2;
++    sf_call(func, 1, t & (VT_BTYPE | VT_UNSIGNED));
++    return;
++  }
++#endif
+   if(bt == VT_INT || bt == VT_SHORT || bt == VT_BYTE) {
+ #ifndef TCC_ARM_VFP
+     uint32_t dsize = 0;
+@@ -2220,6 +2350,21 @@
+   u=t&VT_UNSIGNED;
+   t&=VT_BTYPE;
+   r2=vtop->type.t & VT_BTYPE;
++#ifdef TCC_ARM_SOFTFLOAT
++  {
++    int dbl = r2 != VT_FLOAT;
++    tcc_state->uses_float = 1;
++    if (t == VT_LLONG)
++      func = dbl ? (u ? TOK___fixunsdfdi : TOK___fixdfdi)
++                 : (u ? TOK___fixunssfdi : TOK___fixsfdi);
++    else
++      func = dbl ? (u ? TOK___aeabi_d2uiz : TOK___aeabi_d2iz)
++                 : (u ? TOK___aeabi_f2uiz : TOK___aeabi_f2iz);
++    (void)r;
++    sf_call(func, 1, (t == VT_LLONG ? VT_LLONG : VT_INT) | u);
++    return;
++  }
++#else
+   if(t==VT_INT) {
+ #ifdef TCC_ARM_VFP
+     r=vfpr(gv(RC_FLOAT));
+@@ -2266,12 +2411,21 @@
+     return;
+   }
+   tcc_error("unimplemented gen_cvt_ftoi!");
++#endif /* !TCC_ARM_SOFTFLOAT */
+ }
+ 
+ /* convert from one floating point type to another */
+ void gen_cvt_ftof(int t)
+ {
+-#ifdef TCC_ARM_VFP
++#ifdef TCC_ARM_SOFTFLOAT
++  int sf = (vtop->type.t & VT_BTYPE) == VT_FLOAT, df = (t & VT_BTYPE) == VT_FLOAT;
++  tcc_state->uses_float = 1;
++  if (sf && !df)
++    sf_call(TOK___aeabi_f2d, 1, t & VT_BTYPE);
++  else if (!sf && df)
++    sf_call(TOK___aeabi_d2f, 1, VT_FLOAT);
++  /* double <-> long double: the same format */
++#elif defined TCC_ARM_VFP
+   uint32_t r = gv(RC_FLOAT);
+   if(((vtop->type.t & VT_BTYPE) == VT_FLOAT) != ((t & VT_BTYPE) == VT_FLOAT)) {
+     r = vfpr(r);
+--- a/arm-link.c
++++ b/arm-link.c
+@@ -42,6 +42,7 @@
+ 	case R_ARM_GLOB_DAT:
+ 	case R_ARM_NONE:
+ 	case R_ARM_TARGET1:
++	case R_ARM_TARGET2:
+ 	case R_ARM_MOVT_PREL:
+ 	case R_ARM_MOVW_PREL_NC:
+ 	case R_ARM_TLS_LE32:
+@@ -89,6 +90,7 @@
+ 	case R_ARM_REL32:
+ 	case R_ARM_V4BX:
+ 	case R_ARM_TARGET1:
++	case R_ARM_TARGET2:
+ 	case R_ARM_MOVT_PREL:
+ 	case R_ARM_MOVW_PREL_NC:
+             return AUTO_GOTPLT_ENTRY;
+@@ -393,6 +395,7 @@
+             add32le(ptr, val);
+             return;
+         case R_ARM_REL32:
++        case R_ARM_TARGET2: /* as GNU ld --target2=rel (ARM-DOS, bare metal) */
+             add32le(ptr, val - addr);
+             return;
+         case R_ARM_GOTPC:
+@@ -414,6 +417,9 @@
+         case R_ARM_COPY:
+             return;
+         case R_ARM_V4BX:
++#if CONFIG_TCC_CPUVER >= 5
++            return; /* ARMv5 has BX: keep it (interworking works) */
++#endif
+             /* trade Thumb support for ARMv4 support */
+             if ((0x0ffffff0 & read32le(ptr)) == 0x012FFF10)
+                 write32le(ptr, read32le(ptr) ^ 0xE12FFF10 ^ 0xE1A0F000); /* BX Rm -> MOV PC, Rm */
+--- a/conftest.c
++++ b/conftest.c
+@@ -22,6 +22,7 @@
+     "__NetBSD__",           "TARGETOS_NetBSD",
+     "__linux__",            "TARGETOS_Linux",
+     "__ANDROID__",          "TARGETOS_ANDROID",
++    "__ARMDOS__",           "TCC_TARGET_ARMDOS",
+ 
+     "__SIZEOF_POINTER__",   "PTR_SIZE",
+     "__SIZEOF_LONG__",      "LONG_SIZE",
+--- a/libtcc.c
++++ b/libtcc.c
+@@ -79,6 +79,17 @@
+ ST_DATA int g_debug;
+ 
+ /********************************************************/
++#ifdef TCC_HOST_ARMDOS
++ST_FUNC char *normalize_slashes(char *path)
++{
++    char *p;
++    for (p = path; *p; ++p)
++        if (*p == '\\')
++            *p = '/';
++    return path;
++}
++#endif
++
+ #ifdef _WIN32
+ ST_FUNC char *normalize_slashes(char *path)
+ {
+@@ -496,6 +507,13 @@
+ #endif
+ 
+ /* for #pragma once */
++#ifdef TCC_HOST_ARMDOS
++/* no realpath() in newlib: DOS names are compared case-insensitively */
++ST_FUNC int normalized_PATHCMP(const char *f1, const char *f2)
++{
++    return PATHCMP(f1, f2);
++}
++#else
+ ST_FUNC int normalized_PATHCMP(const char *f1, const char *f2)
+ {
+     char *p1, *p2;
+@@ -509,6 +527,7 @@
+     }
+     return ret;
+ }
++#endif
+ 
+ /********************************************************/
+ /* dynarrays */
+@@ -746,7 +765,7 @@
+     bf->buf_end = bf->buffer + initlen;
+     bf->buf_end[0] = CH_EOB; /* put eob symbol */
+     pstrcpy(bf->filename, sizeof(bf->filename), filename);
+-#ifdef _WIN32
++#if defined _WIN32 || defined TCC_HOST_ARMDOS
+     normalize_slashes(bf->filename);
+ #endif
+     bf->true_filename = bf->filename;
+@@ -899,6 +918,14 @@
+ #ifdef TCC_ARM_HARDFLOAT
+     s->float_abi = ARM_HARD_FLOAT;
+ #endif
++#ifdef TCC_TARGET_ARMDOS
++    /* programs are static MZ+AR1 executables; see tccelf.c */
++    s->output_format = TCC_OUTPUT_FORMAT_ARMDOS;
++    s->static_link = 1;
++    s->armdos_stack = 16384;
++    s->armdos_min_extra = 0;
++    s->armdos_max_extra = 0xFFFFFFFF;
++#endif
+ #if defined TCC_TARGET_ARM64 && defined TCC_TARGET_PE
+     s->pe_dll_characteristics = 0x8160;
+ #endif
+@@ -1198,6 +1225,16 @@
+         const char *ext = tcc_fileextension(filename);
+         if (ext[0]) {
+             ext++;
++#ifdef TCC_TARGET_ARMDOS
++            /* DOS: names are upper case (HELLO.C); .S and .ASM are
++               assembler, run through the preprocessor */
++            if (!strcasecmp(ext, "s") || !strcasecmp(ext, "asm"))
++                filetype = AFF_TYPE_ASMPP;
++            else if (!strcasecmp(ext, "c") || !strcasecmp(ext, "h")
++                     || !strcasecmp(ext, "i"))
++                filetype = AFF_TYPE_C;
++            else
++#endif
+             if (!strcmp(ext, "S"))
+                 filetype = AFF_TYPE_ASMPP;
+             else if (!strcmp(ext, "s"))
+@@ -1455,6 +1492,20 @@
+         } else if (link_option(&o, "Map=")) {
+             tcc_set_str(&s->mapfile, o.arg);
+             ignoring = 1;
++#ifdef TCC_TARGET_ARMDOS
++        } else if (link_option(&o, "stack=")) {
++            s->armdos_stack = (strtoul(o.arg, &end, 0) + 7) & ~7u;
++        } else if (link_option(&o, "gc-sections")) {
++            s->armdos_no_gc = 0;
++        } else if (link_option(&o, "no-gc-sections")) {
++            s->armdos_no_gc = 1;
++        } else if (link_option(&o, "min-extra=")) {
++            s->armdos_min_extra = strtoul(o.arg, &end, 0);
++        } else if (link_option(&o, "max-extra=")) {
++            s->armdos_max_extra = strtoul(o.arg, &end, 0);
++        } else if (link_option(&o, "oformat=") && 0 == strcmp(o.arg, "armdos")) {
++            s->output_format = TCC_OUTPUT_FORMAT_ARMDOS;
++#endif
+         } else if (link_option(&o, "oformat=")) {
+ #if defined TCC_TARGET_PE
+             if (0 == strncmp("pe-", o.arg, 3))
+@@ -2225,12 +2276,22 @@
+ {
+     if (!total_time)
+         total_time = 1;
++#ifdef TCC_HOST_ARMDOS
++    /* integer arithmetic: TCC.EXE has no floating point printf */
++    fprintf(stderr, "# %d idents, %d lines, %u bytes\n"
++                    "# %u.%03u s, %u lines/s, %u KB/s\n",
++           total_idents, total_lines, total_bytes,
++           total_time / 1000, total_time % 1000,
++           (unsigned)((unsigned long long)total_lines*1000/total_time),
++           (unsigned)((unsigned long long)total_bytes*1000/1024/total_time));
++#else
+     fprintf(stderr, "# %d idents, %d lines, %u bytes\n"
+                     "# %0.3f s, %u lines/s, %0.1f MB/s\n",
+            total_idents, total_lines, total_bytes,
+            (double)total_time/1000,
+            (unsigned)total_lines*1000/total_time,
+            (double)total_bytes/1000/total_time);
++#endif
+     fprintf(stderr, "# text %u, data.rw %u, data.ro %u, bss %u bytes\n",
+            s1->total_output[0],
+            s1->total_output[1],
+--- a/tcc.c
++++ b/tcc.c
+@@ -28,6 +28,25 @@
+ #endif
+ #include "tcctools.c"
+ 
++#ifdef TCC_TARGET_ARMDOS
++/* what "TCC" alone prints: in the spirit of Turbo C's TCC.EXE */
++static const char help[] =
++    "Tiny C Compiler for ARM-DOS  Version "TCC_VERSION"\n"
++    "Copyright (c) 2001-2025 Fabrice Bellard and the TinyCC authors (LGPL)\n"
++    "Syntax is: TCC [ options ] file[s]\n"
++    "  -c        Compile only (make .O)       -o name   Name of the output file\n"
++    "  -run      Compile and run at once      -E        Preprocess only\n"
++    "  -Ipath    Include files directory      -Lpath    Libraries directory\n"
++    "  -Dxxx     Define macro                 -Uxxx     Undefine macro\n"
++    "  -lxxx     Link with LIBxxx.A           -g        Debug information\n"
++    "  -w        No warnings                  -Wall     More warnings\n"
++    "  -v        Show version and files       -bench    Show compile statistics\n"
++    "  -Wl,--stack=n   Stack size of the .EXE (default 16384)\n"
++    "  -ar       Library manager: TCC -ar rcs LIBxxx.A files\n"
++    "  -hh       More options\n"
++    "Files: .C source, .S assembler, .O object, .A library.  Output: NAME.EXE\n"
++    ;
++#else
+ static const char help[] =
+     "Tiny C Compiler "TCC_VERSION" - Copyright (C) 2001-2006 Fabrice Bellard\n"
+     "Usage: tcc [options...] [-o outfile] [-c] infile(s)...\n"
+@@ -90,6 +109,7 @@
+     "Discussion & bug reports:\n"
+     "  https://lists.nongnu.org/mailman/listinfo/tinycc-devel\n"
+     ;
++#endif
+ 
+ static const char help2[] =
+     "Tiny C Compiler "TCC_VERSION" - More Options\n"
+@@ -193,7 +213,9 @@
+ #elif defined TCC_TARGET_RISCV64
+         "riscv64"
+ #endif
+-#ifdef TCC_TARGET_PE
++#ifdef TCC_TARGET_ARMDOS
++        " soft-float ARM-DOS"
++#elif defined TCC_TARGET_PE
+         " Windows"
+ #elif defined(TCC_TARGET_MACHO)
+         " Darwin"
+@@ -268,16 +290,69 @@
+         strcpy(ext, ".exe");
+     else
+ #endif
++#ifdef TCC_TARGET_ARMDOS
++    /* HELLO.C -> HELLO.EXE / HELLO.O (the case follows the source's) */
++    if (s->output_type == TCC_OUTPUT_EXE || s->option_r
++        || !((s->just_deps || s->output_type == TCC_OUTPUT_OBJ))) {
++        int up = *ext && ext[1] >= 'A' && ext[1] <= 'Z';
++        strcpy(ext, s->option_r ? (up ? ".O" : ".o") : (up ? ".EXE" : ".exe"));
++    } else
++        strcpy(ext, (*ext && ext[1] >= 'A' && ext[1] <= 'Z') ? ".O" : ".o");
++#else
+     if ((s->just_deps || s->output_type == TCC_OUTPUT_OBJ) && !s->option_r && *ext)
+         strcpy(ext, ".o");
+     else
+         strcpy(buf, "a.out");
++#endif
+     return tcc_strdup(buf);
+ }
+ 
++#ifdef TCC_HOST_ARMDOS
++/* Where TCC.EXE finds INCLUDE\ and LIB\: %TCCDIR% if set, else the
++   directory TCC.EXE was started from if it has an INCLUDE\ (argv[0] is the
++   full path DOS stores after the environment), else C:\TC - where Turbo C
++   lived too. */
++static char armdos_argv0[260];
++/* SDK run-time: without HIMEM.SYS, let the heap use raw extended memory
++   (as pre-XMS DOS extenders did) instead of failing at 640 KB */
++unsigned _armdos_raw_extmem = 1;
++const char *tcc_armdos_dir(void)
++{
++    static char dir[260];
++    char probe[280], *p;
++    int fd;
++
++    p = getenv("TCCDIR");
++    if (p && *p) {
++        pstrcpy(dir, sizeof dir, p);
++    } else {
++        pstrcpy(dir, sizeof dir, armdos_argv0);
++        normalize_slashes(dir);
++        p = tcc_basename(dir);
++        if (p > dir)
++            --p;
++        *p = 0;
++        snprintf(probe, sizeof probe, "%s/include/stdio.h", dir);
++        fd = dir[0] ? open(probe, O_RDONLY | O_BINARY) : -1;
++        if (fd >= 0)
++            close(fd);
++        else
++            strcpy(dir, "C:/TC");
++    }
++    normalize_slashes(dir);
++    p = strchr(dir, 0);
++    if (p > dir && p[-1] == '/')
++        p[-1] = 0;
++    return dir;
++}
++#endif
++
+ static unsigned getclock_ms(void)
+ {
+-#ifdef _WIN32
++#ifdef TCC_HOST_ARMDOS
++    /* the BIOS tick count at 0040:006C (18.2 Hz) */
++    return (unsigned)((unsigned long long)*(volatile unsigned *)0x46C * 10000 / 182);
++#elif defined _WIN32
+     return GetTickCount();
+ #else
+     struct timeval tv;
+@@ -296,6 +371,10 @@
+     char **argv0 = argv;
+     FILE *ppfp = NULL;
+ 
++#ifdef TCC_HOST_ARMDOS
++    if (argc0 > 0 && argv0[0])
++        pstrcpy(armdos_argv0, sizeof armdos_argv0, argv0[0]);
++#endif
+ redo:
+     argc = argc0, argv = argv0;
+     s = s1 = tcc_new();
+@@ -350,6 +429,23 @@
+             goto err;
+         if (s->do_bench)
+             start_time = getclock_ms();
++#ifdef TCC_TARGET_ARMDOS
++        {   /* DOS linkers search libraries after all the objects: so
++               "TCC -lx MAIN.C" works like "TCC MAIN.C -lx" */
++            int i, j = 0;
++            struct filespec **f = tcc_malloc(s->nb_files * sizeof *f);
++            for (i = 0; i < s->nb_files; i++)
++                if (!(s->files[i]->type & AFF_TYPE_LIB)
++                    && strcasecmp(tcc_fileextension(s->files[i]->name), ".a"))
++                    f[j++] = s->files[i];
++            for (i = 0; i < s->nb_files; i++)
++                if ((s->files[i]->type & AFF_TYPE_LIB)
++                    || !strcasecmp(tcc_fileextension(s->files[i]->name), ".a"))
++                    f[j++] = s->files[i];
++            memcpy(s->files, f, s->nb_files * sizeof *f);
++            tcc_free(f);
++        }
++#endif
+     }
+ 
+     set_environment(s);
+--- a/tccelf.c
++++ b/tccelf.c
+@@ -161,6 +161,11 @@
+ 
+     tcc_free(s1->sym_attrs);
+     symtab_section = NULL; /* for tccrun.c:rt_printline() */
++#ifdef TCC_TARGET_ARMDOS
++    tcc_free(s1->armdos_relocs);
++    s1->armdos_relocs = NULL;
++    s1->nb_armdos_relocs = 0;
++#endif
+ }
+ 
+ /* save section data state */
+@@ -770,6 +775,13 @@
+             }
+         } else {
+             esym->st_other = other;
++#ifdef TCC_TARGET_ARMDOS
++            /* an undefined symbol stays strong if any reference to it is
++               (as in GNU ld; weak references do not pull archive members) */
++            if (shndx == SHN_UNDEF && sym_bind == STB_WEAK
++                && ELFW(ST_BIND)(esym->st_info) == STB_GLOBAL)
++                sym_bind = STB_GLOBAL;
++#endif
+         do_patch:
+             esym->st_info = ELFW(ST_INFO)(sym_bind, sym_type);
+             esym->st_shndx = shndx;
+@@ -1138,6 +1150,113 @@
+     }
+ }
+ 
++#ifdef TCC_TARGET_ARMDOS
++/* ARM-DOS .EXE: the image is linked at address 0 and the DOS loader adds
++   the load base to every word listed in the relocation table (ARCH.md 8).
++   While relocating, remember each absolute word that points into the
++   image; refuse absolute relocations that cannot be expressed that way. */
++static void armdos_note_reloc(TCCState *s1, Section *s, int type,
++                              ElfW(Sym) *sym, addr_t addr)
++{
++    const char *name;
++    switch (type) {
++    case R_ARM_ABS32:
++    case R_ARM_TARGET1:
++        break;
++    case R_ARM_MOVT_ABS: case R_ARM_MOVW_ABS_NC:
++    case R_ARM_THM_MOVT_ABS: case R_ARM_THM_MOVW_ABS_NC:
++    case R_ARM_ABS16: case R_ARM_ABS12: case R_ARM_ABS8:
++    case R_ARM_GOT32: case R_ARM_GOT_PREL: case R_ARM_GOTOFF: case R_ARM_GOTPC:
++    case R_ARM_TLS_LE32:
++        if (sym->st_shndx == SHN_ABS || sym->st_shndx == SHN_UNDEF)
++            return;
++        name = (char *)symtab_section->link->data + sym->st_name;
++        tcc_error_noabort("relocation type %d at %s+0x%x (against '%s') "
++            "cannot be relocated by the ARM-DOS loader", type, s->name,
++            (unsigned)(addr - s->sh_addr), name);
++        return;
++    default:
++        return; /* PC-relative: position independent */
++    }
++    /* absolute addresses and weak undefined symbols (NULL) stay as they are */
++    if (sym->st_shndx == SHN_ABS || sym->st_shndx == SHN_UNDEF)
++        return;
++    if (s1->output_type != TCC_OUTPUT_EXE)
++        return;
++    if ((s1->nb_armdos_relocs & 255) == 0)
++        s1->armdos_relocs = tcc_realloc(s1->armdos_relocs,
++            (s1->nb_armdos_relocs + 256) * sizeof(addr_t));
++    s1->armdos_relocs[s1->nb_armdos_relocs++] = addr;
++}
++static void armdos_linker_symbols(TCCState *s1);
++
++/* Section garbage collection, like GNU ld --gc-sections (which the SDK
++   links with). The library is built with -ffunction-sections, so every
++   function is a section of its own; TCC loads whole archive members, and
++   without this a "hello world" would carry every function of every member
++   it touched. Kept: the start-up code, TCC's own sections (the program's
++   compiled code), init/fini arrays, anything not named .text.*, .rodata.*,
++   .data.*, .bss.*, and whatever a kept section refers to. */
++static void armdos_gc_sections(TCCState *s1)
++{
++    int i, changed, *keep, entry;
++    Section *s, *sr;
++    ElfW_Rel *rel;
++    ElfW(Sym) *sym;
++
++    keep = tcc_mallocz(s1->nb_sections * sizeof(int));
++    for (i = 1; i < s1->nb_sections; i++) {
++        s = s1->sections[i];
++        if (!(s->sh_flags & SHF_ALLOC)) {
++            keep[i] = 1;
++            continue;
++        }
++        if (s == text_section || s == data_section || s == rodata_section
++            || s == bss_section
++            || s->sh_type == SHT_INIT_ARRAY || s->sh_type == SHT_FINI_ARRAY
++            || s->sh_type == SHT_PREINIT_ARRAY
++            || (strncmp(s->name, ".text.", 6) && strncmp(s->name, ".rodata.", 8)
++                && strncmp(s->name, ".data.", 6) && strncmp(s->name, ".bss.", 5)))
++            keep[i] = 2;
++    }
++    entry = find_elf_sym(symtab_section, s1->elf_entryname ? s1->elf_entryname : "_start");
++    if (entry) {
++        sym = &((ElfW(Sym) *)symtab_section->data)[entry];
++        if (sym->st_shndx > 0 && sym->st_shndx < s1->nb_sections)
++            keep[sym->st_shndx] = 2;
++    }
++    do {
++        changed = 0;
++        for (i = 1; i < s1->nb_sections; i++) {
++            sr = s1->sections[i];
++            if (sr->sh_type != SHT_RELX || !sr->sh_info || keep[sr->sh_info] != 2)
++                continue;
++            for_each_elem(sr, 0, rel, ElfW_Rel) {
++                int n;
++                sym = &((ElfW(Sym) *)symtab_section->data)[ELFW(R_SYM)(rel->r_info)];
++                n = sym->st_shndx;
++                if (n > 0 && n < s1->nb_sections && !keep[n])
++                    keep[n] = 2, changed = 1;
++            }
++            keep[sr->sh_info] = 3; /* references followed */
++        }
++        for (i = 1; i < s1->nb_sections; i++)
++            if (keep[i] == 3)
++                keep[i] = 4;
++    } while (changed);
++    for (i = 1; i < s1->nb_sections; i++) {
++        s = s1->sections[i];
++        if (keep[i] || s->sh_type == SHT_RELX)
++            continue;
++        if (s1->verbose == 2)
++            printf("   gc: %s (%u bytes)\n", s->name, (unsigned)s->data_offset);
++        s->sh_flags &= ~SHF_ALLOC;
++        free_section(s); /* its relocations are then skipped too */
++    }
++    tcc_free(keep);
++}
++#endif
++
+ /* relocate a given section (CPU dependent) by applying the relocations
+    in the associated relocation section */
+ static void relocate_section(TCCState *s1, Section *s, Section *sr)
+@@ -1168,6 +1287,11 @@
+             continue;
+         }
+         addr = s->sh_addr + rel->r_offset;
++#ifdef TCC_TARGET_ARMDOS
++        if (s1->output_format == TCC_OUTPUT_FORMAT_ARMDOS
++            && (s->sh_flags & SHF_ALLOC))
++            armdos_note_reloc(s1, s, type, sym, addr);
++#endif
+         relocate(s1, rel, type, ptr, addr, tgt);
+     }
+ 
+@@ -1761,7 +1885,18 @@
+     set_local_sym(s1, &"___tcov_data"[!s1->leading_underscore], tcov_section, 0);
+ }
+ 
+-#ifdef TCC_TARGET_UNIX
++#ifdef TCC_TARGET_ARMDOS
++/* ARM-DOS: LIB\CRT0.O (the SDK's _start) goes first; nothing at the end */
++ST_FUNC void tccelf_add_crtbegin(TCCState *s1)
++{
++    if (s1->output_type == TCC_OUTPUT_EXE)
++        tcc_add_crt(s1, "crt0.o");
++}
++
++ST_FUNC void tccelf_add_crtend(TCCState *s1)
++{
++}
++#elif defined TCC_TARGET_UNIX
+ /* add libc crt1/crti objects */
+ ST_FUNC void tccelf_add_crtbegin(TCCState *s1)
+ {
+@@ -1822,7 +1957,17 @@
+ }
+ #endif /* TCC_TARGET_UNIX */
+ 
+-#ifndef TCC_TARGET_PE
++#ifdef TCC_TARGET_ARMDOS
++/* ARM-DOS: LIB\LIBC.A is the SDK's libdos + newlib-nano libc and libm +
++   libgcc in one archive (so one pass resolves everything) */
++ST_FUNC void tcc_add_runtime(TCCState *s1)
++{
++    s1->filetype = 0;
++    tcc_add_pragma_libs(s1);
++    if (!s1->nostdlib)
++        tcc_add_library(s1, "c");
++}
++#elif !defined TCC_TARGET_PE
+ /* add tcc runtime libraries */
+ ST_FUNC void tcc_add_runtime(TCCState *s1)
+ {
+@@ -2415,6 +2560,9 @@
+     ElfW(Phdr) *ph = NULL, *ph2;
+     int i, f, n, phnum, phfill;
+     int file_offset;
++#ifdef TCC_TARGET_ARMDOS
++    int armdos_bss = 0;
++#endif
+ 
+     /* compute number of program headers */
+     phnum = sort_sections(s1, sec_order, d);
+@@ -2492,6 +2640,16 @@
+             }
+         }
+ 
++#ifdef TCC_TARGET_ARMDOS
++        if (s1->output_format == TCC_OUTPUT_FORMAT_ARMDOS
++            && s->sh_type == SHT_NOBITS && !armdos_bss) {
++            /* .bss starts 8-aligned, as in the SDK's link.ld: the image
++               ends there (__bss_start__, armdos_extent()) */
++            armdos_bss = 1;
++            if (align < 7)
++                align = 7;
++        }
++#endif
+         tmp = addr;
+         addr = (addr + align) & ~align;
+         file_offset += (int)(addr - tmp);
+@@ -2811,6 +2969,157 @@
+     return 0;
+ }
+ 
++#ifdef TCC_TARGET_ARMDOS
++/* the extent of the loaded image: [0, *image_end) has contents,
++   [*image_end, *mem_end) is .bss */
++static void armdos_extent(TCCState *s1, addr_t *image_end, addr_t *mem_end,
++                          Section **last_bits, Section **last_any)
++{
++    int i;
++    Section *s;
++    *image_end = *mem_end = 0;
++    *last_bits = *last_any = NULL;
++    for (i = 1; i < s1->nb_sections; i++) {
++        s = s1->sections[i];
++        if (!(s->sh_flags & SHF_ALLOC) || !s->sh_size)
++            continue;
++        if (s->sh_type != SHT_NOBITS && s->sh_addr + s->sh_size >= *image_end)
++            *image_end = s->sh_addr + s->sh_size, *last_bits = s;
++        if (s->sh_addr + s->sh_size >= *mem_end)
++            *mem_end = s->sh_addr + s->sh_size, *last_any = s;
++    }
++    /* 8-aligned, like __image_end, __bss_start__ and __bss_end__ in the
++       SDK's link.ld (layout_sections() starts .bss there): crt0 zeroes
++       .bss a word at a time from __bss_start__, and ARMv5 word stores
++       ignore the low address bits: an unaligned start cleared the last
++       bytes of the section before it (with Arm's newlib-nano, the
++       program's own .data: a string lost its last character). */
++    *image_end = (*image_end + 7) & ~(addr_t)7;
++    *mem_end = (*mem_end + 7) & ~(addr_t)7;
++}
++
++/* the symbols the SDK's crt0/link.ld provide: __bss_start__, __bss_end__,
++   __image_end, end/_end/__end__. Section-relative, so that references to
++   them are relocated with the image. */
++static void armdos_linker_symbols(TCCState *s1)
++{
++    addr_t image_end, mem_end;
++    Section *lb, *la;
++    armdos_extent(s1, &image_end, &mem_end, &lb, &la);
++    if (!lb) {
++        tcc_error_noabort("ARM-DOS: empty program");
++        return;
++    }
++    set_global_sym(s1, "__image_end", lb, image_end - lb->sh_addr);
++    set_global_sym(s1, "__bss_start__", lb, image_end - lb->sh_addr);
++    set_global_sym(s1, "__bss_end__", la, mem_end - la->sh_addr);
++    set_global_sym(s1, "__end__", la, mem_end - la->sh_addr);
++    /* .ARM.exidx is not loaded: an empty unwind table for libgcc */
++    set_global_sym(s1, "__exidx_start", lb, image_end - lb->sh_addr);
++    set_global_sym(s1, "__exidx_end", lb, image_end - lb->sh_addr);
++}
++
++/* sdk/mzstub.asm: the 8086 program a real PC runs */
++static const unsigned char armdos_mzstub[] = {
++    0x0e,0x1f,0xba,0x0e,0x00,0xb4,0x09,0xcd,0x21,0xb8,0x01,0x4c,0xcd,0x21,
++    'T','h','i','s',' ','p','r','o','g','r','a','m',' ','r','e','q','u','i',
++    'r','e','s',' ','a','n',' ','A','R','M',' ','p','r','o','c','e','s','s',
++    'o','r','.',0x0d,0x0a,'$'
++};
++
++static int armdos_cmp_addr(const void *a, const void *b)
++{
++    addr_t x = *(const addr_t *)a, y = *(const addr_t *)b;
++    return x < y ? -1 : x > y;
++}
++
++/* write the MZ + AR1 .EXE (ARCH.md 8; the layout sdk/armexe.mjs writes) */
++static int tcc_output_armdos(TCCState *s1, FILE *f)
++{
++    unsigned char hdr[0xC0], *image;
++    addr_t image_end, mem_end, entry;
++    Section *s, *lb, *la;
++    unsigned ar_off, image_off, reloc_off, dos_len, i, n;
++    addr_t *rel = s1->armdos_relocs;
++
++    armdos_extent(s1, &image_end, &mem_end, &lb, &la);
++    for (i = 1; i < s1->nb_sections; i++) {
++        s = s1->sections[i];
++        if ((s->sh_flags & SHF_ALLOC) && s->sh_size && s->sh_type == SHT_NOBITS
++            && s->sh_addr < image_end)
++            return tcc_error_noabort("ARM-DOS: section %s lies inside the image", s->name);
++        if ((s->sh_flags & SHF_ALLOC) && s->sh_size && (s->sh_flags & SHF_TLS))
++            return tcc_error_noabort("ARM-DOS: thread-local storage is not supported");
++    }
++    entry = get_sym_addr(s1, s1->elf_entryname ? s1->elf_entryname : "_start", 1, 0);
++    if (entry == (addr_t)-1)
++        return -1;
++
++    image = tcc_mallocz(image_end + 4);
++    for (i = 1; i < s1->nb_sections; i++) {
++        s = s1->sections[i];
++        if ((s->sh_flags & SHF_ALLOC) && s->sh_type != SHT_NOBITS && s->sh_size)
++            memcpy(image + s->sh_addr, s->data, s->sh_size);
++    }
++    /* sort, drop duplicates, check */
++    qsort(rel, s1->nb_armdos_relocs, sizeof *rel, armdos_cmp_addr);
++    for (i = n = 0; i < (unsigned)s1->nb_armdos_relocs; i++) {
++        if (n && rel[n - 1] == rel[i])
++            continue;
++        if ((rel[i] & 3) || rel[i] + 4 > image_end) {
++            tcc_free(image);
++            return tcc_error_noabort("ARM-DOS: absolute address at 0x%x is %s",
++                (unsigned)rel[i], (rel[i] & 3) ? "not word aligned (a pointer in a packed struct?)"
++                                               : "outside the image");
++        }
++        rel[n++] = rel[i];
++    }
++
++    dos_len = 0x40 + sizeof armdos_mzstub;
++    ar_off = (dos_len + 15) & ~15;
++    image_off = (ar_off + 64 + 15) & ~15;
++    reloc_off = (image_off + image_end + 3) & ~3;
++    memset(hdr, 0, sizeof hdr);
++    hdr[0] = 'M', hdr[1] = 'Z';
++    write16le(hdr + 0x02, dos_len % 512);
++    write16le(hdr + 0x04, (dos_len + 511) / 512);
++    write16le(hdr + 0x08, 0x40 / 16);
++    write16le(hdr + 0x0A, 0x0010);
++    write16le(hdr + 0x0C, 0xFFFF);
++    write16le(hdr + 0x10, 0x0100);
++    write16le(hdr + 0x18, 0x40);
++    write32le(hdr + 0x3C, ar_off);
++    memcpy(hdr + 0x40, armdos_mzstub, sizeof armdos_mzstub);
++    memcpy(hdr + ar_off, "AR1", 4);
++    write16le(hdr + ar_off + 4, 64);
++    write16le(hdr + ar_off + 6, entry & 1);          /* flags: Thumb entry */
++    write32le(hdr + ar_off + 8, image_off);
++    write32le(hdr + ar_off + 12, image_end);
++    write32le(hdr + ar_off + 16, mem_end - image_end);
++    write32le(hdr + ar_off + 20, s1->armdos_stack);
++    write32le(hdr + ar_off + 24, entry);
++    write32le(hdr + ar_off + 28, reloc_off);
++    write32le(hdr + ar_off + 32, n);
++    write32le(hdr + ar_off + 36, s1->armdos_min_extra);
++    write32le(hdr + ar_off + 40, s1->armdos_max_extra);
++    fwrite(hdr, 1, image_off, f);
++    fwrite(image, 1, image_end, f);
++    for (i = image_off + image_end; i < reloc_off; i++)
++        fputc(0, f);
++    for (i = 0; i < n; i++) {
++        unsigned char w[4];
++        write32le(w, rel[i]);
++        fwrite(w, 1, 4, f);
++    }
++    tcc_free(image);
++    if (s1->verbose)
++        printf("%s: image %u bytes, bss %u, %u relocations, entry 0x%x\n",
++            "ARM-DOS", (unsigned)image_end, (unsigned)(mem_end - image_end),
++            n, (unsigned)entry);
++    return 0;
++}
++#endif
++
+ /* Write an elf, coff or "binary" file */
+ static int tcc_write_elf_file(TCCState *s1, const char *filename, int phnum,
+                               ElfW(Phdr) *phdr)
+@@ -2837,6 +3146,11 @@
+     if (s1->output_format == TCC_OUTPUT_FORMAT_ELF)
+         ret = tcc_output_elf(s1, f, phnum, phdr);
+     else
++#ifdef TCC_TARGET_ARMDOS
++    if (s1->output_format == TCC_OUTPUT_FORMAT_ARMDOS)
++        ret = tcc_output_armdos(s1, f);
++    else
++#endif
+         ret = tcc_output_binary(s1, f);
+     fclose(f);
+ 
+@@ -3041,6 +3355,10 @@
+         /* if linking, also link in runtime libraries (libc, libgcc, etc.) */
+         tcc_add_runtime(s1);
+ 	resolve_common_syms(s1);
++#ifdef TCC_TARGET_ARMDOS
++        if (file_type == TCC_OUTPUT_EXE && !s1->armdos_no_gc && !s1->nb_errors)
++            armdos_gc_sections(s1);
++#endif
+ 
+         if (!s1->static_link) {
+             if (file_type & TCC_OUTPUT_EXE) {
+@@ -3132,8 +3450,21 @@
+     alloc_sec_names(s1, 0);
+     /* this array is used to reorder sections in the output file */
+     sec_order = tcc_malloc(sizeof(int) * 2 * s1->nb_sections);
++#ifdef TCC_TARGET_ARMDOS
++    if (s1->output_format == TCC_OUTPUT_FORMAT_ARMDOS) {
++        /* one flat image linked at 0: no page alignment between segments */
++        s1->has_text_addr = 1;
++        s1->text_addr = 0;
++        if (!s1->section_align)
++            s1->section_align = 8;
++    }
++#endif
+     /* compute section to program header mapping */
+     layout_sections(s1, sec_order, &dyninf);
++#ifdef TCC_TARGET_ARMDOS
++    if (file_type == TCC_OUTPUT_EXE)
++        armdos_linker_symbols(s1);
++#endif
+ 
+         if (dynamic) {
+             /* put in GOT the dynamic section address and relocate PLT */
+@@ -3658,6 +3989,12 @@
+             sym = &((ElfW(Sym) *)s->data)[sym_index];
+             if(sym->st_shndx != SHN_UNDEF)
+                 continue;
++#ifdef TCC_TARGET_ARMDOS
++            /* like GNU ld: a weak reference does not pull in a member
++               (newlib-nano's printf refers to _printf_float weakly) */
++            if (ELFW(ST_BIND)(sym->st_info) == STB_WEAK)
++                continue;
++#endif
+             off = get_be(ar_index + i * entrysize, entrysize);
+             len = read_ar_header(fd, off, &hdr);
+             if (len <= 0 || memcmp(hdr.ar_fmag, ARFMAG, 2)) {
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -253,6 +253,11 @@
+ #if PTR_SIZE == 4
+     if (t == VT_LLONG)
+         return REG_IRE2;
++#if defined TCC_TARGET_ARM && defined TCC_ARM_SOFTFLOAT
++    /* soft-float: a double is a pair of core registers, like a long long */
++    if (t == VT_DOUBLE || t == VT_LDOUBLE)
++        return REG_IRE2;
++#endif
+ #elif defined TCC_TARGET_X86_64
+     if (t == VT_QLONG)
+         return REG_IRE2;
+@@ -417,10 +422,24 @@
+     printf("%s: **** new file\n", file->filename);
+ #endif
+     parse_flags = PARSE_FLAG_PREPROCESS | PARSE_FLAG_TOK_NUM | PARSE_FLAG_TOK_STR;
++#ifdef TCC_TARGET_ARMDOS
++    s1->uses_float = 0;
++#endif
+     next();
+     decl(VT_CONST);
+     gen_inline_functions(s1);
+     check_vstack();
++#ifdef TCC_TARGET_ARMDOS
++    /* Like __fltused in the DOS compilers: a unit that uses floating point
++       references newlib-nano's %f/%e/%g printf and scanf support, so the
++       linker brings it in (a program without floats stays small). */
++    if (s1->uses_float) {
++        set_elf_sym(symtab_section, 0, 0, ELFW(ST_INFO)(STB_GLOBAL, STT_NOTYPE),
++                    0, SHN_UNDEF, "_printf_float");
++        set_elf_sym(symtab_section, 0, 0, ELFW(ST_INFO)(STB_GLOBAL, STT_NOTYPE),
++                    0, SHN_UNDEF, "_scanf_float");
++    }
++#endif
+     /* end of translation unit info */
+ #if TCC_EH_FRAME
+     tcc_eh_frame_end(s1);
+@@ -895,6 +914,10 @@
+     vtop->r2 = VT_CONST;
+     vtop->c = *vc;
+     vtop->sym = NULL;
++#ifdef TCC_TARGET_ARMDOS
++    if (!nocode_wanted && is_float(type->t))
++        tcc_state->uses_float = 1;
++#endif
+ }
+ 
+ ST_FUNC void vswap(void)
+@@ -1845,6 +1868,10 @@
+    register value (such as structures). */
+ ST_FUNC int gv(int rc)
+ {
++#ifdef TCC_TARGET_ARMDOS
++    if (!nocode_wanted && is_float(vtop->type.t))
++        tcc_state->uses_float = 1;
++#endif
+     int r, r2, r_ok, r2_ok, rc2, bt;
+     int bit_pos, bit_size, size, align;
+ 
+@@ -2507,6 +2534,23 @@
+ 
+ #if defined TCC_TARGET_X86_64 || defined TCC_TARGET_I386 || defined TCC_TARGET_ARM64
+ # define gen_negf gen_opf
++#elif defined TCC_TARGET_ARM && defined TCC_ARM_SOFTFLOAT
++void gen_negf(int op)
++{
++    /* soft-float: flip the sign bit as an integer operation (in IEEE,
++       -x is not 0-x: think of -0.0 and NaN) */
++    CType t = vtop->type;
++    tcc_state->uses_float = 1;
++    if ((t.t & VT_BTYPE) == VT_FLOAT) {
++        vtop->type.t = VT_INT;
++        vpushi(0x80000000);
++    } else {
++        vtop->type.t = VT_LLONG;
++        vpushll(0x8000000000000000ULL);
++    }
++    gen_op('^');
++    vtop->type = t;
++}
+ #elif defined TCC_TARGET_ARM
+ void gen_negf(int op)
+ {
+@@ -3207,7 +3251,8 @@
+ }
+ #endif
+ 
+-#if defined TCC_TARGET_ARM64 || defined TCC_TARGET_RISCV64
++#if defined TCC_TARGET_ARM64 || defined TCC_TARGET_RISCV64 \
++    || (defined TCC_TARGET_ARM && defined TCC_ARM_SOFTFLOAT)
+ #define gen_cvt_ftoi1 gen_cvt_ftoi
+ #else
+ /* generic ftoi for unsigned long long case */
+@@ -4202,6 +4247,9 @@
+ {
+     int size, align, maxalign, offset, c, bit_pos, bit_size;
+     int packed, a, bt, prevbt, prev_bit_size;
++#ifdef TCC_TARGET_ARMDOS
++    int nat_align;
++#endif
+     int pcc = !tcc_state->ms_bitfields;
+     int pragma_pack = *tcc_state->pack_stack_ptr;
+     Sym *f;
+@@ -4221,6 +4269,10 @@
+         else
+             bit_size = -1;
+         size = type_size(&f->type, &align);
++#ifdef TCC_TARGET_ARMDOS
++        f->a.unaligned = 0;
++        nat_align = align;
++#endif
+         a = f->a.aligned ? 1 << (f->a.aligned - 1) : 0;
+         packed = 0;
+ 
+@@ -4263,6 +4315,19 @@
+ 	    bit_pos = 0;
+ 	    prevbt = VT_STRUCT;
+ 	    prev_bit_size = 0;
++#ifdef TCC_TARGET_ARMDOS
++            /* A packed short/int member may sit at an odd address, and
++               the ARM926 has no unaligned loads/stores: it will be
++               accessed byte by byte, like a packed bit-field. */
++            if (align < nat_align
++                && ((f->type.t & VT_BTYPE) == VT_SHORT
++                    || (f->type.t & VT_BTYPE) == VT_INT)
++                && !(f->type.t & (VT_ARRAY | VT_BITFIELD))
++                && !IS_ENUM(f->type.t)) {
++                f->a.unaligned = 1;
++                f->auxtype = VT_STRUCT;
++            }
++#endif
+ 
+ 	} else {
+ 	    /* A bit-field.  Layout is more complicated.  There are two
+@@ -5769,6 +5834,14 @@
+             test_lvalue();
+         if (vtop->sym)
+           vtop->sym->a.addrtaken = 1;
++#ifdef TCC_TARGET_ARMDOS
++        /* &packed.member: an ordinary pointer again */
++        if ((vtop->type.t & VT_BITFIELD) && vtop->type.ref
++            && vtop->type.ref->a.unaligned) {
++            vtop->type.t &= ~(VT_BITFIELD | (0xfff << VT_STRUCT_SHIFT));
++            vtop->type.ref = NULL;
++        }
++#endif
+         mk_pointer(&vtop->type);
+         gaddrof();
+         break;
+@@ -6197,8 +6270,20 @@
+             gen_op('+');
+             /* change type to field type, and set to lvalue */
+             vtop->type = s->type;
++#ifdef TCC_TARGET_ARMDOS
++            if (!nocode_wanted && is_float(s->type.t))
++                tcc_state->uses_float = 1;
++#endif
+             if (qualifiers)
+                 parse_btype_qualify(&vtop->type, qualifiers);
++#ifdef TCC_TARGET_ARMDOS
++            /* unaligned (packed) member: a full-width byte-wise bit-field */
++            if (s->a.unaligned) {
++                int bits = (vtop->type.t & VT_BTYPE) == VT_SHORT ? 16 : 32;
++                vtop->type.t |= VT_BITFIELD | (bits << (VT_STRUCT_SHIFT + 6));
++                vtop->type.ref = s;
++            }
++#endif
+             /* an array is never an lvalue */
+             if (!(vtop->type.t & VT_ARRAY)) {
+                 vtop->r |= VT_LVAL;
+@@ -6848,6 +6933,11 @@
+ 		((align & (ret_align - 1))
+                  && ((vtop->r & VT_VALMASK) < VT_CONST /* pointer to struct */
+                      || (vtop->c.i & (ret_align - 1))
++#ifdef TCC_TARGET_ARMDOS
++                     /* a global's own address may be unaligned too, and
++                        the ARM926 has no unaligned word loads */
++                     || (vtop->r & VT_SYM)
++#endif
+                      ))) {
+ 		if (ret_nregs * regsize > size)
+ 		    size = ret_nregs * regsize;
+@@ -8262,6 +8352,15 @@
+ #ifdef CONFIG_TCC_BCHECK
+     int bcheck = tcc_state->do_bounds_check && !NODATA_WANTED;
+ #endif
++#ifdef TCC_TARGET_ARMDOS
++    {   /* a float variable (or array of them) counts as using floats */
++        CType *ft = type;
++        while (ft->t & VT_ARRAY)
++            ft = pointed_type(ft);
++        if (is_float(ft->t))
++            tcc_state->uses_float = 1;
++    }
++#endif
+     init_params p = {0};
+ 
+     if (scope == VT_CONST) {
+--- a/tccpp.c
++++ b/tccpp.c
+@@ -651,6 +651,15 @@
+             len = read(bf->fd, bf->buffer, len);
+             if (len < 0)
+                 len = 0;
++#ifdef TCC_TARGET_ARMDOS
++            {   /* DOS: Ctrl-Z ends a text file (COPY CON, EDLIN write one) */
++                unsigned char *z = memchr(bf->buffer, 0x1A, len);
++                if (z) {
++                    len = z - bf->buffer;
++                    lseek(bf->fd, 0, SEEK_END);
++                }
++            }
++#endif
+         } else {
+             len = 0;
+         }
+@@ -1612,7 +1621,7 @@
+     s = basename = tcc_basename(filename);
+     h = TOK_HASH_INIT;
+     while ((c = (unsigned char)*s) != 0) {
+-#ifdef _WIN32
++#if defined _WIN32 || defined TCC_HOST_ARMDOS
+         h = TOK_HASH_FUNC(h, toup(c));
+ #else
+         h = TOK_HASH_FUNC(h, c);
+@@ -1776,7 +1785,7 @@
+         *tcc_basename(buf) = 0;
+     }
+     pstrcat(buf, sizeof buf, filename);
+-#ifdef _WIN32
++#if defined _WIN32 || defined TCC_HOST_ARMDOS
+     normalize_slashes(buf);
+ #endif
+     if (0 == strcmp(file->filename, buf))
+@@ -3543,7 +3552,11 @@
+ /* init preprocessor */
+ 
+ static const char * const target_os_defs =
+-#ifdef TCC_TARGET_PE
++#ifdef TCC_TARGET_ARMDOS
++    "__ARMDOS__\0"
++    "__MSDOS__\0"
++    "__DOS__\0"
++#elif defined TCC_TARGET_PE
+     "_WIN32\0"
+ # if PTR_SIZE == 8
+     "_WIN64\0"
+--- a/tccrun.c
++++ b/tccrun.c
+@@ -75,7 +75,7 @@
+ /* defined when included from lib/bt-exe.c */
+ #ifndef CONFIG_TCC_BACKTRACE_ONLY
+ 
+-#ifndef _WIN32
++#if !defined _WIN32 && !defined TCC_HOST_ARMDOS
+ # include <sys/mman.h>
+ #endif
+ 
+@@ -232,11 +232,29 @@
+     if ((s1->dflag & 16) && (addr_t)-1 == get_sym_addr(s1, "main", 0, 1))
+         return 0;
+ 
++#ifdef TCC_HOST_ARMDOS
++    {
++        /* ARM-DOS: the program shares TCC.EXE's own C library (a second
++           copy would have its own heap growing in the same DOS memory
++           block). Weak, so the program may define its own versions and
++           LIBC.A still supplies what TCC.EXE lacks (maths, ...). main() is
++           called directly; exit() ends TCC.EXE with the program's code. */
++        extern const struct tcc_armdos_hostsym { const char *name; void *addr; } tcc_armdos_hostsyms[];
++        const struct tcc_armdos_hostsym *h;
++        for (h = tcc_armdos_hostsyms; h->name; h++)
++            set_elf_sym(symtab_section, (addr_t)h->addr, 0,
++                ELFW(ST_INFO)(STB_WEAK, STT_NOTYPE), 0, SHN_ABS, h->name);
++    }
++    s1->run_main = top_sym = "main";
++    if (s1->elf_entryname)
++        s1->run_main = top_sym = s1->elf_entryname;
++#else
+     tcc_add_symbol(s1, "__rt_exit", rt_exit);
+     s1->run_main = "_runmain", top_sym = "main";
+     if (s1->elf_entryname)
+         s1->run_main = top_sym = s1->elf_entryname;
+     tcc_add_support(s1, "runmain.o");
++#endif
+ 
+     if (tcc_relocate(s1) < 0)
+         return -1;
+@@ -470,7 +488,10 @@
+ 
+ static int protect_pages(void *ptr, unsigned long length, int mode)
+ {
+-#ifdef _WIN32
++#ifdef TCC_HOST_ARMDOS
++    /* ARM-DOS: no MMU, no caches to flush - memory is memory */
++    return 0;
++#elif defined _WIN32
+     static const unsigned char protect[] = {
+         PAGE_EXECUTE_READ,
+         PAGE_READONLY,
+--- a/tcctools.c
++++ b/tcctools.c
+@@ -180,7 +180,16 @@
+     }
+     created_file = argv[i_lib];
+ 
++#ifdef TCC_HOST_ARMDOS
++    {   /* DOS 8.3: LIBX.A -> LIBX.$$$ */
++        char *e;
++        pstrcpy(tfile, sizeof tfile - 4, argv[i_lib]);
++        e = tcc_fileextension(tfile);
++        strcpy(e, ".$$$");
++    }
++#else
+     sprintf(tfile, "%s.tmp", argv[i_lib]);
++#endif
+     if ((fo = fopen(tfile, "wb+")) == NULL)
+     {
+         fprintf(stderr, "tcc: ar: can't create temporary file %s\n", tfile);
+--- a/arm-tok.h
++++ b/arm-tok.h
+@@ -148,6 +148,23 @@
+ 
+  DEF_ASM(apsr_nzcv)
+ 
++ /* program status registers for mrs/msr (ARM-DOS) */
++
++ DEF_ASM(cpsr)
++ DEF_ASM(spsr)
++ DEF_ASM(cpsr_c)
++ DEF_ASM(cpsr_f)
++ DEF_ASM(cpsr_fc)
++ DEF_ASM(cpsr_cf)
++ DEF_ASM(cpsr_fsxc)
++ DEF_ASM(cpsr_cxsf)
++ DEF_ASM(spsr_c)
++ DEF_ASM(spsr_f)
++ DEF_ASM(spsr_fc)
++ DEF_ASM(spsr_cf)
++ DEF_ASM(spsr_fsxc)
++ DEF_ASM(spsr_cxsf)
++
+  /* data processing directives */
+ 
+  DEF_ASM(asl)
+@@ -232,6 +249,8 @@
+ 
+  /* misc */
+  DEF_ASM_CONDED(clz)
++ DEF_ASM_CONDED(mrs)
++ DEF_ASM_CONDED(msr)
+ 
+  /* size conversion */
+ 
+--- a/tcc.h
++++ b/tcc.h
+@@ -131,6 +131,13 @@
+ # define IS_ABSPATH(p) (IS_DIRSEP(p[0]) || (p[0] && p[1] == ':' && IS_DIRSEP(p[2])))
+ # define PATHCMP stricmp
+ # define PATHSEP ";"
++#elif defined TCC_HOST_ARMDOS
++/* TCC.EXE itself running on ARM-DOS: DOS paths, case-insensitive names */
++# include <strings.h>
++# define IS_DIRSEP(c) (c == '/' || c == '\\')
++# define IS_ABSPATH(p) (IS_DIRSEP(p[0]) || (p[0] && p[1] == ':'))
++# define PATHCMP strcasecmp
++# define PATHSEP ";"
+ #else
+ # define IS_DIRSEP(c) (c == '/')
+ # define IS_ABSPATH(p) IS_DIRSEP(p[0])
+@@ -185,6 +192,22 @@
+ # endif
+ #endif
+ 
++#ifdef TCC_TARGET_ARMDOS
++/* ARM-DOS: an ARM926 (ARMv5TE) PC without FPU; programs are MZ+AR1 .EXE
++   files with a relocation table (ARCH.md section 8), linked against the
++   ARM-DOS SDK's crt0 + libdos + newlib-nano + libgcc. */
++# ifndef TCC_TARGET_ARM
++#  define TCC_TARGET_ARM
++# endif
++# ifndef TCC_ARM_EABI
++#  define TCC_ARM_EABI
++# endif
++# undef TCC_ARM_VFP
++# undef TCC_ARM_HARDFLOAT
++# define TCC_ARM_SOFTFLOAT 1
++# define TARGETOS_ARMDOS 1
++#endif
++
+ /* only native compiler supports -run */
+ #if defined _WIN32 == defined TCC_TARGET_PE \
+     && defined __APPLE__ == defined TCC_TARGET_MACHO
+@@ -224,7 +247,7 @@
+     || defined TARGETOS_NetBSD \
+     || defined TARGETOS_FreeBSD_kernel
+ # define TARGETOS_BSD 1
+-#elif !(defined TCC_TARGET_PE || defined TCC_TARGET_MACHO)
++#elif !(defined TCC_TARGET_PE || defined TCC_TARGET_MACHO || defined TCC_TARGET_ARMDOS)
+ # define TARGETOS_Linux 1 /* for tccdefs_.h */
+ #endif
+ 
+@@ -252,6 +275,15 @@
+ 
+ /* ------------ path configuration ------------ */
+ 
++#ifdef TCC_TARGET_ARMDOS
++/* everything lives next to TCC.EXE: {B}\INCLUDE, {B}\LIB (crt0.o, libc.a) */
++# define CONFIG_TCC_SYSINCLUDEPATHS "{B}/include"
++# define CONFIG_TCC_LIBPATHS "{B}/lib"
++# define CONFIG_TCC_CRTPREFIX "{B}/lib"
++# define CONFIG_TCC_ELFINTERP "-"
++# define TCC_LIBTCC1 ""
++#endif
++
+ #ifndef CONFIG_SYSROOT
+ # define CONFIG_SYSROOT ""
+ #endif
+@@ -507,7 +539,8 @@
+     dllimport   : 1,
+     addrtaken   : 1,
+     nodebug     : 1,
+-    xxxx        : 2; /* not used */
++    unaligned   : 1, /* ARM-DOS: packed member, needs byte-wise access */
++    xxxx        : 1; /* not used */
+ };
+ 
+ /* function attributes or temporary attributes for parsing */
+@@ -801,6 +834,16 @@
+     unsigned char float_abi; /* float ABI of the generated code*/
+ #endif
+ 
++#ifdef TCC_TARGET_ARMDOS
++    unsigned char uses_float; /* this unit generated floating point code */
++    /* the .EXE's relocation table: image offsets of absolute words */
++    addr_t *armdos_relocs;
++    int nb_armdos_relocs;
++    /* AR1 header fields (-Wl,--stack=N, --min-extra=N, --max-extra=N) */
++    unsigned armdos_stack, armdos_min_extra, armdos_max_extra;
++    unsigned char armdos_no_gc; /* -Wl,--no-gc-sections */
++#endif
++
+     unsigned char has_text_addr;
+     addr_t text_addr; /* address of text section */
+     unsigned section_align; /* section alignment */
+@@ -1311,6 +1354,9 @@
+ PUB_FUNC int tcc_add_library_err(TCCState *s, const char *f);
+ PUB_FUNC void tcc_print_stats(TCCState *s, unsigned total_time);
+ PUB_FUNC int tcc_parse_args(TCCState *s, int *argc, char ***argv);
++#ifdef TCC_HOST_ARMDOS
++ST_FUNC char *normalize_slashes(char *path);
++#endif
+ #ifdef _WIN32
+ ST_FUNC char *normalize_slashes(char *path);
+ PUB_FUNC FILE *tcc_fopen(const char *f, const char *m);
+@@ -1531,6 +1577,7 @@
+ #define TCC_OUTPUT_FORMAT_ELF    0 /* default output format: ELF */
+ #define TCC_OUTPUT_FORMAT_BINARY 1 /* binary image output */
+ #define TCC_OUTPUT_FORMAT_COFF   2 /* COFF */
++#define TCC_OUTPUT_FORMAT_ARMDOS 3 /* ARM-DOS MZ+AR1 .EXE (ARCH.md 8) */
+ #define TCC_OUTPUT_DYN           TCC_OUTPUT_DLL
+ 
+ #define ARMAG  "!<arch>\n"    /* For COFF and a.out archives */
+--- a/tcctok.h
++++ b/tcctok.h
+@@ -265,6 +265,36 @@
+      DEF(TOK___floatundidf, "__aeabi_ul2d")
+      DEF(TOK___fixunssfdi, "__aeabi_f2ulz")
+      DEF(TOK___fixunsdfdi, "__aeabi_d2ulz")
++#  ifdef TCC_ARM_SOFTFLOAT
++     DEF(TOK___aeabi_fadd, "__aeabi_fadd")
++     DEF(TOK___aeabi_fsub, "__aeabi_fsub")
++     DEF(TOK___aeabi_fmul, "__aeabi_fmul")
++     DEF(TOK___aeabi_fdiv, "__aeabi_fdiv")
++     DEF(TOK___aeabi_dadd, "__aeabi_dadd")
++     DEF(TOK___aeabi_dsub, "__aeabi_dsub")
++     DEF(TOK___aeabi_dmul, "__aeabi_dmul")
++     DEF(TOK___aeabi_ddiv, "__aeabi_ddiv")
++     DEF(TOK___aeabi_fcmpeq, "__aeabi_fcmpeq")
++     DEF(TOK___aeabi_fcmplt, "__aeabi_fcmplt")
++     DEF(TOK___aeabi_fcmple, "__aeabi_fcmple")
++     DEF(TOK___aeabi_fcmpge, "__aeabi_fcmpge")
++     DEF(TOK___aeabi_fcmpgt, "__aeabi_fcmpgt")
++     DEF(TOK___aeabi_dcmpeq, "__aeabi_dcmpeq")
++     DEF(TOK___aeabi_dcmplt, "__aeabi_dcmplt")
++     DEF(TOK___aeabi_dcmple, "__aeabi_dcmple")
++     DEF(TOK___aeabi_dcmpge, "__aeabi_dcmpge")
++     DEF(TOK___aeabi_dcmpgt, "__aeabi_dcmpgt")
++     DEF(TOK___aeabi_i2f, "__aeabi_i2f")
++     DEF(TOK___aeabi_ui2f, "__aeabi_ui2f")
++     DEF(TOK___aeabi_i2d, "__aeabi_i2d")
++     DEF(TOK___aeabi_ui2d, "__aeabi_ui2d")
++     DEF(TOK___aeabi_f2iz, "__aeabi_f2iz")
++     DEF(TOK___aeabi_f2uiz, "__aeabi_f2uiz")
++     DEF(TOK___aeabi_d2iz, "__aeabi_d2iz")
++     DEF(TOK___aeabi_d2uiz, "__aeabi_d2uiz")
++     DEF(TOK___aeabi_f2d, "__aeabi_f2d")
++     DEF(TOK___aeabi_d2f, "__aeabi_d2f")
++#  endif
+ # else
+      DEF(TOK___modsi3, "__modsi3")
+      DEF(TOK___umodsi3, "__umodsi3")
+--- a/include/tccdefs.h
++++ b/include/tccdefs.h
+@@ -133,6 +133,26 @@
+ 
+ #endif
+ 
++#if defined __ARMDOS__
++    /* ARM-DOS: newlib's headers (machine/_default_types.h, sys/_intsup.h)
++       look for the type macros GCC predefines */
++    #define __INT8_TYPE__ signed char
++    #define __UINT8_TYPE__ unsigned char
++    #define __INT16_TYPE__ short
++    #define __UINT16_TYPE__ unsigned short
++    #define __UINT32_TYPE__ unsigned int
++    #define __UINT64_TYPE__ unsigned long long
++    #define __SCHAR_MAX__ 0x7f
++    #define __SHRT_MAX__ 0x7fff
++    #define __SIZE_MAX__ 0xffffffffU
++    #define __PTRDIFF_MAX__ 0x7fffffff
++    #define __WCHAR_MAX__ 0x7fffffff
++    #define __WCHAR_MIN__ (-__WCHAR_MAX__ - 1)
++    #define __USER_LABEL_PREFIX__
++    /* sys/cdefs.h defines it for GCC only; string.h needs it (basename) */
++    #define __ASMNAME(cname) cname
++#endif
++
+     /* Some derived integer types needed to get stdint.h to compile correctly on some platforms */
+ #ifndef __NetBSD__
+     #define __UINTPTR_TYPE__ unsigned __PTRDIFF_TYPE__

@@ -1,0 +1,8 @@
+{
+  "dirs": ["ELBOW\\DEMOS", "ELBOW\\DEMOS\\SECOND"],
+  "files": [
+    { "src": "3rdparty/secondreality/*", "dst": "ELBOW\\DEMOS\\SECOND\\" },
+    { "src": "apps/secondreality/dist/README.TXT", "dst": "ELBOW\\DEMOS\\SECOND\\README.TXT" },
+    { "src": "apps/secondreality/dist/SECOND.BAT", "dst": "ELBOW\\DEMOS\\SECOND.BAT" }
+  ]
+}

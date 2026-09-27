@@ -1,0 +1,15 @@
+@X0F  NEWS: ARM-DOS 4.00 IS HERE@X07
+
+  Europa Micro Systems has started shipping ARM-DOS 4.00 with every
+  ARM/AT.  Highlights, from the sysop's first week with it:
+
+   * DOSSHELL - a graphical(ish) shell.  Mouse optional, patience required.
+   * Big hard disks: partitions over 32 MB, finally.
+   * MEM, to see where your 640K went.
+   * TERM - a real comm program in the box.  It's what you're using now
+     if you have an ARM PC.  Alt-D dials, PgDn downloads.
+
+  Our own board runs on an ARM/AT with ARM-DOS 4.00 too.  The door game
+  runs as a separate program, exactly like it did under the old DOS.
+
+  Grab ARMTIPS.TXT from the Text Files area (F, then D) for more.

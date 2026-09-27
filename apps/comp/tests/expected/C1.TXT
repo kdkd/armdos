@@ -1,0 +1,36 @@
+
+
+C:D1.TXT and C:D2.TXT
+
+Compare error at OFFSET 0
+File 1 = 41
+File 2 = 61
+Compare error at OFFSET 5
+File 1 = 46
+File 2 = 66
+Compare error at OFFSET A
+File 1 = 4B
+File 2 = 6B
+Compare error at OFFSET F
+File 1 = 50
+File 2 = 70
+Compare error at OFFSET 14
+File 1 = 55
+File 2 = 75
+Compare error at OFFSET 19
+File 1 = 5A
+File 2 = 7A
+Compare error at OFFSET 1E
+File 1 = 45
+File 2 = 65
+Compare error at OFFSET 23
+File 1 = 4A
+File 2 = 6A
+Compare error at OFFSET 28
+File 1 = 4F
+File 2 = 6F
+Compare error at OFFSET 2D
+File 1 = 54
+File 2 = 74
+10 Mismatches - ending compare
+n

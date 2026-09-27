@@ -1,0 +1,4 @@
+ARM-DOS Multimedia Sampler '93 - a mixed-mode CD-ROM for the ARM/AT
+personal computer: demos, text adventures, ANSI art, BASIC programs,
+public-domain pictures and books on the ISO 9660 data track, plus
+@AUDIOCOUNT@ CD audio tracks.

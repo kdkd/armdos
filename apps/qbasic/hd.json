@@ -1,0 +1,8 @@
+{
+  "comment": "QB.EXE goes to C:\\DOS with the other programs (build/*.EXE); the sample programs to C:\\QB",
+  "dirs": ["QB"],
+  "files": [
+    { "src": "apps/qbasic/samples/BANANAS.BAS", "dst": "QB\\" },
+    { "src": "apps/qbasic/samples/SERPENT.BAS", "dst": "QB\\" }
+  ]
+}

@@ -1,0 +1,81 @@
+End of input file
+*3
+       3:*line 03 of the forty-line test file
+       3:*replacement third line
+*4
+       4:*line 04 of the forty-line test file
+       4:*
+*5
+       5:*line 05 of the forty-line test file
+       5:*X
+*3,5d
+*1,6l
+       1: line 01 of the forty-line test file
+       2: line 02 of the forty-line test file
+       3:*line 06 of the forty-line test file
+       4: line 07 of the forty-line test file
+       5: line 08 of the forty-line test file
+       6: line 09 of the forty-line test file
+*d
+*l
+       1: line 01 of the forty-line test file
+       2: line 02 of the forty-line test file
+       3:*line 07 of the forty-line test file
+       4: line 08 of the forty-line test file
+       5: line 09 of the forty-line test file
+       6: line 10 of the forty-line test file
+       7: line 11 of the forty-line test file
+       8: line 12 of the forty-line test file
+       9: line 13 of the forty-line test file
+      10: line 14 of the forty-line test file
+      11: line 15 of the forty-line test file
+      12: line 16 of the forty-line test file
+      13: line 17 of the forty-line test file
+      14: line 18 of the forty-line test file
+      15: line 19 of the forty-line test file
+      16: line 20 of the forty-line test file
+      17: line 21 of the forty-line test file
+      18: line 22 of the forty-line test file
+      19: line 23 of the forty-line test file
+      20: line 24 of the forty-line test file
+      21: line 25 of the forty-line test file
+      22: line 26 of the forty-line test file
+      23: line 27 of the forty-line test file
+      24: line 28 of the forty-line test file
+*#d
+*2i
+       2:*new two
+       3:*new three
+       4:*^Z
+*1,8l
+       1: line 01 of the forty-line test file
+       2: new two
+       3: new three
+       4:*line 02 of the forty-line test file
+       5: line 07 of the forty-line test file
+       6: line 08 of the forty-line test file
+       7: line 09 of the forty-line test file
+       8: line 10 of the forty-line test file
+*#i
+      39:*at the end
+      40:*^Z
+*38,#l
+      38: line 40 of the forty-line test file
+      39: at the end
+*1i
+       1:*top
+       2:*^Z
+*1,3l
+       1: top
+       2:*line 01 of the forty-line test file
+       3: new two
+*i
+       2:*mid
+       3:*^Z
+*1,5l
+       1: top
+       2: mid
+       3:*line 01 of the forty-line test file
+       4: new two
+       5: new three
+*e

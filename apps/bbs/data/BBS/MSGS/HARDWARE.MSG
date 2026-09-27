@@ -1,0 +1,315 @@
+@@1
+From: Europa Sysop
+To: All
+Subj: The prototype that started it all
+Date: 07-02-88 22:30
+
+People keep asking about the machine The Pit ran on in 1987, so here it
+is, as much as I can say.
+
+It was an engineering sample of what became the ARM/AT.  The board was
+marked REV X2 in hand lettering and the serial number sticker said
+00017.  There were four wires soldered across the back of the board by
+somebody in a hurry, a sticker on the case that said DO NOT SHIP, and a
+second sticker, in different handwriting, that said SERIOUSLY.
+
+A friend in the lab lent it to me "for testing".  A friend who still
+can't talk about it, so please don't ask who.  I tested it by running a
+bulletin board on it for eight months, which I maintain is a very
+thorough test.
+
+It went back when the production machines shipped.  I kept the keyboard.
+Nobody has asked for it.  I type on it every night.
+
+-- Europa
+@@2
+From: Karen Whitfield
+To: Europa Sysop
+Subj: Re: The prototype that started it all
+Date: 07-03-88 07:45
+
+> There were four wires soldered across the back of the board
+
+Five, on the X2s I've heard about.  The fifth one is under the video
+connector, and you'd only see it with the board out of the case.
+
+How would I know that?  I can neither confirm nor deny.
+
+KW
+@@3
+From: Maria Delgado
+To: All
+Subj: Hard card or real hard disk?
+Date: 08-09-88 16:30
+
+Customers keep asking me this at the store, so let's settle it here.
+
+A hard card is a hard disk and its controller on one expansion card.
+You plug it into a slot and you're done: no drive bay, no cables, no
+screwdriver.  A regular hard disk goes in a drive bay with a separate
+controller card and two ribbon cables.
+
+My take: the hard card is wonderful if your case is full or your hands
+are shaky.  The regular drive is cheaper per megabyte and easier to
+upgrade.  Either one beats swapping floppies like a blackjack dealer.
+
+Maria
+@@4
+From: Karen Whitfield
+To: Maria Delgado
+Subj: Re: Hard card or real hard disk?
+Date: 08-10-88 06:55
+
+> Either one beats swapping floppies like a blackjack dealer.
+
+Agreed.  Two things to add:
+
+1. A hard card is heavy and it hangs off a slot.  If you move the
+   machine a lot (hello, portable owners), screw the bracket in tight.
+2. Park your heads before you move ANY hard disk, unless the drive
+   parks itself.  Most new ones do.  The old ones don't, and they will
+   let you know about it exactly once.
+
+KW
+@@5
+From: Maria Delgado
+To: All
+Subj: EGA or VGA?
+Date: 09-14-88 13:10
+
+The other question I get all day.  Karen, want to take this one before I
+make something up?
+@@6
+From: Karen Whitfield
+To: Maria Delgado
+Subj: Re: EGA or VGA?
+Date: 09-14-88 22:20
+
+> Karen, want to take this one before I make something up?
+
+Happily.
+
+EGA: 640 x 350 in 16 colours, chosen from a palette of 64.  Crisp text,
+fine for spreadsheets and most games.
+
+VGA: 640 x 480 in 16 colours, chosen from 262,144.  And the one everyone
+gets excited about: 320 x 200 with 256 colours on screen at once.  Needs
+an analog monitor, so budget for one.
+
+If the customer ever wants to play a game, or look at a fractal, or
+has eyes, sell them the VGA.
+
+KW
+@@7
+From: Susan Oyelaran
+To: Karen Whitfield
+Subj: Re: EGA or VGA?
+Date: 09-15-88 07:30
+
+> 320 x 200 with 256 colours on screen at once.
+
+And on our machines, that mode (13h) is just 64,000 bytes starting at
+address 0xA0000, one byte per pixel, row after row.  No planes, no
+segments, no bank switching.  Pixel (x,y) is at 0xA0000 + y*320 + x.
+A pointer and a STRB.  It's almost too easy.
+
+Susan
+... 16 registers and no segments: I'm home.
+@@8
+From: Dave Morgan
+To: All
+Subj: How many registers is enough?
+Date: 10-19-89 21:02
+
+My ARM/AT manual says the CPU has 16 registers and "no segments".  My
+brother-in-law has a 386 and says real computers have segments.  I asked
+him what they're for and he talked for forty minutes.  I still don't know.
+@@9
+From: Susan Oyelaran
+To: Dave Morgan
+Subj: Re: How many registers is enough?
+Date: 10-19-89 22:30
+
+Segments are for when your pointers are too short.  Our pointers are 32
+bits.  Tell your brother-in-law that a far pointer on the ARM is just a
+pointer, and then hang up before he explains near pointers.
+@@10
+From: Bill Tran
+To: All
+Subj: Modem init string help
+Date: 10-24-89 00:48
+
+My new 2400 keeps answering the phone when my grandmother calls.  She
+thinks we have a fax machine now.  What do I put in the init string?
+@@11
+From: Europa Sysop
+To: Bill Tran
+Subj: Re: Modem init string help
+Date: 10-24-89 08:15
+
+> My new 2400 keeps answering the phone
+
+Put S0=0 in your init string (auto-answer off).  S0=1 means "answer on
+the first ring".  TERM sends AT&C1&D2 after ATZ by default, so the modem
+also tells the computer when there is a carrier (&C1) and hangs up when
+you drop DTR (&D2).  Alt-S in TERM to change it.
+
+And tell grandma the screeching is the future.
+@@12
+From: Rick Lambert
+To: All
+Subj: What is the X86 lamp for?
+Date: 11-14-89 19:50
+
+I'm helping my neighbour set up his new ARM/AT (I'm allowed to touch
+other people's computers, I just won't own one).  On the front panel
+there's POWER, TURBO, DISK, and an amber lamp that says X86.
+
+It has never once lit up.  The manual says nothing.  The neighbour says
+it's "for decoration".  I say nobody puts a lamp on a computer for
+decoration.  Well, except Europa Micro, apparently.
+
+What does it do?
+@@13
+From: Karen Whitfield
+To: Rick Lambert
+Subj: Re: What is the X86 lamp for?
+Date: 11-15-89 06:40
+
+> It has never once lit up.
+
+It lights while the machine is running x86 code.
+
+ARM-DOS comes with ELBOW, a program that runs genuine old x86 DOS
+programs on the ARM, instruction by instruction, translating as it
+goes.  The lamp is the machine telling you it's doing an impression.
+
+Try it: at the DOS prompt, type
+
+    CD \ELBOW
+    DEMO
+
+and watch the front panel.  Or run one of the samples in C:\ELBOW with
+X86 in front of the name, like   X86 C:\ELBOW\FIRE.COM   and keep an eye
+on the lamp while the fire burns.
+
+KW
+@@14
+From: Rick Lambert
+To: Karen Whitfield
+Subj: Re: What is the X86 lamp for?
+Date: 11-15-89 20:10
+
+> The lamp is the machine telling you it's doing an impression.
+
+It lit!  Amber, steady, the whole time the fire was burning.  My
+neighbour said "huh".  I said "huh" too.  We stood there going "huh"
+until his wife asked if we'd broken it.
+
+I'm not buying one.  But I'm thinking about it more than I'd like.
+
+... Still on a PCjr.  For now.
+@@15
+From: Europa Sysop
+To: All
+Subj: The 2:10 freight and a very bad five seconds
+Date: 12-11-89 02:31
+
+Twenty minutes ago the 2:10 came through, heavier than usual.  The
+windows rattled, the cat left the room, and the hard disk light came
+on and STAYED on.  For about five seconds I was back on leap day 1988.
+
+It was fine.  The disk was writing the caller log; the light stayed on
+because it was busy, not because it was dying.  CHKDSK found nothing.
+My heart rate is almost normal.
+
+I'm moving the machine to the inside wall anyway, and it's getting a
+second foam pad.  Harold, what WAS that on the head end tonight?  It
+sounded like two engines and a grudge.
+
+-- Europa
+@@16
+From: Harold Pruitt
+To: Europa Sysop
+Subj: Re: The 2:10 freight and a very bad five seconds
+Date: 12-11-89 06:15
+
+> It sounded like two engines and a grudge.
+
+Two tonight.  The GP40 on the point with a second unit trailing, and
+the train was long, near a hundred cars.  That's why the house shook
+longer.  They add power before the holidays.
+
+Your disk parks itself, I asked my grandson.  But I approve of the foam.
+In the signal business we had a saying: the vibration you plan for
+never breaks anything.
+
+Harold
+@@17
+From: Dave Morgan
+To: All
+Subj: What is extended memory FOR?
+Date: 02-08-90 21:15
+
+MEM says I have 640K of conventional memory and 15 megabytes of
+"extended memory".  Fifteen MEGABYTES.  Lotus uses the 640K and
+complains.  What is the other fifteen megabytes doing?  Watching?
+@@18
+From: Karen Whitfield
+To: Dave Morgan
+Subj: Re: What is extended memory FOR?
+Date: 02-08-90 23:05
+
+> What is the other fifteen megabytes doing?  Watching?
+
+Mostly, yes.  DOS programs live in the first 640K, because that's the
+deal DOS made in 1981 and we're all still honouring it.  Memory above
+1 MB is "extended memory", and a program has to ask for it, through
+HIMEM.SYS (the XMS driver), to use it.
+
+Who asks: disk caches, RAM disks, and the big new programs that know
+how.  Lotus 2 doesn't.  So for you it's a very expensive audience.
+
+Try MEM /PROGRAM for the 640K side of the story.  It lists every
+program and driver sitting in memory, and how much each one ate.
+
+KW
+@@19
+From: Bill Tran
+To: All
+Subj: MY 9600 IS HERE
+Date: 03-11-90 01:40
+
+It came today.  V.32, 9600 bits per second, full duplex, and a manual
+thicker than my phone book.  I called The ARM Pit and it connected at
+9600 on the first try.  The message base went by so fast I had to use
+Pause.  I have never used Pause in my life.
+
+Next stop: 14,400.  I've read that's coming.  Or maybe there's something
+even faster that I haven't heard about yet.
+@@20
+From: Marcus Feld
+To: All
+Subj: Sound card: which IRQ?
+Date: 06-22-90 17:30
+
+Got a Sound Blaster for my birthday!!!  (Thanks Grandma, and no, it is
+not "a very loud modem".)  The box says set it to IRQ 5.  The ARM/AT
+manual says something about IRQ 7.  Who do I believe?
+@@21
+From: Karen Whitfield
+To: Marcus Feld
+Subj: Re: Sound card: which IRQ?
+Date: 06-22-90 21:05
+
+> Who do I believe?
+
+The ARM/AT manual.  On our machines, IRQ 5 and IRQ 6 share their
+vectors with two of the ARM's own exception vectors, so the sound card
+goes on IRQ 7, port 220h.  The games and drivers for the ARM/AT expect
+it there.  (The printer port is also on 7 on paper, but nobody uses the
+printer interrupt.  Nobody.)
+
+Happy birthday.  Please keep the volume below "neighbours".
+
+KW

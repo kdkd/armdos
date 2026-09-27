@@ -1,0 +1,214 @@
+End of input file
+*l
+       1:*line 01 of the forty-line test file
+       2: line 02 of the forty-line test file
+       3: line 03 of the forty-line test file
+       4: line 04 of the forty-line test file
+       5: line 05 of the forty-line test file
+       6: line 06 of the forty-line test file
+       7: line 07 of the forty-line test file
+       8: line 08 of the forty-line test file
+       9: line 09 of the forty-line test file
+      10: line 10 of the forty-line test file
+      11: line 11 of the forty-line test file
+      12: line 12 of the forty-line test file
+      13: line 13 of the forty-line test file
+      14: line 14 of the forty-line test file
+      15: line 15 of the forty-line test file
+      16: line 16 of the forty-line test file
+      17: line 17 of the forty-line test file
+      18: line 18 of the forty-line test file
+      19: line 19 of the forty-line test file
+      20: line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+      23: line 23 of the forty-line test file
+      24: line 24 of the forty-line test file
+*5l
+       5: line 05 of the forty-line test file
+       6: line 06 of the forty-line test file
+       7: line 07 of the forty-line test file
+       8: line 08 of the forty-line test file
+       9: line 09 of the forty-line test file
+      10: line 10 of the forty-line test file
+      11: line 11 of the forty-line test file
+      12: line 12 of the forty-line test file
+      13: line 13 of the forty-line test file
+      14: line 14 of the forty-line test file
+      15: line 15 of the forty-line test file
+      16: line 16 of the forty-line test file
+      17: line 17 of the forty-line test file
+      18: line 18 of the forty-line test file
+      19: line 19 of the forty-line test file
+      20: line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+      23: line 23 of the forty-line test file
+      24: line 24 of the forty-line test file
+      25: line 25 of the forty-line test file
+      26: line 26 of the forty-line test file
+      27: line 27 of the forty-line test file
+      28: line 28 of the forty-line test file
+*10,15l
+      10: line 10 of the forty-line test file
+      11: line 11 of the forty-line test file
+      12: line 12 of the forty-line test file
+      13: line 13 of the forty-line test file
+      14: line 14 of the forty-line test file
+      15: line 15 of the forty-line test file
+*30l
+      30: line 30 of the forty-line test file
+      31: line 31 of the forty-line test file
+      32: line 32 of the forty-line test file
+      33: line 33 of the forty-line test file
+      34: line 34 of the forty-line test file
+      35: line 35 of the forty-line test file
+      36: line 36 of the forty-line test file
+      37: line 37 of the forty-line test file
+      38: line 38 of the forty-line test file
+      39: line 39 of the forty-line test file
+      40: line 40 of the forty-line test file
+*,5l
+       1:*line 01 of the forty-line test file
+       2: line 02 of the forty-line test file
+       3: line 03 of the forty-line test file
+       4: line 04 of the forty-line test file
+       5: line 05 of the forty-line test file
+*38,l
+      38: line 38 of the forty-line test file
+      39: line 39 of the forty-line test file
+      40: line 40 of the forty-line test file
+*#l
+*p
+       1: line 01 of the forty-line test file
+       2: line 02 of the forty-line test file
+       3: line 03 of the forty-line test file
+       4: line 04 of the forty-line test file
+       5: line 05 of the forty-line test file
+       6: line 06 of the forty-line test file
+       7: line 07 of the forty-line test file
+       8: line 08 of the forty-line test file
+       9: line 09 of the forty-line test file
+      10: line 10 of the forty-line test file
+      11: line 11 of the forty-line test file
+      12: line 12 of the forty-line test file
+      13: line 13 of the forty-line test file
+      14: line 14 of the forty-line test file
+      15: line 15 of the forty-line test file
+      16: line 16 of the forty-line test file
+      17: line 17 of the forty-line test file
+      18: line 18 of the forty-line test file
+      19: line 19 of the forty-line test file
+      20: line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+      23:*line 23 of the forty-line test file
+*p
+      24: line 24 of the forty-line test file
+      25: line 25 of the forty-line test file
+      26: line 26 of the forty-line test file
+      27: line 27 of the forty-line test file
+      28: line 28 of the forty-line test file
+      29: line 29 of the forty-line test file
+      30: line 30 of the forty-line test file
+      31: line 31 of the forty-line test file
+      32: line 32 of the forty-line test file
+      33: line 33 of the forty-line test file
+      34: line 34 of the forty-line test file
+      35: line 35 of the forty-line test file
+      36: line 36 of the forty-line test file
+      37: line 37 of the forty-line test file
+      38: line 38 of the forty-line test file
+      39: line 39 of the forty-line test file
+      40:*line 40 of the forty-line test file
+*1p
+       1: line 01 of the forty-line test file
+       2: line 02 of the forty-line test file
+       3: line 03 of the forty-line test file
+       4: line 04 of the forty-line test file
+       5: line 05 of the forty-line test file
+       6: line 06 of the forty-line test file
+       7: line 07 of the forty-line test file
+       8: line 08 of the forty-line test file
+       9: line 09 of the forty-line test file
+      10: line 10 of the forty-line test file
+      11: line 11 of the forty-line test file
+      12: line 12 of the forty-line test file
+      13: line 13 of the forty-line test file
+      14: line 14 of the forty-line test file
+      15: line 15 of the forty-line test file
+      16: line 16 of the forty-line test file
+      17: line 17 of the forty-line test file
+      18: line 18 of the forty-line test file
+      19: line 19 of the forty-line test file
+      20: line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+      23:*line 23 of the forty-line test file
+*35,39p
+      35: line 35 of the forty-line test file
+      36: line 36 of the forty-line test file
+      37: line 37 of the forty-line test file
+      38: line 38 of the forty-line test file
+      39:*line 39 of the forty-line test file
+*20
+      20:*line 20 of the forty-line test file
+      20:*
+*l
+       9: line 09 of the forty-line test file
+      10: line 10 of the forty-line test file
+      11: line 11 of the forty-line test file
+      12: line 12 of the forty-line test file
+      13: line 13 of the forty-line test file
+      14: line 14 of the forty-line test file
+      15: line 15 of the forty-line test file
+      16: line 16 of the forty-line test file
+      17: line 17 of the forty-line test file
+      18: line 18 of the forty-line test file
+      19: line 19 of the forty-line test file
+      20:*line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+      23: line 23 of the forty-line test file
+      24: line 24 of the forty-line test file
+      25: line 25 of the forty-line test file
+      26: line 26 of the forty-line test file
+      27: line 27 of the forty-line test file
+      28: line 28 of the forty-line test file
+      29: line 29 of the forty-line test file
+      30: line 30 of the forty-line test file
+      31: line 31 of the forty-line test file
+      32: line 32 of the forty-line test file
+*.l
+      20:*line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+      23: line 23 of the forty-line test file
+      24: line 24 of the forty-line test file
+      25: line 25 of the forty-line test file
+      26: line 26 of the forty-line test file
+      27: line 27 of the forty-line test file
+      28: line 28 of the forty-line test file
+      29: line 29 of the forty-line test file
+      30: line 30 of the forty-line test file
+      31: line 31 of the forty-line test file
+      32: line 32 of the forty-line test file
+      33: line 33 of the forty-line test file
+      34: line 34 of the forty-line test file
+      35: line 35 of the forty-line test file
+      36: line 36 of the forty-line test file
+      37: line 37 of the forty-line test file
+      38: line 38 of the forty-line test file
+      39: line 39 of the forty-line test file
+      40: line 40 of the forty-line test file
+*-3,+2l
+      17: line 17 of the forty-line test file
+      18: line 18 of the forty-line test file
+      19: line 19 of the forty-line test file
+      20:*line 20 of the forty-line test file
+      21: line 21 of the forty-line test file
+      22: line 22 of the forty-line test file
+*q
+Abort edit (Y/N)? 
+
+Abort edit (Y/N)? y

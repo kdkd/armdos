@@ -1,0 +1,16 @@
+
+C:\T>upcase < a.txt
+THIS IS FILE A.
+IT HAS TWO LINES.
+
+C:\T>upcase<b.txt>up.txt
+
+C:\T>type up.txt
+FILE B, LINE ONE
+LINE TWO
+LINE THREE
+
+C:\T>upcase < nofile.txt
+File not found
+
+C:\T>

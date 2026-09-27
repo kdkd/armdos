@@ -1,0 +1,8 @@
+{
+  "dirs": ["GAMES", "GAMES\\ADVENT"],
+  "files": [
+    { "src": "build/ADVENT.EXE", "dst": "GAMES\\ADVENT\\" },
+    { "src": "apps/advent/src/COPYING", "dst": "GAMES\\ADVENT\\LICENSE.TXT" }
+  ],
+  "excludeFromDos": ["ADVENT.EXE"]
+}

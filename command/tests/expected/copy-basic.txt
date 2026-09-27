@@ -1,0 +1,25 @@
+C:\T>copy a.txt+b.txt ab.txt
+A.TXT
+B.TXT
+        1 File(s) copied
+
+C:\T>type ab.txt
+This is file A.
+It has two lines.
+File B, line one
+line two
+line three
+
+C:\T>copy c.txt \t
+File cannot be copied onto itself
+        0 File(s) copied
+
+C:\T>copy nofile.txt z.txt
+File not found - NOFILE.TXT
+        0 File(s) copied
+
+C:\T>copy \t\nofile.txt z.txt
+File not found - C:\T\NOFILE.TXT
+        0 File(s) copied
+
+C:\T>

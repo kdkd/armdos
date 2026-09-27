@@ -1,0 +1,262 @@
+@@1
+From: Lenny Szabo
+To: All
+Subj: Zork I: your first ten minutes (no spoilers)
+Date: 06-28-88 20:45
+
+Zork I is up in the Games file area (get ZORK1.EXE AND the ZORK1.DAT
+story file, the first is useless without the second).  For those of you
+who have never played a text adventure, welcome to the best thing a
+computer can do with no graphics at all.
+
+You start West of House, in an open field, next to a white house with a
+boarded front door and a small mailbox.  Your first ten minutes:
+
+  * OPEN MAILBOX.  READ what you find.  It's polite.
+  * Walk around the house.  Front doors are overrated.
+  * EXAMINE everything.  TAKE anything that isn't nailed down.
+  * INVENTORY (or just I) tells you what you're carrying.
+  * Draw a map on paper.  Seriously.  Graph paper.  Arrows.
+
+And the most important advice anybody will ever give you about Zork: if
+the game says "It is pitch black.  You are likely to be eaten by a
+grue," believe it.
+
+Lenny
+... I am in a maze of twisty little passages, all alike.
+@@2
+From: Marcus Feld
+To: Lenny Szabo
+Subj: Re: Zork I: your first ten minutes (no spoilers)
+Date: 06-30-88 21:12
+
+> believe it.
+
+I did not believe it.  I was eaten by a grue.  Then I restored and went
+back to check, and I was eaten by a grue AGAIN.  What is a grue?  What
+does it look like?
+
+Please don't say "nobody has ever seen one and lived".
+@@3
+From: Lenny Szabo
+To: Marcus Feld
+Subj: Re: Zork I: your first ten minutes (no spoilers)
+Date: 06-30-88 23:40
+
+> What does it look like?
+
+Nobody has ever seen one and lived.
+
+Here's your hint, gently: grues only live in the dark.  The house has
+something in it that would make the dark go away.  It's shiny.  It's
+brass.  It likes the words TURN ON.  A lamp is a good idea.
+
+Lenny
+@@4
+From: Lenny Szabo
+To: All
+Subj: Colossal Cave: say the magic word
+Date: 09-04-88 19:55
+
+The granddaddy of them all, Colossal Cave Adventure, came with my
+ARM/AT on the hard disk, in C:\GAMES\ADVENT.  If yours didn't, ask at
+SFARM, somebody will have it on the disk-of-the-month.
+
+Hint for beginners: there's a building near the start.  Go inside.
+Look around.  Read everything carefully, especially anything that looks
+like it's written on a wall.  Then say XYZZY.
+
+Then try saying it somewhere else, and enjoy the most famous two words
+in computer games:  "Nothing happens."
+
+Lenny
+@@5
+From: Harold Pruitt
+To: Lenny Szabo
+Subj: Re: Colossal Cave: say the magic word
+Date: 11-04-89 10:20
+
+> Then say XYZZY.
+
+Well, I'll be.  Lenny, I played this game in 1978 on the railroad's
+computer, on a paper terminal, after the day shift went home.  We were
+supposed to be testing a new signal logging program.  Three of us
+mapped the whole cave on the back of track diagrams.
+
+I just said XYZZY on my own computer, in my own den, eleven years later,
+and it did the same thing it did then.  I had to go sit on the porch for
+a while.
+
+Harold
+@@6
+From: Susan Oyelaran
+To: All
+Subj: RISC Dragon survival guide
+Date: 11-10-89 21:30
+
+After a month of being murdered by Stray Pointers, I have learned things.
+I share them so that you may suffer less:
+
+  1. BANK YOUR GOLD before going into the forest.  When you die, you
+     lose what you're carrying.  The bank doesn't care that you died.
+  2. Buy ARMOUR before weapons.  Nobody tells you this.  Doris's shop.
+  3. Don't fight your master until the Training Hall says you're ready.
+     You can't run from a master.  I tried.  He watched.
+  4. The healer charges more at higher levels.  Keep enough gold on
+     you to get patched up, and heal BEFORE the next fight, not after.
+  5. Visit the Floating Point Inn.  Listen to the bartender.  Half the
+     rumours are true.  The other half are funny.
+  6. Gems are worth something at the Inn.  Don't sell them for gold.
+
+Susan
+... Slain by a Stray Pointer, 11 times and counting.
+@@7
+From: Marcus Feld
+To: All
+Subj: I KILLED THE RISC DRAGON
+Date: 01-09-90 01:57
+
+I KILLED IT.  I KILLED THE RISC DRAGON.  Level 12, the Great Pipeline,
+the Aegis of the Acorn, forty minutes of pressing A, and it's DEAD.
+
+I'm back to level 1 now and my name is on the scoreboard with a 1 in
+the Dragons column.  I'm the first one!  The Daily News says so!
+
+I have a chemistry test in six hours.  Worth it.
+@@8
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: I KILLED THE RISC DRAGON
+Date: 01-09-90 07:30
+
+> I have a chemistry test in six hours.  Worth it.
+
+Congratulations, Marcus!  First dragonslayer in Acorn Vale.  It's on
+the Wall of Fame now, which is more permanent than a chemistry grade,
+but please don't tell your mother I said that.
+
+Also I checked the caller log.  You were on for 58 minutes on a school
+night.  So your mother may already know.
+
+-- Europa
+@@9
+From: Rick Lambert
+To: All
+Subj: That Russian falling-blocks game
+Date: 02-02-90 20:05
+
+Confession: the PCjr has been playing a lot of that Russian game where
+the blocks fall and you rotate them to fill lines.  It's the first
+computer game my wife has ever asked to play.  She is better than me.
+She is MUCH better than me.
+
+I have been told that there are people on this board who play games in
+3D.  I don't believe it, but I'm open-minded.
+
+... PCjr: it's not old, it's seasoned.
+@@10
+From: Bill Tran
+To: All
+Subj: RISC Wars: some tips for new pilots
+Date: 02-20-90 03:10
+
+RISC Wars has eaten my week.  Things I've learned the expensive way:
+
+  * Find two ports next to each other that want each other's cargo.
+    Fly back and forth.  That's the whole secret of every trading game
+    ever made, and it's still true in space.
+  * Buy more cargo holds as soon as you can afford them.  Every trip
+    earns more.
+  * Fighters are insurance.  Don't fly into a strange sector with none.
+  * Watch the news.  Some of the other pilots are VERY busy at 4 AM.
+    Nobody I know is awake at 4 AM.  Except me.  And them.
+
+Bill
+@@11
+From: Gordon Kessler
+To: Bill Tran
+Subj: Re: RISC Wars: some tips for new pilots
+Date: 02-21-90 00:45
+
+> Find two ports next to each other that want each other's cargo.
+
+I found a pair on my second day and I'm not telling anyone where they
+are.  I'll only say this: I'm playing a RISC game on a RISC board, and
+I'm winning, which proves that a CISC mind is simply more flexible.
+
+Gordon Kessler, sysop, The 386 Fortress
+@@12
+From: Lenny Szabo
+To: All
+Subj: Byte-Sized Trivia: I have a problem
+Date: 05-26-90 22:15
+
+My name is Lenny, and I have played Byte-Sized Trivia every single day
+since the sysop opened it.  I'm on top of the high score board.  I am
+not proud.  I'm a little proud.
+
+Advice: answer fast, the points drop while you think.  And if you don't
+know who wrote a game, guess the name of the person who wrote the
+manual.  That's not how it works, but it feels right.
+@@13
+From: Marcus Feld
+To: All
+Subj: Keen Dreams in file area 2?!
+Date: 07-14-90 15:40
+
+Why is there a file in the Games area called KEENDRMS.ZIP, a game about
+a kid in pajamas fighting giant vegetables, with a FILE DATE OF 1992?
+
+Is the sysop's clock battery dying?  Has the sysop invented time travel?
+Can I borrow it for my chemistry test?
+@@14
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: Keen Dreams in file area 2?!
+Date: 07-14-90 22:00
+
+> Has the sysop invented time travel?
+
+I'd love to take the credit.  The clock is fine (I set it every night).
+The file is just... from later.  It arrived, I read the license, the
+license says sysops may share it unmodified, so I'm sharing it.
+
+It really is a boy in pajamas fighting King Boobus Tuber and his
+vegetable army with flower power.  It's wonderful.  If you have an ARM
+PC, look in C:\GAMES\KEEN and run GETKEEN.BAT: it dials this board by
+itself, logs in as the guest, downloads the zip and installs it.  Don't
+touch the keyboard while it works.  It gets shy.
+
+-- Europa
+@@15
+From: Marcus Feld
+To: All
+Subj: DOOM is AMAZING
+Date: 12-10-93 23:55
+
+Has anyone else tried DOOM yet?  It's in C:\GAMES\DOOM on my machine.
+It's 3D.  REAL 3D.  You walk around a moon base, the lights flicker,
+things growl at you from the dark.  I played until my hands shook.
+
+The ARM runs it smooth as butter.  The chainsaw is my favourite and I'm
+not going to explain that to my mother.
+@@16
+From: Europa Sysop
+To: Marcus Feld
+Subj: Re: DOOM is AMAZING
+Date: 01-01-80 00:03
+
+> Date: 12-10-93
+
+Marcus, your message is dated December 1993.  Mine is dated January 1,
+1980, because the clock battery on the board just died and ARM-DOS woke
+up at the dawn of time.  Somewhere between the two of us is the actual
+date.
+
+I'll replace the battery tomorrow and dial Boulder for the time.  In
+the meantime, I have no idea what "DOOM" is, I don't have a C:\GAMES
+\DOOM, and I'm choosing not to think about moon bases.
+
+Rick, you said 3D was a myth.  Please advise.
+
+-- Europa, somewhere in time

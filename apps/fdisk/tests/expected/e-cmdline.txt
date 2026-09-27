@@ -1,0 +1,6 @@
+Invalid switch -  /X
+Parameter value not in allowed range -  3
+Invalid parameter
+Required parameter missing - /PRI
+Invalid parameter
+Parameter value not in allowed range - /EXT:5000

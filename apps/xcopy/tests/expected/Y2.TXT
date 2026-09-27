@@ -1,0 +1,6 @@
+Reading source file(s)...
+\M\SM.DAT
+\M\BIG.DAT
+Reading source file(s)...
+\M\SM2.DAT
+        3 File(s) copied

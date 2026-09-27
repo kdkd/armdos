@@ -1,0 +1,25 @@
+00 |(F = file, D = directory)?x                                                     
+01 |Does A.TXT specify a file name                                                  
+02 |or directory name on the target                                                 
+03 |(F = file, D = directory)?f                                                     
+04 |Reading source file(s)...                                                       
+05 |\S\A.TXT                                                                        
+06 |        1 File(s) copied                                                        
+07 |[19]                                                                            
+08 |Does NUL specify a file name                                                    
+09 |or directory name on the target                                                 
+10 |(F = file, D = directory)?f                                                     
+11 |Reading source file(s)...                                                       
+12 |\S\A.TXT                                                                        
+13 |Cannot XCOPY to a reserved device                                               
+14 |        0 File(s) copied                                                        
+15 |[20]                                                                            
+16 |File not found - ????????.???                                                   
+17 |        0 File(s) copied                                                        
+18 |[21]                                                                            
+19 |Press any key to begin copying file(s)q                                         
+20 |Reading source file(s)...                                                       
+21 |\S\A.TXT                                                                        
+22 |\S\OLD.TXT                                                                      
+23 |        2 File(s) copied                                                        
+24 |C:\>_                                                                           

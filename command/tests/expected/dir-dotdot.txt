@@ -1,0 +1,25 @@
+PARAMS   BAT        70 09-24-26   3:12p
+PAUSER   BAT        43 09-24-26   3:12p
+SUB          <DIR>     09-24-26   3:12p
+VARS     BAT       146 09-24-26   3:12p
+WAITER   BAT        45 09-24-26   3:12p
+RET      COM        48 09-24-26   3:12p
+ARGS     COM       112 09-24-26   3:12p
+UPCASE   COM        60 09-24-26   3:12p
+TRASH    COM        32 09-24-26   3:12p
+WAITKEY  COM        25 09-24-26   3:12p
+       32 File(s)   31547392 bytes free
+
+C:\T\SUB>cd \
+
+C:\>dir ..
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\
+
+Invalid directory
+
+C:\>cd \t
+
+C:\T>

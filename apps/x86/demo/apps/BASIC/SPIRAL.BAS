@@ -1,0 +1,10 @@
+10 REM SPIRAL.BAS - CGA graphics from GW-BASIC.  Press a key to end.
+20 SCREEN 1: COLOR 0, 1: CLS
+30 FOR A = 0 TO 50 STEP .05
+40 X = 160 + A * 2.5 * COS(A): Y = 100 + A * 2 * SIN(A)
+50 IF A = 0 THEN PSET (X, Y), 1 ELSE LINE -(X, Y), 1 + INT(A / 6) MOD 3
+60 NEXT A
+70 CIRCLE (160, 100), 95, 3
+80 LOCATE 25, 1: PRINT "Made by GW-BASIC on an ARM";
+90 IF INKEY$ = "" THEN 90
+100 SCREEN 0: WIDTH 80: KEY ON

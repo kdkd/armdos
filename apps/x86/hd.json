@@ -1,0 +1,212 @@
+{
+  "dirs": [
+    "ELBOW",
+    "ELBOW\\MSDOS20",
+    "ELBOW\\FREEDOS",
+    "ELBOW\\FREEDOS\\SOURCE",
+    "ELBOW\\APPS",
+    "ELBOW\\APPS\\ARCTIC",
+    "ELBOW\\APPS\\BASIC",
+    "ELBOW\\APPS\\BASIC\\SOURCE",
+    "ELBOW\\APPS\\DATAPERF",
+    "ELBOW\\APPS\\KERMIT",
+    "ELBOW\\APPS\\KROZ",
+    "ELBOW\\APPS\\KROZ\\CAVERNS",
+    "ELBOW\\APPS\\KROZ\\CRUSADE",
+    "ELBOW\\APPS\\KROZ\\DUNGEONS",
+    "ELBOW\\APPS\\KROZ\\KINGDOM",
+    "ELBOW\\APPS\\KROZ\\KINGDOM2",
+    "ELBOW\\APPS\\KROZ\\LOST",
+    "ELBOW\\APPS\\KROZ\\RETURN",
+    "ELBOW\\APPS\\KROZ\\TEMPLE",
+    "ELBOW\\APPS\\MARS",
+    "ELBOW\\APPS\\PTOMB",
+    "ELBOW\\APPS\\SC",
+    "ELBOW\\APPS\\SC\\SRC",
+    "ELBOW\\APPS\\SOPWITH",
+    "ELBOW\\APPS\\SOPWITH\\SOURCE",
+    "ELBOW\\APPS\\SUPERNOV",
+    "ELBOW\\APPS\\TITANIC",
+    "ELBOW\\APPS\\VDE",
+    "ELBOW\\APPS\\WORDWHIZ",
+    "ELBOW\\APPS\\ZZT"
+  ],
+  "files": [
+    {
+      "src": "apps/x86/dist/X86.BAT",
+      "dst": "DOS\\X86.BAT"
+    },
+    {
+      "src": "apps/x86/dist/README.TXT",
+      "dst": "ELBOW\\README.TXT"
+    },
+    {
+      "src": "apps/x86/dist/DEMO.BAT",
+      "dst": "ELBOW\\DEMO.BAT"
+    },
+    {
+      "src": "build/elbow/hello86.COM",
+      "dst": "ELBOW\\HELLO86.COM"
+    },
+    {
+      "src": "build/elbow/fire.COM",
+      "dst": "ELBOW\\FIRE.COM"
+    },
+    {
+      "src": "build/elbow/BENCH86.EXE",
+      "dst": "ELBOW\\BENCH86.EXE"
+    },
+    {
+      "src": "build/elbow/BENCHARM.EXE",
+      "dst": "ELBOW\\BENCHARM.EXE"
+    },
+    {
+      "src": "apps/x86/demo/bench.c",
+      "dst": "ELBOW\\BENCH.C"
+    },
+    {
+      "src": "apps/x86/demo/msdos20/*",
+      "dst": "ELBOW\\MSDOS20\\"
+    },
+    {
+      "src": "apps/x86/dist/ASM.BAT",
+      "dst": "ELBOW\\MSDOS20\\ASM.BAT"
+    },
+    {
+      "src": "apps/x86/demo/freedos/*.COM",
+      "dst": "ELBOW\\FREEDOS\\"
+    },
+    {
+      "src": "apps/x86/demo/freedos/*.EXE",
+      "dst": "ELBOW\\FREEDOS\\"
+    },
+    {
+      "src": "apps/x86/demo/freedos/README.TXT",
+      "dst": "ELBOW\\FREEDOS\\README.TXT"
+    },
+    {
+      "src": "apps/x86/demo/freedos/source/*",
+      "dst": "ELBOW\\FREEDOS\\SOURCE\\"
+    },
+    {
+      "src": "apps/x86/dist/MENU.BAT",
+      "dst": "ELBOW\\APPS\\MENU.BAT"
+    },
+    {
+      "src": "apps/x86/dist/OFFICE.BAT",
+      "dst": "ELBOW\\APPS\\OFFICE.BAT"
+    },
+    {
+      "src": "apps/x86/demo/apps/*",
+      "dst": "ELBOW\\APPS\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/ARCTIC/*",
+      "dst": "ELBOW\\APPS\\ARCTIC\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/BASIC/*",
+      "dst": "ELBOW\\APPS\\BASIC\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/BASIC/SOURCE/*",
+      "dst": "ELBOW\\APPS\\BASIC\\SOURCE\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/DATAPERF/*",
+      "dst": "ELBOW\\APPS\\DATAPERF\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/KERMIT/*",
+      "dst": "ELBOW\\APPS\\KERMIT\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/*",
+      "dst": "ELBOW\\APPS\\KROZ\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/CAVERNS/*",
+      "dst": "ELBOW\\APPS\\KROZ\\CAVERNS\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/CRUSADE/*",
+      "dst": "ELBOW\\APPS\\KROZ\\CRUSADE\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/DUNGEONS/*",
+      "dst": "ELBOW\\APPS\\KROZ\\DUNGEONS\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/KINGDOM/*",
+      "dst": "ELBOW\\APPS\\KROZ\\KINGDOM\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/KINGDOM2/*",
+      "dst": "ELBOW\\APPS\\KROZ\\KINGDOM2\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/LOST/*",
+      "dst": "ELBOW\\APPS\\KROZ\\LOST\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/RETURN/*",
+      "dst": "ELBOW\\APPS\\KROZ\\RETURN\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/KROZ/TEMPLE/*",
+      "dst": "ELBOW\\APPS\\KROZ\\TEMPLE\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/MARS/*",
+      "dst": "ELBOW\\APPS\\MARS\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/PTOMB/*",
+      "dst": "ELBOW\\APPS\\PTOMB\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/SC/*",
+      "dst": "ELBOW\\APPS\\SC\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/SC/SRC/*",
+      "dst": "ELBOW\\APPS\\SC\\SRC\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/SOPWITH/*",
+      "dst": "ELBOW\\APPS\\SOPWITH\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/SOPWITH/SOURCE/*",
+      "dst": "ELBOW\\APPS\\SOPWITH\\SOURCE\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/SUPERNOV/*",
+      "dst": "ELBOW\\APPS\\SUPERNOV\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/TITANIC/*",
+      "dst": "ELBOW\\APPS\\TITANIC\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/VDE/*",
+      "dst": "ELBOW\\APPS\\VDE\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/VDE/LETTER.TXT",
+      "dst": "ELBOW\\APPS\\VDE\\"
+    },
+    {
+      "src": "3rdparty/elbow-gallery/WORDWHIZ/*",
+      "dst": "ELBOW\\APPS\\WORDWHIZ\\"
+    },
+    {
+      "src": "apps/x86/demo/apps/ZZT/*",
+      "dst": "ELBOW\\APPS\\ZZT\\"
+    },
+    {
+      "src": "apps/x86/dist/X86APPS.BAT",
+      "dst": "DOS\\X86APPS.BAT"
+    }
+  ]
+}

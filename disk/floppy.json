@@ -1,0 +1,219 @@
+{
+  "comment": "Drive A: - build/floppy-boot.img, the ARM-DOS 4.00 Startup diskette: a bootable system disk with DOS in A:\\DOS, like a DOS setup disk. FORMAT C: /S then INSTALL (disk/a/INSTALL.BAT) gives a fresh, empty ARM-DOS on the hard disk. C:\\DOS minus what does not fit: the big programming tools, DOCTOR, the games' helpers, ARMINFO, FILE, UNZIP, POPUP.",
+  "base": "..",
+  "format": "fd1440",
+  "label": "ARM-DOS",
+  "date": "1988-06-17 12:00:00",
+  "boot": {
+    "src": "build/bootsect.bin",
+    "optional": true
+  },
+  "files": [
+    {
+      "src": "build/IO.SYS",
+      "attr": "HSR",
+      "first": 1,
+      "optional": true
+    },
+    {
+      "src": "build/ARMDOS.SYS",
+      "attr": "HSR",
+      "first": 2,
+      "optional": true
+    },
+    {
+      "src": "build/COMMAND.COM",
+      "optional": true
+    },
+    {
+      "src": "build/HIMEM.SYS",
+      "dst": "DOS\\HIMEM.SYS"
+    },
+    {
+      "src": "build/ANSI.SYS",
+      "dst": "DOS\\ANSI.SYS"
+    },
+    {
+      "src": "build/DISPLAY.SYS",
+      "dst": "DOS\\DISPLAY.SYS"
+    },
+    {
+      "src": "build/EGA.CPI",
+      "dst": "DOS\\EGA.CPI"
+    },
+    {
+      "src": "build/COUNTRY.SYS",
+      "dst": "DOS\\COUNTRY.SYS"
+    },
+    {
+      "src": "build/KEYB.COM",
+      "dst": "DOS\\KEYB.COM"
+    },
+    {
+      "src": "build/KEYBOARD.SYS",
+      "dst": "DOS\\KEYBOARD.SYS"
+    },
+    {
+      "src": "build/NLSFUNC.EXE",
+      "dst": "DOS\\NLSFUNC.EXE"
+    },
+    {
+      "src": "build/MODE.COM",
+      "dst": "DOS\\MODE.COM"
+    },
+    {
+      "src": "build/MORE.COM",
+      "dst": "DOS\\MORE.COM"
+    },
+    {
+      "src": "build/SORT.EXE",
+      "dst": "DOS\\SORT.EXE"
+    },
+    {
+      "src": "build/FIND.EXE",
+      "dst": "DOS\\FIND.EXE"
+    },
+    {
+      "src": "build/TREE.COM",
+      "dst": "DOS\\TREE.COM"
+    },
+    {
+      "src": "build/COMP.COM",
+      "dst": "DOS\\COMP.COM"
+    },
+    {
+      "src": "build/FC.EXE",
+      "dst": "DOS\\FC.EXE"
+    },
+    {
+      "src": "build/LABEL.COM",
+      "dst": "DOS\\LABEL.COM"
+    },
+    {
+      "src": "build/REPLACE.EXE",
+      "dst": "DOS\\REPLACE.EXE"
+    },
+    {
+      "src": "build/DISKCOMP.COM",
+      "dst": "DOS\\DISKCOMP.COM"
+    },
+    {
+      "src": "build/DISKCOPY.COM",
+      "dst": "DOS\\DISKCOPY.COM"
+    },
+    {
+      "src": "build/SYS.COM",
+      "dst": "DOS\\SYS.COM"
+    },
+    {
+      "src": "build/XCOPY.EXE",
+      "dst": "DOS\\XCOPY.EXE"
+    },
+    {
+      "src": "build/PRINT.COM",
+      "dst": "DOS\\PRINT.COM"
+    },
+    {
+      "src": "build/CHKDSK.COM",
+      "dst": "DOS\\CHKDSK.COM"
+    },
+    {
+      "src": "build/FORMAT.COM",
+      "dst": "DOS\\FORMAT.COM"
+    },
+    {
+      "src": "build/EDLIN.COM",
+      "dst": "DOS\\EDLIN.COM"
+    },
+    {
+      "src": "build/MEM.EXE",
+      "dst": "DOS\\MEM.EXE"
+    },
+    {
+      "src": "build/ATTRIB.EXE",
+      "dst": "DOS\\ATTRIB.EXE"
+    },
+    {
+      "src": "build/JOIN.EXE",
+      "dst": "DOS\\JOIN.EXE"
+    },
+    {
+      "src": "build/SUBST.EXE",
+      "dst": "DOS\\SUBST.EXE"
+    },
+    {
+      "src": "build/DEBUG.COM",
+      "dst": "DOS\\DEBUG.COM"
+    },
+    {
+      "src": "build/FDISK.EXE",
+      "dst": "DOS\\FDISK.EXE"
+    },
+    {
+      "src": "build/MOUSE.COM",
+      "dst": "DOS\\MOUSE.COM"
+    },
+    {
+      "src": "build/ARMCD.SYS",
+      "dst": "DOS\\ARMCD.SYS"
+    },
+    {
+      "src": "build/ARMCDEX.EXE",
+      "dst": "DOS\\ARMCDEX.EXE"
+    },
+    {
+      "src": "build/TURBO.COM",
+      "dst": "DOS\\TURBO.COM"
+    },
+    {
+      "src": "build/SBMIX.EXE",
+      "dst": "DOS\\SBMIX.EXE"
+    },
+    {
+      "src": "build/EDIT.EXE",
+      "dst": "DOS\\EDIT.EXE"
+    },
+    {
+      "src": "build/ELBOW.EXE",
+      "dst": "DOS\\ELBOW.EXE"
+    },
+    {
+      "src": "build/SHELLB.COM",
+      "dst": "DOS\\SHELLB.COM"
+    },
+    {
+      "src": "build/SHELLC.EXE",
+      "dst": "DOS\\SHELLC.EXE"
+    },
+    {
+      "src": "build/edit/EDIT.HLP",
+      "dst": "DOS\\EDIT.HLP"
+    },
+    {
+      "src": "build/dosshell/SHELL.MEU",
+      "dst": "DOS\\SHELL.MEU"
+    },
+    {
+      "src": "build/dosshell/DOSUTIL.MEU",
+      "dst": "DOS\\DOSUTIL.MEU"
+    },
+    {
+      "src": "build/dosshell/SHELL.HLP",
+      "dst": "DOS\\SHELL.HLP"
+    },
+    {
+      "src": "build/dosshell/SHELL.CLR",
+      "dst": "DOS\\SHELL.CLR"
+    }
+  ],
+  "tree": [
+    {
+      "src": "disk/a",
+      "optional": true
+    }
+  ],
+  "dirs": [
+    "DOS",
+    "SETUP"
+  ]
+}

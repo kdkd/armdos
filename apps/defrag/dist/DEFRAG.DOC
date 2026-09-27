@@ -1,0 +1,171 @@
+===========================================================================
+
+                       A R M   D I S K   O P T I M I Z E R
+
+                                  Version 1.1
+
+                   Copyright (C) 1990 Europa Micro Systems
+                             All Rights Reserved.
+
+===========================================================================
+
+
+ WHAT IT DOES
+ ------------
+
+ When DOS writes a file it takes whatever free clusters it finds first.
+ After a few months of creating, growing and deleting files, most of your
+ files are scattered in pieces all over the disk, and the drive head spends
+ its life seeking back and forth.  Programs load slower, the disk wears
+ faster, and an UNDELETE is less likely to work.
+
+ The ARM Disk Optimizer (DEFRAG.EXE) puts every file back together in one
+ contiguous piece and, if you like, packs all the files at the front of the
+ disk so the free space is one big area.  You watch it work on a map of
+ the whole disk.
+
+ It works with every ARM-DOS drive formatted with a 12-bit or 16-bit FAT:
+ 360K, 720K, 1.2M and 1.44M diskettes and hard disk partitions up to the
+ largest DOS 4 allows.
+
+
+ BEFORE YOU START
+ ----------------
+
+   1. BACK UP YOUR DISK.  The optimizer is careful (see "Safety" below),
+      but a power failure is a power failure.
+
+   2. Run CHKDSK /F first.  The optimizer refuses to work on a disk with
+      lost clusters or cross-linked files.
+
+   3. Close all other programs.  Do not run the optimizer from a DOSSHELL
+      or other program that has files open, and do not run it on a drive
+      that a network, SUBST, JOIN or ASSIGN has redirected.
+
+
+ INSTALLATION
+ ------------
+
+ Copy DEFRAG.EXE to your DOS directory:
+
+      COPY DEFRAG.EXE C:\DOS
+
+ That's all.  No configuration file, no TSR, nothing in AUTOEXEC.BAT.
+
+
+ RUNNING IT
+ ----------
+
+      DEFRAG [d:] [/F | /U] [/S[:]order[-]] [/H] [/FAST] [/AUTO] [/BW]
+
+      d:      the drive to optimize (asked for if you leave it out)
+      /F      Full Optimization
+      /U      Unfragment Files Only
+      /S      sort the files in each directory:
+                 N  by name          D  by date and time
+                 E  by extension     S  by size
+              a "-" after the letter reverses the order (/S:D- = newest
+              first)
+      /H      also move hidden files (system files never move)
+      /FAST   run at full speed instead of the leisurely pace of a real
+              disk
+      /AUTO   ask nothing: analyze, optimize, exit (for batch files; the
+              exit code is 0 done, 1 error, 2 stopped)
+      /BW     black and white (for LCD and composite screens)
+
+ Without /F, /U or /AUTO the optimizer first reads the disk and tells you
+ how much of it is fragmented and which method it recommends.  Choose
+ Optimize to go ahead, or Configure to pick things yourself from the
+ Optimize menu (Alt or F10):
+
+      Begin Optimization    starts (Alt+B)
+      Drive                 picks another drive
+      Optimization Method   Full Optimization or Unfragment Files Only
+      File Sort             the order of the files in each directory
+      Map Legend            what the symbols on the map mean
+      Fast Speed            no pacing (check mark = on)
+      About Defrag          version and copyright
+      Exit                  back to DOS (Alt+X)
+
+ A mouse works everywhere: click the menu, the choices and the buttons.
+ Press Esc during an optimization to stop it; it stops cleanly after the
+ piece it is moving and the disk is always left in a usable state.
+
+
+ THE MAP
+ -------
+
+      (full block)   used: part of a file or directory
+      (shaded)       unused: free space
+      r              being read
+      W              being written
+      B              bad clusters (never used)
+      X              unmovable: IO.SYS, ARMDOS.SYS, system and hidden
+                     files, files other programs have open
+
+ On a big disk each block stands for several clusters; the Legend box
+ says how many.
+
+
+ THE TWO METHODS
+ ---------------
+
+ FULL OPTIMIZATION rewrites the whole disk: directories first, then the
+ files, directory by directory, packed from the start of the disk with no
+ gaps.  Afterwards every file is in one piece and all the free space is at
+ the end, so new files will not be fragmented either.  Takes longer.
+
+ UNFRAGMENT FILES ONLY moves each fragmented file, whole, into the first
+ free area big enough to hold it.  Quicker, but the free space stays in
+ pieces.  If a file does not fit anywhere it is left alone; run Full
+ Optimization.
+
+
+ SAFETY
+ ------
+
+ Every piece of a file is copied to free space and read back and compared
+ BEFORE the file allocation table is changed.  Then the one link that
+ leads to the piece (the directory entry or the previous cluster) is
+ switched over, and only then is the old copy freed.  Every FAT copy is
+ updated each time.  If the power fails in the middle, the worst you get
+ is a few lost clusters, which CHKDSK /F turns into FILE0000.CHK files.
+
+ IO.SYS and ARMDOS.SYS are never moved: the boot record expects IO.SYS to
+ start at the first cluster in one piece.  System files, hidden files
+ (unless /H) and files that DOS has open stay where they are too.
+
+ Sorting the directories rewrites directory sectors and drops the entries
+ of deleted files, so UNDELETE cannot bring those back afterwards.
+
+
+ SHAREWARE
+ ---------
+
+ This is shareware.  Try it for 30 days.  If you keep using it, please
+ register: send $15 to
+
+      Europa Micro Systems
+      Attn: Disk Optimizer
+
+ or leave a message for the SysOp on The ARM Pit BBS.  Registered users
+ get the next version on diskette and a printed manual.
+
+ You may copy DEFRAG11.ZIP and give it to others and upload it to bulletin
+ boards, as long as the three files (DEFRAG.EXE, DEFRAG.DOC, FILE_ID.DIZ)
+ stay together and unchanged, and you charge nothing for it.
+
+
+ HISTORY
+ -------
+
+      1.0   first release
+      1.1   FAT16 partitions over 32 MB; File Sort; mouse support;
+            /AUTO for batch files; files other programs have open are
+            left alone
+
+
+ Europa Micro Systems makes no warranty of any kind.  You use this program
+ at your own risk.  Back up your disk.
+
+===========================================================================

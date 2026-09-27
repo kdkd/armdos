@@ -1,0 +1,453 @@
+# SHELL.HLP source (tools/mkhlp.mjs). The topic order is the enum in
+# shellc/shell.h. The key assignments are those documented for the DOS 4.00
+# Shell; the other texts are ARM-DOS's own.
+@H_KEYS Key Assignments Help
+ Enter      Places in system memory
+            the information you select
+            or type.
+
+ Esc        Cancels the current function
+            or operation.
+
+ F1         Displays help information.
+
+ F2         1.  Saves the information
+            typed in a text box in
+            Start Programs.
+            2.  Completes the copy
+            operation in Start Programs.
+
+ F3         1.  Exits Start Programs and
+            displays the DOS command
+            prompt.
+            2.  Exits the File System
+            and displays Start Programs
+            or the DOS command prompt.
+            3.  Cancels the copy
+            operation in Start Programs.
+
+ F4         Creates the marker that
+            separates the commands used
+            to start a program.
+
+ F9         1.  Displays the key
+            assignments from within a
+            help panel.
+            2.  Switches the View
+            function from ASCII to
+            hexadecimal format and back.
+            3.  Returns a text box
+            to its original value.
+
+ F10        Moves the selection cursor
+            to and from the menu bar
+            at the top of the screen.
+
+ F11 or     Displays an index of the
+ Alt+F1     help topics within a help
+            panel.
+
+ Shift+F9   Displays the Shell command
+            prompt.
+
+ PgDn       Scrolls to the next page of
+            information.
+
+ PgUp       Scrolls to the previous page
+            of information.
+
+ Spacebar   Selects or deselects a
+            filename.
+
+ Tab        Moves the selection cursor
+            to the different areas of
+            the File System screen.
+
+ Ctrl+      Selects that drive in the
+ letter     File System.
+
+@H_HELPHELP Help on Help
+Help is there for every item you can select and every text box in the Shell. Move the selection cursor to the item and press F1. PgDn and PgUp scroll the help text; Esc puts the help away.
+
+From any help panel, F11 (or Alt+F1) shows the index of help topics and F9 shows the key assignments. To read a topic from the index, highlight it and press Enter. The index also has the instructions for using the Shell.
+
+@H_SPINSTR Start Programs Instructions
+Start Programs lists your programs and groups. A title that ends with three dots is a group: a list of more titles.
+
+With the keyboard:
+ -   Use the up and down arrow keys to
+     highlight a title, then press
+     Enter.  A program starts; a group
+     shows its titles.
+ -   Press Esc to go back to the Main
+     Group.
+ -   Press F10 to move to the action
+     bar, choose Program or Group, then
+     choose what you want to do with the
+     highlighted title: start, add,
+     change, delete, copy or reorder.
+
+With a mouse:
+ -   Double-click a title to start the
+     program or to show the group.
+ -   Click Esc=Cancel at the bottom of
+     the screen to go back to the Main
+     Group.
+ -   Click a title, then click Program
+     or Group on the action bar.
+
+@H_FSINSTR File System Instructions
+The File System shows the drives, the directory tree of the current drive and the files in the current directory.
+
+With the keyboard:
+ -   Tab moves the selection cursor
+     between the drives, the directory
+     tree and the file list.
+ -   Among the drives, use the arrow
+     keys and Enter to read a drive,
+     or press Ctrl and the drive letter
+     from anywhere.
+ -   In the tree, the arrow keys move to
+     another directory; its files are
+     listed at once.
+ -   In the file list, the arrow keys
+     move the cursor and the Spacebar
+     selects or deselects the file.
+     Enter starts the file.
+ -   F10 moves to the action bar, where
+     File, Options, Arrange and Exit
+     work on the selected files.
+
+With a mouse, click a drive, a directory or a file to select it, and double-click a file to start it. Click the arrows after More: to scroll.
+
+@H_MOUSE Mouse Instructions
+ -   To select an item, point to it and
+     click button 1.  An item with an
+     asterisk (*) in its name is not
+     available at the moment.
+ -   To close a menu, click anywhere
+     outside it.
+ -   To start a program or show a group
+     in Start Programs, point to the
+     title and double-click button 1.
+ -   To start a file in the File System,
+     double-click the filename.
+ -   To scroll, click the arrows after
+     More:.
+ -   The labels on the bottom line, such
+     as F10=Actions and Esc=Cancel, work
+     like the keys when you click them.
+
+@H_KBD Keyboard Instructions
+ -   PgUp and PgDn scroll a page at a
+     time; Ctrl+Home and Ctrl+End go to
+     the beginning and to the end.
+ -   F10 moves to and from the action
+     bar at the top of the screen.
+ -   To choose an item from a menu,
+     highlight it with the arrow keys and
+     press Enter, or press the letter
+     that is shown in a different color.
+     An item with an asterisk (*) is not
+     available at the moment.
+ -   Esc closes a menu or cancels.
+ -   Tab moves between the areas of the
+     File System screen.
+ -   Ctrl and a drive letter select that
+     drive in the File System.
+
+@H_PROGRAM Program Help
+Choose this action to start, add, change, delete or copy a program title. Highlight the title first.
+
+@H_GROUP Group Help
+Choose this action to add, change, delete or reorder the titles of a group. A group is a list of related titles; its title ends with three dots, like DOS Utilities...
+
+Groups can be added only to the Main Group, and a group holds up to 16 titles.
+
+@H_SPEXIT Exit Help
+Choose this action to leave the Shell and get the DOS command prompt, or to go on working in Start Programs.
+
+@H_START Start Program Help
+Choose this action to start the highlighted program, or to show the titles of the highlighted group.
+
+@H_ADDPROG Add Program Help
+Choose this action to add a program title to the group on the screen. Type the title and the commands that start the program; the help text and the password are optional. Press F2 to save the new title, Esc to cancel.
+
+To type more than one command, press F4 between them.
+
+@H_CHGPROG Change Program Help
+Choose this action to change the title, the commands, the help text or the password of the highlighted program. Press F2 to save the changes, Esc to cancel.
+
+@H_DELPROG Delete Program Help
+Choose this action to remove the highlighted program title from the group. The program itself stays on the disk.
+
+@H_COPYPROG Copy Program Help
+Choose this action to copy the highlighted program title into another group.
+
+ 1.  Highlight the program title.
+ 2.  Choose Copy from the Program menu.
+ 3.  Show the destination group: press
+     Esc for the Main Group, or
+     highlight a group and press Enter.
+ 4.  Press F2 to copy the title there,
+     or F3 to cancel.
+
+A group can hold up to 16 titles.
+
+@H_ADDGRP Add Group Help
+Choose this action to add a group to the Main Group. Type the title and the name of the file the Shell keeps the group in (up to 8 characters; the Shell adds .MEU). Press F2 to save, Esc to cancel.
+
+@H_CHGGRP Change Group Help
+Choose this action to change the title, the file name, the help text or the password of the highlighted group. Press F2 to save, Esc to cancel.
+
+@H_DELGRP Delete Group Help
+Choose this action to remove the highlighted group from the Main Group. The group file stays on the disk.
+
+@H_REORDER Reorder Group Help
+Choose this action to move the highlighted title to another place in the group. Highlight the new position and press Enter, or press Esc to cancel.
+
+@H_EXITSHELL Exit Shell Help
+Choose this action (or press F3) to leave the Shell and get the DOS command prompt.
+
+To come back to the Shell, type DOSSHELL at the command prompt.
+
+@H_RESUMESP Resume Start Programs Help
+Choose this action to close the menu and go on working in Start Programs.
+
+@H_FILE File Help
+Choose this action to start, print, associate, move, copy, delete, rename, view, select or deselect files, to change their attributes, or to create, rename or delete a directory.
+
+Select the files (or highlight the directory) before you choose the action.
+
+@H_OPTIONS Options Help
+Choose this action to choose which files are listed and in what order, to set the File System options, or to see information about the selected file, directory and disk.
+
+@H_ARRANGE Arrange Help
+Choose this action to show one directory tree and file list, two of them (for example to compare two drives), or a list of all the files on the drive.
+
+@H_FSEXIT Exit Help
+Choose this action to leave the File System, or to go on working in it.
+
+@H_OPEN Open (Start) File Help
+Choose this action to start the selected file. Files with the extensions .COM, .EXE and .BAT are programs; any other file starts the program you associated its extension with (see Associate). Type the options the program needs in the Options field.
+
+@H_PRINT Print File Help
+Choose this action to print the selected files in the background. PRINT must have been started (type PRINT at the command prompt) and the printer must be ready.
+
+@H_ASSOC Associate File Help
+Choose this action to tie filename extensions to the selected program. For example, if you associate TXT with EDLIN.COM, opening a .TXT file starts Edlin with that file. You can choose whether the Shell asks for options each time.
+
+@H_MOVE Move File Help
+Choose this action to move the selected files to another directory or drive. The files are copied there and then erased where they were.
+
+@H_COPY Copy File Help
+Choose this action to copy the selected files to another directory, or to the same directory under another name.
+
+@H_DELETE Delete Help
+Choose this action to delete the selected files, or the highlighted directory. A directory must be empty before it can be deleted, and the root directory cannot be deleted.
+
+@H_RENAME Rename Help
+Choose this action to give the selected files, or the highlighted directory, a new name. The root directory cannot be renamed.
+
+@H_ATTR Change File Attribute Help
+Choose this action to change the attributes of the selected files. A hidden file is not listed by DIR, a read-only file cannot be changed or deleted, and the archive attribute marks a file that has changed since the last backup.
+
+@H_VIEW View File Help
+Choose this action to look at the selected file. PgDn and PgUp move through it, F9 switches between text and hexadecimal. You cannot change the file while viewing it.
+
+@H_MKDIR Create Directory Help
+Choose this action to make a new directory under the highlighted one. Type a name of up to 8 characters, with an extension of up to 3 if you want.
+
+@H_SELALL Select All Help
+Choose this action (or press Alt+/) to select all the files in the file list.
+
+@H_DESELALL Deselect All Help
+Choose this action (or press Alt+\) to deselect all the selected files.
+
+@H_DISPOPT Display Options Help
+Choose this action to list only the files that match a name such as *.TXT or LETTER?.DOC, and to sort the list by name, extension, date, size or the order in which the files are on the disk.
+
+@H_FILEOPT File Options Help
+Choose this action to turn the confirmation messages for deleting and replacing files on or off, and to allow selecting files in more than one directory at a time.
+
+@H_SHOWINFO Show Information Help
+Choose this action to see the name and attributes of the highlighted file, the number and size of the selected files, and information about the directory and the disk.
+
+@H_SINGLE Single File List Help
+Choose this action to show one directory tree and one file list.
+
+@H_MULTIPLE Multiple File List Help
+Choose this action to show two directory trees and two file lists, one above the other. Each can show a different drive or directory; Tab moves between them. This is handy for copying and moving files.
+
+@H_SYSTEM System File List Help
+Choose this action to list every file on the drive, whatever directory it is in, with information about the highlighted file, the directory and the disk.
+
+@H_EXITFS Exit File System Help
+Choose this action (or press F3) to leave the File System. You go back to Start Programs, or to the DOS command prompt if Start Programs is not active.
+
+@H_RESUMEFS Resume File System Help
+Choose this action to close the menu and go on working in the File System.
+
+@H_TITLE Add Title Help
+Type the title that is listed in the group, up to 40 characters for a program and 37 for a group (the Shell adds three dots to a group title). Tab or Enter moves to the next field.
+
+@H_PASSWORD Password Help
+Type a password of up to 8 characters if the title should be protected. The password is then asked for before the item is started, changed or deleted. Leave the field empty for no password.
+
+@H_HELPTEXT Add Help Text Help
+Type the text shown when F1 is pressed on this title. An ampersand (&) starts a new line.
+
+@H_COMMANDS Add Program Startup Commands Help
+Type the commands that start the program, as you would at the DOS prompt. Press F4 between commands to put more than one command on the line.
+
+Square brackets ask for parameters when the program is started: [ ] shows a Program Parameters box, and inside the brackets /T"title", /I"instructions", /P"prompt", /D"default", /R (typing replaces the default) and /L"length" describe the box. %1 repeats the first answer.
+
+@H_GRPFILE Add Group Filename Help
+Type the name of the file the group is kept in, up to 8 characters without an extension. The Shell adds .MEU.
+
+@H_COLORS Change Colors Help
+Press the left or right arrow key to see the four color combinations on the screen. Press Enter to keep the one shown, or Esc to go back to the colors you had.
+
+@H_DELITEM Delete This Item Help
+Choose 1 to remove the title from the group.
+
+@H_NODELITEM Do Not Delete This Item Help
+Choose 2 to keep the title.
+
+@H_CONFDEL Confirm on Delete Help
+When this option is on (marked with an arrow), the Shell asks before each file is deleted. Press the Spacebar to turn an option on or off, then press Enter.
+
+@H_CONFREP Confirm on Replace Help
+When this option is on, the Shell asks before a copied or moved file replaces a file that has the same name.
+
+@H_SELACROSS Select Across Directories Help
+When this option is on, files you select stay selected when you move to another directory, so one action can work on files from several directories.
+
+@H_NAME Name Help
+Type the names of the files to list. Use ? for any one character and * for any characters, for example *.TXT. *.* lists all the files.
+
+@H_SORTNAME Name File Sort Help
+Use the up and down arrow keys to choose how the files are sorted: by name, by extension, by date (newest first), by size (largest first) or in the order they are on the disk.
+
+@H_SORTEXT Extension File Sort Help
+Sorts the files by their extensions, and files with the same extension by name.
+
+@H_SORTDATE Date File Sort Help
+Sorts the files by date and time, the newest first.
+
+@H_SORTSIZE Size File Sort Help
+Sorts the files by size, the largest first.
+
+@H_SORTDISK Disk Order Sort Help
+Lists the files in the order in which they are in the directory on the disk.
+
+@H_HIDDEN Hidden Attribute Help
+Highlight an attribute and press the Spacebar to turn it on or off; an arrow marks the attributes that are on. Press Enter when complete.
+
+ Hidden     DIR does not list the file.
+ Read only  The file cannot be changed
+            or deleted.
+ Archive    The file changed since the
+            last backup.
+
+@H_READONLY Read-only Attribute Help
+A read-only file cannot be changed or deleted.
+
+@H_ARCHIVE Archive Attribute Help
+The archive attribute marks a file that has changed since it was last backed up.
+
+@H_ONEATATIME Change Selected Files One at a Time Help
+Choose 1 to set the attributes of each selected file on its own. Choose 2 to give all the selected files the same attributes at once.
+
+@H_ALLATONCE Change All Selected Files at Once Help
+Gives all the selected files the same attributes.
+
+@H_NODELDIR Do Not Delete This Directory
+Choose 1 to keep the directory.
+
+@H_DELDIR Delete This Directory
+Choose 2 to delete the directory. It must be empty.
+
+@H_SKIP Skip This File and Continue Help
+Choose 1 to leave this file as it is and go on with the next one. Choose 2 to replace the file that is already there with the one being copied or moved.
+
+@H_REPLACE Replace This File Help
+Choose 1 to skip this file and go on with the next one. Choose 2 to replace the file that is already there.
+
+@H_SKIPDEL Skip This File and Continue Help
+Choose 1 to keep this file and go on with the next one.
+
+@H_DELFILE Delete This File Help
+Choose 1 to keep this file and go on with the next one. Choose 2 to delete it. To stop being asked, turn off Confirm on delete in File options.
+
+@H_DRIVE Drive Help
+Select the drive whose files and directories you want to see. With the keyboard, move to a drive letter with the arrow keys and press Enter, or press Ctrl and the drive letter. With a mouse, click the letter.
+
+When the screen has two file lists, each can show a different drive; Tab moves between them.
+
+@H_RENDIR Rename Directory Help
+Type the new name of the directory, up to 8 characters with an extension of up to 3.
+
+@H_COPYTO Copy To: Help
+Type the directory (and drive) to copy the files to, for example C:\WORK. To copy one file under another name, type the new name.
+
+@H_MOVETO Move To: Help
+Type the directory (and drive) to move the files to, for example A:\.
+
+@H_NEWNAME New Filename Help
+Type the new name of the file, up to 8 characters and an extension of up to 3.
+
+@H_OPENOPT Open a Program Options Help
+Type the parameters and switches the program needs, as you would after its name at the DOS prompt, then press Enter to start it.
+
+@H_NEWDIR Create New Directory Name Help
+Type the name of the new directory. It is created under the directory highlighted in the tree.
+
+@H_TREE Directory Tree Help
+The directory tree shows the directories of the drive. Move the selection cursor with the arrow keys or click a directory: its files are listed on the right. An arrow marks the current directory.
+
+@H_FILELIST File List Help
+The file list shows the files of the current directory with their sizes and dates. Move the cursor with the arrow keys and press the Spacebar to select or deselect a file; an arrow marks the selected files. Enter starts the file under the cursor.
+
+@H_SELECTING Selecting Instructions
+Before you choose an action, select what it should work on:
+
+ -   Start Programs: highlight the title
+     with the arrow keys or click it.
+ -   File System: press the Spacebar or
+     click a file to select it; select
+     as many as you want.  Highlight a
+     directory in the tree for the
+     directory actions.
+ -   In menus and lists, highlight the
+     choice and press Enter, press its
+     letter or number, or click it.
+
+@H_ASSOCEXT Associate File Extensions Help
+Type the filename extensions to associate with the program, separated by blanks, for example TXT DOC.
+
+@H_VIEWHELP View Help
+PgDn and PgUp move through the file, Ctrl+Home and Ctrl+End go to its beginning and end, and F9 switches between the text and the hexadecimal view. Press Esc or Enter to go back to the File System.
+
+@H_DELFILES Delete Files Help
+These are the files to be deleted. Press Enter to delete them, or Esc to cancel.
+
+@H_MOVEFROM Move From: Help
+These are the files to be moved.
+
+@H_COPYFROM Copy From: Help
+These are the files to be copied.
+
+@H_MESSAGE Message Help
+The Shell could not do what you asked. Correct the problem, for example insert a diskette or close the drive door, and try again, or press Esc to cancel.
+
+@H_INTRO Introduction
+The DOS Shell makes DOS easier to use. Start Programs lists the programs installed on your computer in groups: highlight one and press Enter to start it. The File System shows the files on your disks and lets you copy, move, delete and start them with menus instead of typed commands.
+
+F10 moves to the action bar at the top of every screen, F1 gives help on whatever is highlighted, and Shift+F9 gives you the DOS command prompt (type EXIT to come back).
+
+@H_PARAMS Program Parameters Help
+Type the parameters for the program, then press Enter to start it. Press Esc to go back without starting it.
+
+@H_ITEMS Program Help
+Select this item to start the program. To see what an item does, highlight it and press F1.

@@ -1,0 +1,86 @@
+===============================================================================
+copying.emx       emx 0.8g     LICENSE                              13-Jul-1993
+===============================================================================
+                                     Copyright (c) 1990-1993 by Eberhard Mattes
+
+emx (emx.exe, emxd.exe, emx.dll, emxio.dll, emxbind.exe, emxomf.exe,
+emxofmar.exe, emxomfld.exe) is
+
+    Copyright (c) 1990-1993 by Eberhard Mattes.
+
+The emx C library is
+
+    Copyright (c) 1990-1993 by Eberhard Mattes
+    Copyright (c) 1991-1993 by Kolja Elsaesser
+    Copyright (c) 1992-1993 by Steffen Haecker
+    Copyright (c) 1992-1993 by Kai Uwe Rommel
+    [...this place is reserved for your name...]
+
+The emx graphics library and the emx video library are
+
+    Copyright (c) 1987-1993 by Eberhard Mattes
+
+THERE IS NO WARRANTY!
+
+    No guarantee is made as to the proper functioning of the software.
+    No liability will be admitted for damage resulting from using the
+    software.
+
+Copying the emx development package:
+
+    You are allowed to copy the complete and unmodified emx package
+    (emxdev.zip, emxlib.zip, emxample.zip, emxtest.zip) if this is
+    done without charge.  If you want to charge a small fee for
+    handling etc., you have to contact the author.  If you want to
+    charge a big fee, you aren't allowed to copy the emx development
+    package.  The emxomf, emxomfar, emxomfld and listomf programs are
+    exceptions: the GNU General Public License (see COPYING) applies
+    to these programs if distributed separately from the emx
+    development package.
+
+Copying the emx runtime package:
+
+    Everybody is allowed to use the emx runtime package.  You are
+    allowed to copy the unmodified emx runtime package if you do not
+    charge for the distribution.
+
+    If you take money for a program you've developed with emx (or for
+    emx), a complimentary copy would be appreciated by the emx
+    author.
+
+    If you donate a complimentary copy of your program to the emx
+    author you are allowed to accompany that program with those
+    (unmodified) parts (emx.exe, emxbind.exe, emx.dll emxio.dll,
+    emxlibc.dll, emxwrap.dll and emxrev.cmd) of the emx runtime
+    package which are required by that program.  Moreover, in that
+    case you are allowed to copy the relevant sections of emxrt.doc
+    into the documentation of your program.
+
+    (To avoid emx.dll, use the -Zomf -Zsys options of GCC.)
+
+    In any case, you are allowed to use the emx C library (including
+    libsys), the emx graphics library and the emx video library for
+    your programs, without restriction.  If you've modified
+    emxwrap.dll or emxlibc.dll, you should rename these files (to
+    avoid problems with other programs using emxwrap.dll or
+    emxlibc.dll) and include source code for the changed parts.
+
+Copying the emx library sources (emx C library, emx graphics library
+and emx video library):
+
+    You must not take money for the emx library sources.  You are
+    allowed to change and copy the emx library sources if you keep the
+    copyright message intact.  If you improve the emx libraries,
+    please send your enhancements to the emx author (you should
+    copyright your enhancements similar to the existing emx
+    libraries).
+
+Copying GNU software:
+
+    See \emx\doc\COPYING and \emx\doc\COPYING.LIB.
+
+Copying BSD software:
+
+    See \emx\doc\COPYING.BSD.
+
+------------------------- END OF COPYING.EMX -------------------------------

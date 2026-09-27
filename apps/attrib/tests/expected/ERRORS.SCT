@@ -1,0 +1,25 @@
+Parameter format not correct - +X
+File not found - \NOFILE.TXT
+Path not found - \NODIR\X.TXT
+Path not found - Q:\X.TXT
+Parameter format not correct -
+Parameter format not correct -
+Invalid switch - /X
+Invalid parameter - \AT\F2.DAT
+Required parameter missing
+Parameter format not correct - /S
+File not found - \AT\SUB
+Parameter format not correct -
+Required parameter missing
+Invalid parameter - CP
+Parameter format not correct - "\AT\F1.TXT"
+Invalid parameter - \AT\F2.DAT
+  A    R     C:\AT\F1.TXT
+
+
+
+
+
+
+
+

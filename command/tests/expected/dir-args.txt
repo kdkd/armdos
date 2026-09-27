@@ -1,0 +1,25 @@
+CALLRET  BAT        96 09-24-26   3:12p
+CHAIN    BAT        17 09-24-26   3:12p
+E1       BAT        53 09-24-26   3:12p
+ECHOON   BAT        53 09-24-26   3:12p
+FORCALL  BAT        60 09-24-26   3:12p
+FORS     BAT       181 09-24-26   3:12p
+IFS      BAT       354 09-24-26   3:12p
+LABELS   BAT       141 09-24-26   3:12p
+LOOP     BAT        92 09-24-26   3:12p
+NOEOL    BAT        40 09-24-26   3:12p
+PARAMS   BAT        70 09-24-26   3:12p
+PAUSER   BAT        43 09-24-26   3:12p
+VARS     BAT       146 09-24-26   3:12p
+WAITER   BAT        45 09-24-26   3:12p
+       18 File(s)   31547392 bytes free
+
+C:\T>dir nofile
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+File not found
+
+C:\T>

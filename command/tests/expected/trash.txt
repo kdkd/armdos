@@ -1,0 +1,24 @@
+
+C:\T>trash
+
+C:\T>ver
+
+ARM-DOS Version 4.00
+Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+See documentation for full copyright notices and acknowledgements.
+
+C:\T>dir sub /w
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 1988-0617
+ Directory of  C:\T\SUB
+
+.               ..              X        TXT
+        3 File(s)   33644544 bytes free
+
+C:\T>
+
+
+
+
+

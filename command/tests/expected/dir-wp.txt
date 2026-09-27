@@ -1,0 +1,17 @@
+
+C:\T>dir many /w/p
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T\MANY
+
+.               ..              F01      TXT    F02      TXT    F03      TXT
+F04      TXT    F05      TXT    F06      TXT    F07      TXT    F08      TXT
+F09      TXT    F10      TXT    F11      TXT    F12      TXT    F13      TXT
+F14      TXT    F15      TXT    F16      TXT    F17      TXT    F18      TXT
+F19      TXT    F20      TXT    F21      TXT    F22      TXT    F23      TXT
+F24      TXT    F25      TXT    F26      TXT    F27      TXT    F28      TXT
+F29      TXT    F30      TXT
+       32 File(s)   31535104 bytes free
+
+C:\T>

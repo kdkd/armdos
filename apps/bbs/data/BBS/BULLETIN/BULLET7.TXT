@@ -1,0 +1,41 @@
+@X0F  THE WALL OF FAME@X07
+
+@X0E  Legends of The Pit (1987, when handles were allowed)@X07
+
+  @X0BCaptain Carrier@X07 ........ First caller ever.  Hung up by pulling the
+                           phone cord out of the wall.  Every time.
+  @X0BNullModem Nancy@X07 ........ Wired her two computers together and called
+                           herself.  Left herself a message.  Answered it.
+  @X0BThe Phantom Dialer@X07 ..... 212 calls, zero messages.  We know you're
+                           out there.
+  @X0BSysOp's Cat@X07 ............ Not the cat.  Someone pretending to be the
+                           cat.  Parity was not amused.
+  @X0BLord Pipeline@X07 .......... Explained instruction pipelines to anyone,
+                           anywhere, unprompted.  Now works in Boca Raton.
+  @X0BBarrel Shifter@X07 ......... Our first programmer.  Wrote the first
+                           ZMODEM batch file.  It deleted itself.
+  @X0BTriple Plus@X07 ............ Typed three plus signs in a message.  Once.
+
+@X0E  Hall of Records (The ARM Pit, since 06-17-88)@X07
+
+  @X0BMost calls ..............@X07 Karen Whitfield       158 calls
+  @X0BCaller number 1,000 .....@X07 Karen Whitfield       (09-12-89, has the mug)
+  @X0BMost messages ...........@X07 Gordon Kessler        (and most words)
+  @X0BLongest message .........@X07 Gordon Kessler        "Why the 386 Wins",
+                                                  55 lines, 0 paragraphs
+  @X0BMost downloads ..........@X07 Bill Tran             (at 1-3 AM Pacific)
+  @X0BLongest distance call ...@X07 Bill Tran             Sunnyvale, CA
+  @X0BBiggest phone bill ......@X07 Dave Morgan           Springfield, IL
+                                                  (his wife has the details)
+  @X0BFirst 2400 baud caller ..@X07 Bill Tran
+  @X0BMost helpful answers ....@X07 Karen Whitfield, Susan Oyelaran (tie)
+  @X0BBest Zork hints .........@X07 Lenny Szabo           (never a spoiler)
+  @X0BMost dragon deaths ......@X07 Susan Oyelaran        (Stray Pointers)
+  @X0BFirst to slay the
+  @X0B  RISC Dragon ...........@X07 Marcus Feld           (on a school night)
+  @X0BOldest new user .........@X07 Harold Pruitt, 68     (typed in ALL CAPS for
+                                                  a month; we miss it)
+  @X0BMost loyal to old iron ..@X07 Rick Lambert          (PCjr, still)
+  @X0BMost probations .........@X07 The Byte Bandit       (ongoing)
+
+  Want to be on the wall?  Do something memorable.  Nicely.

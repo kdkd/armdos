@@ -1,0 +1,2 @@
+@ECHO OFF
+C:\TERM\TERM.EXE %1 %2

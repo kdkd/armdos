@@ -1,0 +1,25 @@
+[ one two]
+1:0 ONE
+2:0 TWO
+
+C:\T>args c:x.y d:z
+[ c:x.y d:z]
+1:3 X       Y
+2:4 Z
+
+C:\T>args /a /b
+[ /a /b]
+1:0 A
+2:0 B
+
+C:\T>args one,two;three=four
+[ one,two;three=four]
+1:0 ONE
+2:0 TWO
+
+C:\T>args.com hello
+[ hello]
+1:0 HELLO
+2:0
+
+C:\T>

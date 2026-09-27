@@ -1,0 +1,4 @@
+\S\D1\B.TXT (Y/N)?z
+\S\D1\B.TXT (Y/N)?y
+\S\D1\NEW.TXT (Y/N)?y
+        2 File(s) copied

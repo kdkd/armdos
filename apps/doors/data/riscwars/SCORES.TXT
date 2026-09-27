@@ -1,0 +1,6 @@
+RISC Wars - top traders by net worth
+ 1. Karen Whitfield      Big Endian               217,500 cr
+ 2. Gordon Kessler       Protected Mode           175,500 cr
+ 3. Susan Oyelaran       Stray Pointer II         166,250 cr
+ 4. Bill Tran            Carrier Detect           111,200 cr
+ 5. Maria Delgado        Barrel Shifter            82,000 cr

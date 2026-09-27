@@ -1,0 +1,21 @@
+
+C:\T>type a.txt
+This is file A.
+It has two lines.
+
+C:\T>type ctrlz.txt
+Text before the end of file mark
+
+C:\T>type nofile.txt
+File not found - NOFILE.TXT
+
+C:\T>type \t\nofile.txt
+File not found - \T\NOFILE.TXT
+
+C:\T>type *.txt
+Invalid filename or file not found
+
+C:\T>type
+Required parameter missing
+
+C:\T>

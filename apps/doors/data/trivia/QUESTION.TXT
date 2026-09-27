@@ -1,0 +1,700 @@
+; QUESTION.TXT - the question box of Byte-Sized Trivia (TRIVIA.EXE)
+;
+; Sysops: add your own!  A question is one or more "Q " lines, then exactly
+; four answers, "* " for the right one and "- " for the others (the door
+; shuffles them), then optionally "! " lines with a fact shown afterwards.
+; Leave a blank line between questions.  Lines starting with ";" are ignored.
+
+Q Who wrote XMODEM, the file transfer protocol that got BBSes swapping
+Q files in 1977?
+* Ward Christensen
+- Chuck Forsberg
+- Tom Jennings
+- Dennis Hayes
+! XMODEM sent 128-byte blocks with a one-byte checksum.  Simple, and it
+! worked over nearly anything.
+
+Q The first dial-up bulletin board, CBBS, went online in February 1978.
+Q In which city?
+* Chicago
+- Boston
+- San Francisco
+- Seattle
+! Ward Christensen and Randy Suess built it during a Chicago blizzard.
+
+Q Who started FidoNet, the network that lets BBSes swap mail at night,
+Q in 1984?
+* Tom Jennings
+- Ward Christensen
+- Randy Suess
+- Chuck Forsberg
+
+Q Which file transfer protocol, written by Chuck Forsberg in 1986, can
+Q resume a transfer that was cut off?
+* ZMODEM
+- XMODEM
+- YMODEM-g
+- Kermit
+! It is the one this board uses by default.  Press D, pick Z, done.
+
+Q The Kermit file transfer protocol was developed in 1981 at which
+Q university?
+* Columbia University
+- MIT
+- Stanford University
+- Carnegie Mellon University
+
+Q Who is the Kermit protocol named after?
+* Kermit the Frog
+- A Columbia professor named Kermit
+- A town in West Virginia
+- It stands for "Kermit Error-Recovering Modem Interface Transfer"
+
+Q What speed did the original 1981 Hayes Smartmodem run at?
+* 300 bps
+- 110 bps
+- 1200 bps
+- 2400 bps
+
+Q In the Hayes command set, what do the letters "AT" at the start of
+Q every command stand for?
+* Attention
+- Answer Tone
+- Asynchronous Transfer
+- Auto Terminal
+
+Q Which Hayes command dials a number using touch tones?
+* ATDT
+- ATDP
+- ATA
+- ATH1
+! ATDP dials with pulses, like an old rotary phone.
+
+Q What do you type (with a pause before and after) to get a Hayes modem
+Q back to command mode without hanging up?
+* +++
+- ATH0
+- Ctrl-C
+- ~~~
+
+Q "Modem" is short for...
+* Modulator-demodulator
+- Mode emulator
+- Mobile data emitter
+- Modular data memory
+
+Q The unit "baud" is named after which telegraph pioneer?
+* Emile Baudot
+- Samuel Morse
+- Alexander Graham Bell
+- Guglielmo Marconi
+
+Q A serial line set to "8N1" sends...
+* 8 data bits, no parity, 1 stop bit
+- 8 bits, normal speed, 1 channel
+- 8 data bits, 1 parity bit, no stop bit
+- 8 characters, then 1 null
+! So every byte costs 10 bits on the wire: at 2400 bps, 240 characters
+! a second.
+
+Q At 2400 bps with 8N1, about how many characters a second arrive?
+* 240
+- 300
+- 2,400
+- 24
+
+Q Which standard defines the good old serial port and its DB-25 plug?
+* RS-232
+- IEEE-488
+- SCSI
+- V.22bis
+
+Q An ANSI screen colour code starts with the ESC character and which
+Q other character?
+* [
+- ]
+- @
+- #
+
+Q What is ASCII short for?
+* American Standard Code for Information Interchange
+- Automatic Serial Character Input Interface
+- American Society of Computer Industry Interfaces
+- Alphanumeric Standard Character Interchange Index
+
+Q In ASCII, what number is the capital letter "A"?
+* 65
+- 1
+- 64
+- 97
+
+Q What is the ASCII code of the Escape character?
+* 27
+- 13
+- 8
+- 127
+
+Q How many bits in a nibble?
+* 4
+- 2
+- 8
+- 16
+
+Q What is hexadecimal FF in decimal?
+* 255
+- 256
+- 15
+- 100
+
+Q Which company published Zork in the early 1980s?
+* Infocom
+- Sierra On-Line
+- Broderbund
+- Activision
+
+Q Zork was first written on a mainframe at which university?
+* MIT
+- Stanford University
+- Dartmouth College
+- UC Berkeley
+
+Q In Zork, "It is pitch black.  You are likely to be eaten by a..."
+* grue
+- troll
+- thief
+- cyclops
+
+Q Colossal Cave Adventure was started by Will Crowther.  Who expanded
+Q it in 1977?
+* Don Woods
+- Scott Adams
+- Dave Lebling
+- Roberta Williams
+
+Q Which magic word moves you around in Colossal Cave Adventure?
+* XYZZY
+- PLUGH-A
+- ABRACADABRA
+- OPEN SESAME
+! PLUGH works too, once you know where to say it.
+
+Q Who designed King's Quest (1984) for Sierra?
+* Roberta Williams
+- Ken Williams
+- Al Lowe
+- Jane Jensen
+
+Q Richard Garriott, creator of the Ultima games, is better known by
+Q which name?
+* Lord British
+- Lord Ultima
+- The Avatar
+- Lord Blackthorn
+
+Q Elite, the 1984 space trading game, was written for the BBC Micro by
+Q Ian Bell and...
+* David Braben
+- Chris Sawyer
+- Jeff Minter
+- Peter Molyneux
+
+Q Who created Tetris in 1984?
+* Alexey Pajitnov
+- Shigeru Miyamoto
+- Toru Iwatani
+- Nolan Bushnell
+
+Q In which country was Tetris created?
+* The Soviet Union
+- Japan
+- Hungary
+- Finland
+
+Q In what year did Namco release Pac-Man?
+* 1980
+- 1978
+- 1982
+- 1984
+
+Q Pac-Man's four ghosts are Blinky, Pinky, Inky and...
+* Clyde
+- Sue
+- Winky
+- Stinky
+
+Q Who designed Donkey Kong (1981)?
+* Shigeru Miyamoto
+- Toru Iwatani
+- Alexey Pajitnov
+- Hideo Kojima
+
+Q Before he was called Mario, the hero of Donkey Kong was known as...
+* Jumpman
+- Mr. Video
+- Carpenter
+- Hammerhead
+
+Q Which company made Space Invaders (1978)?
+* Taito
+- Namco
+- Atari
+- Sega
+
+Q Pong (1972) was the first big hit for which company?
+* Atari
+- Magnavox
+- Midway
+- Coleco
+
+Q Atari was founded in 1972 by Ted Dabney and...
+* Nolan Bushnell
+- Steve Jobs
+- Jack Tramiel
+- Ralph Baer
+
+Q Atari's 1977 home console was first sold as the Atari VCS.  What did
+Q VCS stand for?
+* Video Computer System
+- Video Cartridge System
+- Visual Color Screen
+- Versatile Console System
+
+Q Thousands of unsold Atari cartridges were famously buried in a 1983
+Q landfill near which town?
+* Alamogordo, New Mexico
+- Sunnyvale, California
+- Roswell, New Mexico
+- Las Vegas, Nevada
+
+Q The Nintendo Entertainment System was sold in Japan under what name?
+* Famicom
+- Game Boy
+- Super Scope
+- NES Jr.
+
+Q Which game came bundled with the Game Boy when it reached North
+Q America in 1989?
+* Tetris
+- Super Mario Land
+- Pac-Man
+- Donkey Kong
+
+Q Who designed SimCity (1989)?
+* Will Wright
+- Sid Meier
+- Richard Garriott
+- Chris Crawford
+
+Q Who wrote Prince of Persia (1989)?
+* Jordan Mechner
+- John Romero
+- Ron Gilbert
+- David Crane
+
+Q Legend of the Red Dragon (1989), the famous BBS door game, was
+Q written by...
+* Seth Robinson
+- Gary Martin
+- Tom Jennings
+- Chuck Forsberg
+
+Q The BBS door game TradeWars 2002 was written by...
+* Gary Martin
+- Seth Robinson
+- Scott Adams
+- Ward Christensen
+
+Q Which company made the Commodore 64's famous sound chip, the SID?
+* MOS Technology
+- Yamaha
+- Texas Instruments
+- General Instrument
+! Commodore owned MOS Technology, so it made its own chips.
+
+Q What is the Commodore 64's sound chip called?
+* SID
+- VIC-II
+- POKEY
+- CIA
+
+Q The Commodore 64 came out in which year?
+* 1982
+- 1979
+- 1984
+- 1986
+
+Q Which processor is inside the Commodore 64?
+* MOS 6510
+- Zilog Z80
+- Motorola 68000
+- MOS 6809
+
+Q Which home computer was the first to sell a million units?
+* Commodore VIC-20
+- Apple II
+- TRS-80
+- Atari 800
+
+Q Which company designed the 6502 processor?
+* MOS Technology
+- Zilog
+- Motorola
+- Rockwell
+
+Q The Z80 processor was made by...
+* Zilog
+- MOS Technology
+- Motorola
+- Acorn
+
+Q Who designed the Apple II?
+* Steve Wozniak
+- Steve Jobs
+- Jef Raskin
+- Chuck Peddle
+
+Q The Apple II went on sale in which year?
+* 1977
+- 1975
+- 1980
+- 1983
+
+Q Which processor does the Apple II use?
+* MOS 6502
+- Zilog Z80
+- Motorola 6800
+- MOS 6510
+
+Q The Apple Macintosh was introduced in January of which year?
+* 1984
+- 1982
+- 1985
+- 1987
+
+Q Who directed the famous "1984" television ad for the Macintosh?
+* Ridley Scott
+- Steven Spielberg
+- George Lucas
+- James Cameron
+
+Q Which processor powers the original Macintosh?
+* Motorola 68000
+- MOS 6502
+- Zilog Z80
+- Motorola 6809
+
+Q The Amiga's custom chips are called Agnus, Denise and...
+* Paula
+- Gary
+- Lisa
+- Rhonda
+
+Q What is the name of the Amiga's famous bouncing red and white
+Q checkered ball demo?
+* Boing
+- Bounce
+- Juggler
+- Spheres
+
+Q In the Atari ST, what does "ST" usually stand for?
+* Sixteen/Thirty-two
+- Super Terminal
+- Screen Technology
+- Serial Tramiel
+
+Q The ZX Spectrum (1982) was made by...
+* Sinclair Research
+- Acorn Computers
+- Amstrad
+- Dragon Data
+
+Q Which processor runs the ZX Spectrum?
+* Zilog Z80
+- MOS 6502
+- Motorola 6809
+- ARM2
+
+Q Which company built the BBC Micro (1981)?
+* Acorn Computers
+- Sinclair Research
+- Research Machines
+- Oric
+
+Q The TRS-80 was sold through which chain of stores?
+* Radio Shack
+- Sears
+- Montgomery Ward
+- Crazy Eddie
+
+Q The 1977 "trinity" of ready-to-use home computers was the Apple II,
+Q the TRS-80 and...
+* the Commodore PET
+- the Atari 800
+- the Altair 8800
+- the ZX80
+
+Q The Altair 8800 kit made the cover of which magazine in January 1975?
+* Popular Electronics
+- Byte
+- Scientific American
+- Creative Computing
+
+Q The Osborne 1 (1981) is best remembered as an early...
+* portable computer
+- laser printer
+- hard disk
+- video game console
+! It weighed about 24 pounds.  "Portable" meant it had a handle.
+
+Q VisiCalc (1979), the first spreadsheet for personal computers, was
+Q written by Dan Bricklin and...
+* Bob Frankston
+- Mitch Kapor
+- Gary Kildall
+- Seymour Rubinstein
+
+Q The first ARM processor ran for the first time in 1985 at which
+Q British company?
+* Acorn Computers
+- Sinclair Research
+- Inmos
+- Amstrad
+
+Q Who designed the first ARM processor's instruction set?
+* Sophie Wilson
+- Chuck Peddle
+- Federico Faggin
+- Clive Sinclair
+! Steve Furber designed the chip itself.
+
+Q What did "ARM" originally stand for?
+* Acorn RISC Machine
+- Advanced RISC Microprocessor
+- Asynchronous Register Machine
+- Arithmetic Reduced Microcode
+
+Q RISC stands for...
+* Reduced Instruction Set Computer
+- Rapid Integer Scalar Core
+- Register-Indexed Segment Control
+- Really Is Seriously Cool
+
+Q How many general registers can an ARM program see at once, counting
+Q the program counter?
+* 16
+- 8
+- 32
+- 4
+
+Q Which ARM register is the program counter?
+* R15
+- R0
+- R13
+- R14
+! R13 is the stack pointer and R14 the link register.
+
+Q BASIC was created at Dartmouth College in 1964 by John Kemeny and...
+* Thomas Kurtz
+- Dennis Ritchie
+- John Backus
+- Niklaus Wirth
+
+Q What does BASIC stand for?
+* Beginner's All-purpose Symbolic Instruction Code
+- Basic Automatic Standard Instruction Compiler
+- Binary Arithmetic and Symbolic Instruction Code
+- Beginner's Algorithmic Syntax for Instruction Coding
+
+Q The C programming language was created at Bell Labs by...
+* Dennis Ritchie
+- Brian Kernighan
+- Bjarne Stroustrup
+- Niklaus Wirth
+
+Q "The C Programming Language" (1978) was written by Brian Kernighan
+Q and...
+* Dennis Ritchie
+- Ken Thompson
+- Donald Knuth
+- P. J. Plauger
+
+Q UNIX was born at which laboratory?
+* Bell Labs
+- Xerox PARC
+- MIT's AI Lab
+- Los Alamos
+
+Q Who designed the Pascal programming language?
+* Niklaus Wirth
+- Blaise Pascal
+- Edsger Dijkstra
+- Grace Hopper
+
+Q Who led the team that created FORTRAN?
+* John Backus
+- John McCarthy
+- Alan Kay
+- Grace Hopper
+
+Q Who invented LISP?
+* John McCarthy
+- Marvin Minsky
+- John Backus
+- Seymour Papert
+
+Q The Logo language is famous for teaching programming with a...
+* turtle
+- robot dog
+- rabbit
+- paintbrush
+
+Q The Smalltalk language and the Alto computer were developed at...
+* Xerox PARC
+- Bell Labs
+- SRI
+- MIT
+
+Q Who invented the computer mouse?
+* Douglas Engelbart
+- Alan Kay
+- Steve Jobs
+- Ivan Sutherland
+
+Q The 1947 "first actual case of bug being found" was a moth taped into
+Q the log book of which machine?
+* Harvard Mark II
+- ENIAC
+- UNIVAC I
+- Colossus
+! Grace Hopper loved telling the story.
+
+Q What was the backdoor password to the WOPR in WarGames (1983)?
+* Joshua
+- Falken
+- Pencil
+- Tic-Tac-Toe
+
+Q In WarGames, what does WOPR stand for?
+* War Operation Plan Response
+- World Over Protection Router
+- Weapons Ordnance Planning Robot
+- Wide Orbit Predictive Radar
+
+Q Which studio released TRON (1982)?
+* Walt Disney Productions
+- Lucasfilm
+- Universal Pictures
+- MGM
+
+Q How big were the first floppy disks, in the early 1970s?
+* 8 inches
+- 5.25 inches
+- 3.5 inches
+- 12 inches
+
+Q Which company introduced the 3.5-inch floppy disk?
+* Sony
+- Apple
+- Commodore
+- 3M
+
+Q Usenet started in 1979 with graduate students at which university?
+* Duke University
+- MIT
+- UC Berkeley
+- Harvard University
+
+Q The very first ARPANET message, in 1969, crashed after two letters.
+Q What were they?
+* LO
+- HI
+- OK
+- GO
+! They were trying to type LOGIN.
+
+Q Who sent the first network email and chose the @ sign for addresses?
+* Ray Tomlinson
+- Vint Cerf
+- Tom Jennings
+- Bob Metcalfe
+
+Q Elk Cloner (1982), one of the first computer viruses in the wild,
+Q infected which computer?
+* Apple II
+- Commodore 64
+- Atari 800
+- TRS-80
+
+Q The 1988 Internet worm that slowed thousands of computers was
+Q written by...
+* Robert Tappan Morris
+- Kevin Mitnick
+- Clifford Stoll
+- Captain Crunch
+
+Q Clifford Stoll's 1989 book about tracking a hacker through a 75-cent
+Q accounting error is called...
+* The Cuckoo's Egg
+- Hackers
+- The Soul of a New Machine
+- Neuromancer
+
+Q Who wrote Neuromancer (1984), the novel that made "cyberspace" a
+Q household word?
+* William Gibson
+- Bruce Sterling
+- Neal Stephenson
+- Isaac Asimov
+
+; ---------------------------------------------------------------- ARM Pit trivia
+
+Q [ARM Pit] What is the name of the sysop's cat?
+* Parity
+- Checksum
+- Baud
+- Nibble
+! Her word is final.  It says so in the rules.
+
+Q [ARM Pit] Which number do you dial for The ARM Pit?
+* 555-1989
+- 555-0100
+- 555-0386
+- 867-5309
+
+Q [ARM Pit] Which company made the ARM/AT?
+* Europa Micro Systems
+- Acorn Computers
+- Hayes Microcomputer Products
+- Delgado Computer Exchange
+
+Q [ARM Pit] The Pit's hard disk crashed on a day that doesn't exist
+Q three years out of four.  Which?
+* February 29, 1988
+- April 1, 1988
+- June 17, 1988
+- December 31, 1987
+
+Q [ARM Pit] Where does SFARM, the South Florida ARM Users' Group, meet?
+* Sal's Pizza on Hollywood Blvd
+- The sysop's spare room
+- The Boca Raton public library
+- Delgado Computer Exchange
+
+Q [ARM Pit] Why is node 2 always down?
+* The sysop borrowed the modem for the Amiga
+- Parity sleeps on it
+- The freight train unplugged it
+- The Byte Bandit is on it
+
+Q [ARM Pit] Which caller has been "on probation" for as long as anyone
+Q can remember?
+* The Byte Bandit
+- Rick Lambert
+- Gordon Kessler
+- Marcus Feld
+
+Q [ARM Pit] What is the name of the SFARM newsletter?
+* The Barrel Shifter
+- The Pipeline
+- The Carry Flag
+- RISC Report

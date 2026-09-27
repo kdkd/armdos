@@ -1,0 +1,6 @@
+
+---------- \WORK\B.TXT
+The quick brown fox
+
+---------- \WORK\A.TXT
+The quick brown fox

@@ -1,0 +1,9 @@
+
+
+C:G1.TXT and C:\T\G2.TXT
+
+Compare error at OFFSET 2
+File 1 = 63
+File 2 = 64
+EOF mark not found
+n

@@ -1,0 +1,25 @@
+ECHO is on
+
+C>echo hello world
+hello world
+
+C>echo.
+
+
+C>echo  two spaces
+ two spaces
+
+C>echo off
+echo
+ECHO is off
+echo on
+
+C>echo=on
+
+C>echo on and on
+on and on
+
+C>echo,comma
+comma
+
+C>

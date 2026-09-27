@@ -1,0 +1,239 @@
+@@1
+From: Europa Sysop
+To: All
+Subj: Welcome to The Flame Pit
+Date: 01-15-89 20:00
+
+This area is for the RISC vs CISC war, and ONLY the RISC vs CISC war.
+The other areas thank you in advance.
+
+The rules of The Flame Pit:
+
+  1. Argue about the chips, not the people.
+  2. Benchmarks must be reproducible.  "My cousin says" is not a
+     benchmark.
+  3. You may not type +++ in a message.  I know why you want to.  No.
+  4. When someone says something smart on the other side, you are
+     allowed to say so.  It will not kill you.
+
+Parity the cat is moderating.  She is on the RISC side, but only because
+the ARM/AT's modem is warmer.
+
+-- Europa
+@@2
+From: Gordon Kessler
+To: All
+Subj: Why the 386 Wins
+Date: 01-16-89 02:40
+
+Since the sysop has kindly given me a room to shout in, let me say what
+I came to say, once, completely, so nobody can ever claim I didn't warn
+them: the 386 wins, and it wins for reasons that have nothing to do with
+how many registers you can count on your fingers or how pretty your
+instruction encoding looks on a poster, because the 386 runs every
+program that was ever written for the PC, all of it, the whole
+mountain, every spreadsheet and every game and every accounting package
+that somebody's uncle wrote in 1983 and nobody has the source code for
+any more, and the ARM runs what, exactly, a nice clean new set of
+programs that were all written in the last year by people who think
+elegance is a feature, when every working person in this country knows
+that the only feature is "does it run the thing I already have", and
+that's before we even get to the instructions themselves, which on the
+386 do REAL WORK, a single REP MOVSB moves a whole block of memory
+while your ARM is still loading its sixteen registers one at a time
+like a clerk counting change, and don't tell me about "load/store
+architecture" as if having to load something before you can add to it
+were a virtue instead of an extra step that the 386 simply doesn't make
+you take, because on my machine I can add straight to memory, in one
+instruction, like an adult, and as for segments, which you people love
+to laugh at, segments are protection, segments are organisation,
+segments are how a real operating system knows which memory belongs to
+whom, and the fact that your "flat" address space lets any program
+scribble anywhere it likes is not freedom, it's anarchy, and when the
+big operating systems of the 1990s arrive they will run in protected
+mode on the 386 and they will use every one of those segment registers
+you've been mocking, and your ARM will be sitting in the corner running
+a BBS in somebody's spare bedroom, and I say that with respect for the
+sysop, who is a fine person with questionable taste in processors, and
+while I'm on the subject of taste, let me address the so-called
+"pipeline" that you all keep bringing up at Sal's Pizza as if you
+invented it, because the 386 has a pipeline too, and a prefetch queue,
+and it has had them since before your chip had a name, and the
+difference is that ours is hidden inside where it belongs instead of
+being printed on T-shirts, and let me also address the TURBO button,
+which on your machines goes from 12 to 100 and which you all seem to
+think is a personality, when a turbo button is an admission that the
+machine was too fast for the software and had to be slowed down on
+purpose to be useful, which is not a boast, it is a confession, and
+speaking of confessions, I would like to hear one of you confess that
+you have ever needed thirty-two bits of address space for anything
+other than feeling superior, because 640K is a great deal of memory and
+I have run an entire bulletin board in it, with doors, and I have never
+once wished for a flat model, not once, not even on the night the
+message base hit 400K and the whole Fortress had to be reorganised by
+hand, and
+finally, and I want this on the record, clock for clock the 386 has
+more transistors than your ARM, many more, and more transistors means
+more thinking, and more thinking means more work done, and nobody ever
+got fired for buying more thinking, and I have run The 386 Fortress on
+a 386 since the day the chip came out and it has never once lost a
+message to line noise or a train, which is more than some boards I
+could mention can say, and that is why the 386 wins, and I will be
+happy to accept your apologies at 555-0386, any time, day or night,
+the line is always up, because it runs on a 386.
+
+Gordon Kessler, sysop, The 386 Fortress
+@@3
+From: Susan Oyelaran
+To: Gordon Kessler
+Subj: Re: Why the 386 Wins
+Date: 01-16-89 07:55
+
+> more transistors means more thinking
+
+Gordon, I read the whole thing.  It took my whole breakfast.  In return,
+three short points, with paragraphs, as a gift:
+
+The ARM has fewer transistors because it doesn't need a microcoded
+decoder to untangle instructions of one to fifteen bytes.  Every ARM
+instruction is 32 bits.  The transistors it saves go into doing the
+work, not figuring out what the work is.
+
+"Loading its sixteen registers one at a time": LDM loads up to sixteen
+registers in ONE instruction.  I posted the loop in Programmers' Corner.
+
+And the old programs: that's a fair point.  Genuinely.  It's the best
+point in your message.  I'll give you that one, with a bow.
+
+Susan
+@@4
+From: Karen Whitfield
+To: Gordon Kessler
+Subj: Re: Why the 386 Wins
+Date: 01-17-89 06:30
+
+> on my machine I can add straight to memory, in one instruction
+
+You can write it in one instruction.  The chip still has to read the
+memory, add, and write it back, and it takes the cycles to do all
+three.  The ARM just makes you write down what it's going to do anyway.
+
+Also, for the record: 16 general registers on the ARM, 8 on the 386,
+one of which is the stack pointer.  Every value you keep in a register
+is a trip to memory you don't make.
+
+KW
+@@5
+From: Rick Lambert
+To: All
+Subj: Both of you are wrong
+Date: 01-17-89 19:15
+
+The PCjr has neither a 386 nor an ARM.  It has never needed one.  It
+has been running my checkbook since 1984 and it has never once been in
+a flame war.
+
+I rest my case.  My case is beige and has a cordless keyboard.
+
+... PCjr: above it all.
+@@6
+From: Marcus Feld
+To: All
+Subj: RISC vs CISC (let's settle this)
+Date: 10-25-89 23:59
+
+RISC: every instruction does one thing, fast.
+CISC: every instruction does twelve things, eventually.
+
+Discuss.  Politely.  The sysop is watching.
+@@7
+From: Susan Oyelaran
+To: Marcus Feld
+Subj: Re: RISC vs CISC (let's settle this)
+Date: 10-26-89 06:40
+
+> CISC: every instruction does twelve things, eventually.
+
+To be fair, REP MOVSB is a pretty good instruction.  But my ARM does a
+whole LDM/STM of eight registers while the 286 is still decoding the
+prefix bytes, so I know which side I'm on.
+@@8
+From: Gordon Kessler
+To: Marcus Feld
+Subj: Re: RISC vs CISC (let's settle this)
+Date: 10-26-89 23:20
+
+> CISC: every instruction does twelve things, eventually.
+
+And RISC: every program needs twelve instructions to do one thing,
+immediately.  I have been saying this for a year.  Nobody listens.
+
+(Marcus, how old are you?  Your mother picked up the extension while I
+was reading this.  I heard it in the line noise.)
+
+Gordon
+@@9
+From: Gordon Kessler
+To: All
+Subj: I ran my program on an ARM/AT
+Date: 03-14-90 00:30
+
+I'll say this once, and quietly, and then we'll never speak of it.
+
+At the SFARM meeting on Tuesday (I go to spy, everyone knows this),
+Karen Whitfield put a floppy in her ARM/AT and ran MY program, a genuine
+x86 .COM file I wrote myself in 1986, under this ELBOW thing.  The X86
+lamp on the front panel came on, amber, and stayed on.  My program ran.
+Every instruction of it.  Correctly.
+
+Then she ran a benchmark, the same C program compiled once for the ARM
+and once for the 8086, and ran both.  I'm not going to say what the
+numbers were.  I'm going to say that I went home and did not turn on
+the 386 that night.
+
+That's all.  That's the whole message.
+
+Gordon
+@@10
+From: Susan Oyelaran
+To: Gordon Kessler
+Subj: Re: I ran my program on an ARM/AT
+Date: 03-14-90 07:10
+
+> That's all.  That's the whole message.
+
+Gordon, thank you.  That can't have been easy to type.
+
+And for the record, your point about the old programs was right all
+along.  Nobody wants to throw away the mountain.  We just found a way
+to carry it with us.
+
+Susan
+@@11
+From: Gordon Kessler
+To: Europa Sysop
+Subj: A confession (go ahead and post it)
+Date: 06-20-90 23:10
+
+The 386 Fortress will remain a 386 board.  The 386 has been good to me,
+and I am loyal to machines that have been good to me.
+
+That said, I bought an ARM/AT for the kitchen.  For recipes.  It has
+nothing to do with anything.  It's in the kitchen.
+
+Gordon Kessler, sysop, The 386 Fortress (still)
+@@12
+From: Europa Sysop
+To: Gordon Kessler
+Subj: Re: A confession (go ahead and post it)
+Date: 06-21-90 00:15
+
+> I bought an ARM/AT for the kitchen.  For recipes.
+
+Gordon, welcome to the Pit.  You may keep your segments.  You may keep
+your fortress.  You may keep your 55-line paragraph, which is on the
+Wall of Fame and will outlive us all.
+
+Rule 4 of The Flame Pit is working.  I'm going to go tell the cat.
+
+-- Europa

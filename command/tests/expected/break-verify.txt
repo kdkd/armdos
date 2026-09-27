@@ -1,0 +1,25 @@
+
+C>break on
+
+C>break
+BREAK is on
+
+C>break off
+
+C>verify
+VERIFY is off
+
+C>verify on
+
+C>verify
+VERIFY is on
+
+C>verify off
+
+C>break x
+Must specify ON or OFF
+
+C>verify x
+Must specify ON or OFF
+
+C>

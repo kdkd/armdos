@@ -1,0 +1,32 @@
+
+  Address     Name          Size       Type 
+  컴컴컴�     컴컴컴컴     컴컴컴     컴컴컴
+  000000                   000400     Interrupt Vector
+  000400                   000100     ROM Communication Area
+  000500                   000200     DOS Communication Area
+
+  000700      IO           002510     System Program
+
+  002C10      MSDOS        008E20     System Program
+
+  00BA30      IO           003D00     System Data
+                           000380      FILES=     
+                           000100      FCBS=      
+                           0029A0      BUFFERS=   
+                           0001C0      LASTDRIVE= 
+                           000CD0      STACKS=    
+  00F740      COMMAND      001640     Program   
+  010D90      MSDOS        000030     -- Free --
+  010DD0      COMMAND      0000A0     Environment
+  010E80      COMMAND      000040     Data      
+  010ED0      MEM          000050     Environment
+  010F30      MEM          012F00     Program   
+  023E40      MSDOS        07C1B0     -- Free --
+
+
+    655360 bytes total memory
+    655360 bytes available
+    585920 largest executable program size
+
+   3145728 bytes total extended memory
+   3145728 bytes available extended memory

@@ -1,0 +1,25 @@
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+D        TXT        36 09-24-26   3:12p
+        1 File(s)   31514624 bytes free
+
+C:\T>ren nofile.txt x.txt
+Duplicate file name or file not found
+
+C:\T>ren d.txt a.txt
+Duplicate file name or file not found
+
+C:\T>ren a.txt \x.txt
+Invalid filename or file not found
+
+C:\T>ren a.txt c:x.txt
+Invalid parameter
+
+C:\T>ren
+Required parameter missing
+
+C:\T>ren a.txt
+Required parameter missing
+
+C:\T>

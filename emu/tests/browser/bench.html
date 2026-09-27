@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>ARM-PC CPU benchmark</title>
+<pre id="out">running…</pre>
+<script type="module">
+// Runs build/emu-tests/bench-r20/bench.bin (built by tests/machine/perf.mjs)
+// on the bare CPU, with and without the JIT, and reports MIPS.
+import { runBare } from '../cpu/bare.mjs';
+const q = new URLSearchParams(location.search);
+const url = q.get('bin') || '../../../build/emu-tests/bench-r20/bench.bin';
+const bin = new Uint8Array(await (await fetch(url)).arrayBuffer());
+const res = {};
+for (const jit of [true, false]) {
+  const r = await runBare(bin, { jit, maxInsns: jit ? 5e9 : 2e8 });
+  res[jit ? 'jit' : 'interp'] = { mips: +r.mips.toFixed(1), insns: r.insns, ok: r.out.includes('sieve 6542') };
+}
+document.getElementById('out').textContent = JSON.stringify(res, null, 2);
+window.benchResult = res;
+</script>

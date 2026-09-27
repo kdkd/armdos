@@ -1,0 +1,5 @@
+{
+  "comment": "TCC: TCC.EXE goes to C:\\DOS with the other programs (build/*.EXE); C:\\TC holds INCLUDE, LIB, SAMPLES (built by apps/tcc/app.mk)",
+  "dirs": ["TC"],
+  "tree": [ { "src": "build/tcc/disk/TC", "dst": "TC" } ]
+}

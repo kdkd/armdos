@@ -1,0 +1,25 @@
+@X0F  OTHER BOARDS WORTH A CALL@X07  (all numbers 305 area code)
+
+  The ARM Pit ................ 555-1989   you are here (FidoNet 1:1989/1)
+  ARM-DOS Host Link .......... 555-0100   files to/from your own computer
+  The Floating Point ......... 555-7734   math and fractals, sysop Doc
+                                          Mantissa.  Tell him Europa sent
+                                          you and he'll tell you a pun.
+  The 386 Fortress ........... 555-0386   sysop Gordon Kessler.  Yes, that
+                                          Gordon.  Wear asbestos.
+  Silicon Beach Exchange ..... 555-4262   (nobody ever answers)
+  Byte Bandit's Lair ......... 555-6667   (we don't talk about it)
+  ??? ........................ 555-0199   Bill Tran says a strange computer
+                                          answers this one with pictures.
+                                          We haven't figured it out yet.
+
+  Not boards, but people keep dialling them anyway:
+  867-5309 is always busy.  POPCORN (767-2676) tells you the time.
+  Europa Micro Support (555-0142) has very good hold music.  555-3299 is
+  our fax machine: it screams at modems.  555-0123 is Mrs. Pomeroy's
+  kitchen - if you get her, say sorry.  399-2364 used to just ring; now
+  something answers and asks for a LOGON.  Shall we play a game?  No.
+  No, we shall not.  And Bill swears 011-7-095-231-1984 reaches a VAX in
+  Moscow called KREMVAX.  Long distance to the USSR: your phone bill.
+
+  Know another board?  Leave a comment to the sysop (C on the Main Menu).

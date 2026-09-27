@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ARM-PC emulator demo</title>
+<style>
+  body { background: #1b1d22; color: #d8d8d8; font: 13px/1.4 system-ui, sans-serif; margin: 0; padding: 16px; }
+  #screen { display: block; width: 720px; height: 540px; image-rendering: pixelated; background: #000; outline: none; box-shadow: 0 0 0 1px #444; }
+  #screen:focus { box-shadow: 0 0 0 2px #6a9fd8; }
+  .bar { display: flex; gap: 12px; align-items: center; margin: 8px 0; flex-wrap: wrap; max-width: 720px; }
+  .led { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #333; vertical-align: middle; margin-right: 4px; }
+  .led.on { background: #3f3; box-shadow: 0 0 6px #3f3; }
+  .led.fd.on { background: #fb3; box-shadow: 0 0 6px #fb3; }
+  #serial { background: #0c0d10; color: #9c9; max-width: 720px; height: 140px; overflow: auto; margin: 0; padding: 6px; font: 12px ui-monospace, monospace; white-space: pre-wrap; }
+  button, label.btn { background: #2d3139; color: #ddd; border: 1px solid #444; border-radius: 4px; padding: 3px 9px; cursor: pointer; font: inherit; }
+  #stats { font-family: ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<canvas id="screen" width="720" height="400" tabindex="0"></canvas>
+<div class="bar">
+  <span><span class="led hd" id="ledhd"></span>HDD</span>
+  <span><span class="led fd" id="ledfd"></span>FDD</span>
+  <span id="stats">loading…</span>
+</div>
+<div class="bar">
+  <button id="turbo">Turbo: on</button>
+  <label class="btn">Insert floppy…<input id="fdfile" type="file" hidden></label>
+  <button id="eject">Eject</button>
+  <button id="reset">Reset</button>
+  <button id="cad">Ctrl-Alt-Del</button>
+  <span>Click the screen to type; click again to capture the mouse.</span>
+</div>
+<pre id="serial"></pre>
+<script type="module">
+import { Machine, RealtimeDriver } from './machine.mjs';
+import { renderScreen } from './render.mjs';
+
+const q = new URLSearchParams(location.search);
+async function fetchBytes(url) {
+  if (!url) return null;
+  const m = /^blank:(\d+)$/.exec(url);
+  if (m) return new Uint8Array(+m[1] * 1024 * 1024);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + ': ' + r.status);
+  return new Uint8Array(await r.arrayBuffer());
+}
+const $ = (id) => document.getElementById(id);
+const serial = $('serial');
+let serialBuf = '';
+const flushSerial = () => { if (serialBuf) { serial.textContent += serialBuf; serialBuf = ''; serial.scrollTop = serial.scrollHeight; } };
+
+// ---- audio (PC speaker)
+let audio = null, osc = null, gain = null;
+function speaker(on, freq) {
+  if (!audio) { try { audio = new AudioContext(); gain = audio.createGain(); gain.gain.value = 0; gain.connect(audio.destination); osc = audio.createOscillator(); osc.type = 'square'; osc.connect(gain); osc.start(); } catch { return; } }
+  if (on && freq > 20 && freq < 20000) { osc.frequency.setValueAtTime(freq, audio.currentTime); gain.gain.setTargetAtTime(0.06, audio.currentTime, 0.002); }
+  else gain.gain.setTargetAtTime(0, audio.currentTime, 0.002);
+}
+
+// ---- LEDs
+const ledTimers = {};
+function led(id) { const el = $(id); el.classList.add('on'); clearTimeout(ledTimers[id]); ledTimers[id] = setTimeout(() => el.classList.remove('on'), 120); }
+
+let cmos = null;
+try { const s = localStorage.getItem('armpc-cmos'); if (s) cmos = Uint8Array.from(atob(s), (c) => c.charCodeAt(0)); } catch {}
+
+const [rom, hd, fd] = await Promise.all([
+  fetchBytes(q.get('rom') || '../build/emu-tests/rom/testrom.bin'),
+  fetchBytes(q.get('hd') || 'blank:32'),
+  fetchBytes(q.get('fd')),
+]);
+const machine = new Machine({
+  rom, hd, fd, cmos,
+  jit: q.get('jit') !== '0',
+  mhz: q.get('mhz') ? +q.get('mhz') : undefined,
+  onSerial: (b) => { serialBuf += String.fromCharCode(b); },
+  onDebug: (b) => { serialBuf += String.fromCharCode(b); },
+  onSpeaker: speaker,
+  onDiskActivity: (drive) => led(drive >= 0x80 ? 'ledhd' : 'ledfd'),
+  onCmosWrite: (ram) => { try { localStorage.setItem('armpc-cmos', btoa(String.fromCharCode(...ram))); } catch {} },
+});
+
+// ---- display
+const canvas = $('screen'), ctx = canvas.getContext('2d');
+let img = null, imageData = null;
+function draw() {
+  img = renderScreen(machine, img, performance.now());
+  if (canvas.width !== img.width || canvas.height !== img.height) { canvas.width = img.width; canvas.height = img.height; imageData = null; }
+  if (!imageData) imageData = new ImageData(img.data, img.width, img.height);
+  ctx.putImageData(imageData, 0, 0);
+}
+
+// ---- input
+canvas.addEventListener('keydown', (e) => { if (machine.keyDown(e.code)) e.preventDefault(); });
+canvas.addEventListener('keyup', (e) => { if (machine.keyUp(e.code)) e.preventDefault(); });
+canvas.addEventListener('click', () => { if (document.activeElement === canvas && canvas.requestPointerLock) canvas.requestPointerLock(); canvas.focus(); });
+document.addEventListener('mousemove', (e) => { if (document.pointerLockElement === canvas) machine.mouseMove(e.movementX, e.movementY); });
+const btnBits = (b) => (b & 1) | ((b & 2) ? 2 : 0) | ((b & 4) ? 4 : 0);
+document.addEventListener('mousedown', (e) => { if (document.pointerLockElement === canvas) machine.mouseButtons(btnBits(e.buttons)); });
+document.addEventListener('mouseup', (e) => { if (document.pointerLockElement === canvas) machine.mouseButtons(btnBits(e.buttons)); });
+
+$('turbo').onclick = () => { machine.setTurbo(!machine.turbo); $('turbo').textContent = 'Turbo: ' + (machine.turbo ? 'on' : 'off'); canvas.focus(); };
+$('fdfile').onchange = async (e) => { const f = e.target.files[0]; if (f) machine.insertFloppy(new Uint8Array(await f.arrayBuffer())); canvas.focus(); };
+$('eject').onclick = () => { machine.ejectFloppy(); canvas.focus(); };
+$('reset').onclick = () => { machine.stopped = false; machine.powerCycle(); canvas.focus(); };
+$('cad').onclick = () => { machine.typeText('{CTRL+ALT+DEL}'); canvas.focus(); };
+
+const driver = new RealtimeDriver(machine, {
+  onFrame: (s) => {
+    draw(); flushSerial();
+    $('stats').textContent = `${s.mips.toFixed(0)} MIPS host · ${s.effMips.toFixed(0)} MIPS delivered · load ${(100 * s.hostLoad).toFixed(0)}% · ` +
+      `${machine.mhz} MHz · mode ${machine.vga.mode.toString(16).padStart(2, '0')}h · ${(s.emuMs / 1000).toFixed(1)} s` + (machine.stopped ? ` · exit ${machine.exitCode}` : '');
+  },
+});
+driver.start();
+canvas.focus();
+window.emu = { machine, driver };
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+Replacing C:\R2\A.TXT
+
+1 file(s) replaced

@@ -1,0 +1,4 @@
+Press any key to begin copying file(s)x
+Reading source file(s)...
+\S\A.TXT
+        1 File(s) copied

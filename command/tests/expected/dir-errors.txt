@@ -1,0 +1,25 @@
+
+C:\T>dir /x
+Invalid switch -  /x
+
+C:\T>dir a b
+Too many parameters - b
+
+C:\T>dir q:
+Invalid drive specification
+
+C:\T>dir \nodir\*.*
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+Path not found
+
+C:\T>dir sub\
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+Invalid directory
+
+C:\T>

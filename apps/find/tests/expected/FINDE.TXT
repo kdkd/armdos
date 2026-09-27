@@ -1,0 +1,6 @@
+
+---------- \WORK\B.TXT
+[1]The quick brown fox
+[2]jumps over the lazy cat.
+[3]Line three
+[4]Line four

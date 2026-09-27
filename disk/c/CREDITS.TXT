@@ -1,0 +1,355 @@
+                         ARM-DOS 1.0  -  CREDITS
+                         =======================
+
+  Copyright (C) 2026 Kevin Day, with lots of help from Europa.
+
+  ARM-DOS is an imagined 1988 PC with an ARM processor, and most of what
+  runs on it was written for it: the BIOS, the DOS kernel, COMMAND.COM,
+  the emulator and the web page around it, and dozens of programs. Where
+  a notice says "Europa Micro Systems", that is the machine's make-believe
+  manufacturer, and the work is part of ARM-DOS.
+
+  A great deal more came from other people who were kind enough to share
+  their work. This file lists every such piece: what it is, who made it,
+  the licence it is used under, and where it came from. Many programs also
+  keep their own licence file next to them on this disk. Where a licence
+  asks for the source code to be offered, the ARM-DOS project offers it.
+
+  Contents
+    1. The system            5. Sound and music
+    2. Programming           6. The x86 gallery under ELBOW
+    3. Games                 7. Demos, the CD-ROM and ARM-DOS Online
+    4. GEM                   8. Fonts, data and references
+
+
+==========================================================================
+1. THE SYSTEM
+==========================================================================
+
+MS-DOS 4.00 (the model for ARM-DOS)
+  (C) IBM and Microsoft Corporation. Released as source code by Microsoft
+  under the MIT License (github.com/microsoft/MS-DOS, v4.0).
+  ARM-DOS's kernel (IO.SYS, ARMDOS.SYS), HIMEM.SYS and COMMAND.COM are new
+  C and ARM code. Their behaviour and their messages follow that source,
+  so they include Portions (C) Microsoft Corp., MIT License.
+
+DOS 4 commands carried over from Microsoft's source
+  Portions (C) Microsoft Corp., MIT License.
+  Compiled for the ARM from Microsoft's own C source:
+    FC, MEM, ATTRIB, FDISK, JOIN, SUBST (and their shared helper library)
+  Assembled from Microsoft's own source:
+    KEYBOARD.SYS (plus a Dvorak layout added for ARM-DOS), COUNTRY.SYS
+  Re-created in C from Microsoft's assembly source, step by step:
+    ANSI.SYS, CHKDSK, COMP, DEBUG (now for ARM code), DISKCOMP, DISKCOPY,
+    DISPLAY.SYS, EDLIN, FIND, FORMAT, KEYB, LABEL, MODE, MORE, NLSFUNC,
+    PRINT, REPLACE, SORT, SYS, TREE, XCOPY
+
+The DOS 4.00 Shell (DOSSHELL)
+  New code for ARM-DOS, written from the real Shell's screens. The Shell's
+  source is not part of Microsoft's release; none of its code is used.
+
+The C runtime inside the programs
+  newlib (Red Hat and many contributors), BSD-style licences.
+  libgcc (Free Software Foundation), GNU GPL with the GCC Runtime Library
+  Exception.
+  Every program built with the ARM-DOS SDK contains parts of both, and
+  C:\TC\LIB\LIBC.A and the headers in C:\TC\INCLUDE come from them.
+
+Turbo Vision (used by EDIT, ARM Turbo C and ARM QuickBASIC)
+  Borland International made the original source public; the modern
+  port is by magiblot (github.com/magiblot/tvision), MIT License plus
+  Borland's original disclaimer. The ARM-DOS platform layer is new.
+
+Original ARM-DOS programs (no third-party code)
+  AC, ARMINFO, ARMCDEX, ARMCD.SYS, BANNER, CDPLAY, CRASH, DEFRAG, DEMO,
+  DOCTOR, SAY, ELBOW, FILE, HERCULES, JOYTEST, MOUSE, ONLINE, PAINT,
+  PLAYMIDI, POPUP, SBMIX, SBTEST, TERM, TURBO, UNZIP, and The ARM Pit BBS
+  with its door games. Their looks are homages to programs of the era;
+  none of those programs' code or text was used.
+
+
+==========================================================================
+2. PROGRAMMING
+==========================================================================
+
+TinyCC (TCC.EXE, and the compiler inside ARM Turbo C)
+  Tiny C Compiler 0.9.28rc, (C) 2001-2025 Fabrice Bellard and the TinyCC
+  authors. GNU LGPL 2.1 (C:\TC\COPYING.TXT). From repo.or.cz/tinycc.git,
+  given an ARM-DOS code generator and output format.
+
+Bywater BASIC 3.40 (BASIC.EXE, and the interpreter inside QB)
+  (C) 1993 Ted A. Campbell, 1995-1997 Jon B. Volkoff, Paul Edwards,
+  2014-2017 Howard Wulf, 2019 Ken Martin, Lee Wittenberg and others.
+  GNU GPL version 2 (C:\BASIC\LICENSE.TXT). From
+  sourceforge.net/projects/bwbasic, with a GW-BASIC-style screen, sound
+  and graphics layer added for ARM-DOS.
+
+EDIT, ARM Turbo C (TC), ARM QuickBASIC (QB)
+  The applications are new ARM-DOS code on Turbo Vision (section 1). The
+  sample programs in C:\TC\SAMPLES, C:\QB and C:\BASIC are ARM-DOS's own.
+
+
+==========================================================================
+3. GAMES
+==========================================================================
+
+  The shareware games below are the publishers' unmodified shareware
+  releases, given away free of charge as their licences allow, with those
+  licences next to them. The registered versions are not included.
+
+DOOM (C:\GAMES\DOOM)
+  Code: (C) 1993-1996 id Software, GNU GPL 2 or later (released 1999).
+  Chocolate Doom (C) 2005-2014 Simon Howard et al.; doomgeneric by ozkl
+  (github.com/ozkl/doomgeneric). ARM-DOS platform files, same licence.
+  Data: DOOM1.WAD, the shareware DOOM v1.9 IWAD by id Software,
+  unmodified. id's shareware terms allow free copies, never for money.
+
+WOLFENSTEIN 3D (C:\GAMES\WOLF3D)
+  Code: (C) 1992 id Software; Wolf4SDL by Moritz "Ripper" Kroll and
+  contributors (github.com/11001011101001011/Wolf4SDL), used under the
+  GNU GPL 2.
+  Data: the shareware Wolfenstein 3D v1.4 by id Software and Apogee
+  Software, unmodified, with Apogee's VENDOR.DOC and the complete original
+  archive 1WOLF14.ZIP.
+
+QUAKE (C:\GAMES\QUAKE)
+  Code: (C) 1996-1997 id Software, GNU GPL 2 or later (released 1999),
+  WinQuake from github.com/id-Software/Quake.
+  Data: PAK0.PAK of the shareware Quake v1.06, unmodified, with id's
+  SLICNSE.TXT and LICINFO.TXT and the complete release QUAKE106.ZIP.
+
+DUKE NUKEM 3D (C:\GAMES\DUKE3D)
+  Game code: (C) 1996-2003 3D Realms, GNU GPL 2 or later (released 2003),
+  through Chocolate Duke3D (Fabien Sanglard,
+  github.com/fabiensanglard/chocolate_duke3D).
+  Build engine: (C) 1993-1997 Ken Silverman, under his BUILD SOURCE CODE
+  LICENSE (BUILDLIC.TXT, next to the game): free of charge only.
+  Apogee Sound System: (C) 1994-1995 James R. Dose, GNU GPL 2; MV_MIX.C
+  from jfaudiolib, (C) 2009 Jonathon Fowler, GNU GPL 2.
+  Data: the shareware Duke Nukem 3D v1.3D by 3D Realms, unmodified, with
+  its LICENSE.TXT and the complete original archive 3DDUKE13.ZIP.
+
+HEXEN II (C:\GAMES\HEXEN2, engine only)
+  (C) 1996-1997 id Software, 1997-1998 Raven Software; uHexen2 / Hammer
+  of Thyrion (git.code.sf.net/p/uhexen2/uhexen2), GNU GPL 2. Its hash
+  index code is adapted from the Doom 3 GPL source, (C) id Software,
+  GNU GPL 3 with additional terms. PROGS.DAT and HEXEN.RC are compiled
+  from uHexen2's GPL game code. No Hexen II data ships with ARM-DOS: the
+  demo's licence does not allow passing it on, so you bring your own
+  (see C:\GAMES\HEXEN2\README.TXT).
+
+COMMANDER KEEN IN KEEN DREAMS (C:\GAMES\KEEN)
+  KEEN.EXE: Keen Dreams source (C) 2014 Javier M. Chavez, GNU GPL 2 or
+  later, through ReflectionHLE by NY00123 (github.com/NY00123/refkeen),
+  GNU GPL 2 or later, whose backend is under the 3-clause BSD licence
+  (its unlzexe and CRC-32 code are public domain). KEEN.EXE contains no
+  game data.
+  Data: the shareware Keen Dreams v1.13 (Softdisk, 1992) is not on this
+  disk. The ARM Pit BBS offers the unmodified KEENDRMS.ZIP, as its
+  LICENSE.DOC allows BBS sysops to do, and GETKEEN downloads it.
+
+ZORK I, II, III (C:\GAMES\ZORK)
+  Story files: Infocom's Zork, released as source by Microsoft in 2025,
+  MIT License, (C) 2025 Microsoft (LICENSE.TXT); from
+  github.com/historicalsource/zork1, zork2 and zork3.
+  Interpreter: MojoZork by Ryan C. Gordon, zlib licence (MOJOZORK.TXT),
+  altered for ARM-DOS (github.com/icculus/mojozork).
+
+COLOSSAL CAVE ADVENTURE (C:\GAMES\ADVENT)
+  Open Adventure 1.22 by Eric S. Raymond, a forward port of Will Crowther
+  and Don Woods' Adventure 2.5, released with the authors' permission.
+  BSD 2-clause licence for code and data (LICENSE.TXT). From
+  gitlab.com/esr/open-adventure.
+
+
+==========================================================================
+4. GEM
+==========================================================================
+
+GEM/3 (C:\GEMAPPS)
+  AES, VDI, screen drivers and their system fonts, Desktop and the
+  Calculator/Clock accessory: (C) 1985-1988 Digital Research Inc.,
+  released by Caldera Thin Clients in 1999 under the GNU GPL 2. Taken from
+  the OpenGEM SDK (github.com/shanecoughlan/OpenGEM); the 8086 assembly
+  and the screen driver were rewritten in C and ARM code, also GPL 2.
+  DEMO.APP: the GEM Programmer's Toolkit sample by Tom Rolander and Tim
+  Oren, from John Elliott's GEM bindings. Digital Research marked it as a
+  non-copyrighted work and asked to be acknowledged as its originator,
+  which we gladly do: this code comes from Digital Research, Inc.
+
+
+==========================================================================
+5. SOUND AND MUSIC
+==========================================================================
+
+Nuked OPL3 (the Sound Blaster's FM chip)
+  (C) 2013-2020 Nuke.YKT; Nuked-OPL3-fast changes (C) 2026 Tony Gies.
+  GNU LGPL 2.1 or later. Ported to JavaScript for the emulator from the
+  copy in Chocolate Doom. Its thanks, passed on: the MAME team (Jarek
+  Burczynski, Tatsuyuki Satoh), carbon14 and opl3 of
+  forums.submarine.org.uk, Matthew Gambrell and Olli Niemitalo (OPLx
+  decapsulated), John McMaster and digshadow (siliconpr0n.org).
+
+GeneralUser GS 2.0.3 (the General MIDI daughterboard's sound set)
+  by S. Christian Collins (github.com/mrbumpy409/GeneralUser-GS),
+  GeneralUser GS License v2.0. Reduced in size for the web; the modified
+  bank says so. The synthesiser playing it is ARM-DOS's own.
+
+FM instrument bank of the ARM-DOS SDK's MIDI helper (heard in SBTEST)
+  The GENMIDI lump of Freedoom, (C) 2001-2024 Contributors to the
+  Freedoom project, BSD 3-clause licence.
+
+The MIDI files in C:\MIDI
+  From the Mutopia Project (mutopiaproject.org), each placed in the public
+  domain by its typesetter: Bach's Prelude in C (Tobias Erbsland), Toccata
+  and Fugue in D minor (anonymous) and Brandenburg Concerto No. 2 (Andy
+  Vaught); Mozart's Eine kleine Nachtmusik (anonymous); Beethoven's Fur
+  Elise (Stelios Samelis); Grieg's In the Hall of the Mountain King
+  (Coyau); Joplin's The Entertainer and Maple Leaf Rag (Chris Sawer).
+
+Sounds of the machine
+  The PC speaker, power switch, fan, floppy and hard disk, printer and
+  modem sounds are all synthesised as they happen. No recordings are
+  used. A real 56K modem call served only as a reference for tuning.
+
+
+==========================================================================
+6. THE x86 GALLERY UNDER ELBOW (C:\ELBOW)
+==========================================================================
+
+  These are genuine x86 programs, byte for byte as their rights holders
+  released them. C:\ELBOW\APPS\README.TXT gives each one's source,
+  licence evidence and SHA-256 checksum.
+
+MS-DOS 2.0 tools (C:\ELBOW\MSDOS20)
+  MASM, LINK, EXE2BIN, DEBUG, EDLIN, SORT, FIND, MORE: (C) Microsoft
+  Corporation, MIT License (LICENSE.TXT).
+
+FreeDOS tools (C:\ELBOW\FREEDOS)
+  TREE (Dave Dunfield, Kenneth J. Davis), FIND (Jim Hall), MORE and CHOICE
+  (Jim Hall, FreeDOS): GNU GPL 2, from the FreeDOS 1.3 base repository.
+  Their source packages are in FREEDOS\SOURCE.
+
+Apogee freeware (C:\ELBOW\APPS)
+  The Kroz series, Beyond the Titanic, Supernova and Word Whiz by Scott
+  Miller (Supernova with Terry Nagy); Arctic Adventure and Pharaoh's Tomb
+  by George Broussard; Monuments of Mars by Todd Replogle.
+  (C) Apogee Software, Ltd. Released as freeware by Apogee / 3D Realms
+  (1998 and 20 March 2009). Freeware, not public domain: they may not be
+  sold.
+
+ZZT 3.2
+  ZZT by Tim Sweeney, (C) 1991 Epic MegaGames. The Reconstruction of ZZT
+  by Adrian Siekierka, MIT License, "used with permission"
+  (github.com/asiekierka/reconstruction-of-zzt), with its demonstration
+  world.
+
+Sopwith, the Author's Edition
+  (C) 1984, 1985, 1987 BMB Compuscience Canada Ltd., (C) 1984-2003 David
+  L. Clark. GNU GPL; its source is in SOPWITH\SOURCE. From the SDL
+  Sopwith project's archive of the original files.
+
+GW-BASIC (built on this machine)
+  (C) 1982-1983 Microsoft Corporation, MIT License (released 2020,
+  github.com/microsoft/GW-BASIC). The OEM modules by D. Spinellis,
+  S. Gros and T.K. Chia, same licence (codeberg.org/tkchia/GW-BASIC).
+  Assembled under ELBOW by Microsoft MASM 5.10 and LINK 3.65 from the
+  MIT-licensed MS-DOS 4.00 release.
+
+VDE 1.97
+  (C) 1987-2021 Eric Meyer. Copyrighted freeware: free to use and pass
+  on in complete original form, not to be modified or sold for profit
+  without the author's written permission.
+
+SC 6.21 (the Spreadsheet Calculator)
+  Public domain (James Gosling, Mark Weiser, Jeff Buhrt and others), DOS
+  port of 1994 from the Simtel archive. It contains the GNU regex library
+  (GNU GPL), so its source is in SC\SRC.
+
+DataPerfect 2.6
+  By Lew Bastian; published by WordPerfect Corporation, then Novell.
+  Copyrighted freeware since Novell released it for free distribution in
+  1995; this is the author's own later release.
+
+MS-DOS Kermit 3.14
+  (C) 1982-1995 The Trustees of Columbia University. Revised 3-clause BSD
+  licence since 2011 (kermitproject.org). MSKERMIT.INI is ARM-DOS's.
+
+ELBOW's own samples
+  HELLO86, FIRE and BENCH are ARM-DOS's own. BENCH86.EXE was compiled
+  with Open Watcom v2.
+
+
+==========================================================================
+7. DEMOS, THE CD-ROM AND ARM-DOS ONLINE
+==========================================================================
+
+Second Reality (C:\ELBOW\DEMOS\SECOND)
+  By Future Crew, 1993. Released with its source code in 2013 into the
+  public domain under the Unlicense (UNLICENS.TXT), from
+  github.com/mtuomi/SecondReality. Run unmodified under ELBOW.
+
+"ARM-DOS 4.00: the demo" (C:\DEMO)
+  Code and music written for ARM-DOS.
+
+The Multimedia Sampler '93 disc (drive D:)
+  Music by Kevin MacLeod (incompetech.com), licensed under Creative
+  Commons: By Attribution 4.0 License,
+  http://creativecommons.org/licenses/by/4.0/ :
+    "Cipher", "Local Forecast - Elevator", "Funkorama",
+    "Eighties Action". Only their loudness was adjusted.
+  Pictures: NASA photographs (Earthrise, The Blue Marble, Edwin Aldrin
+  on the Moon, and the Moon from Galileo, NASA/JPL/USGS), which are not
+  copyrighted.
+  Texts: The Time Machine (H. G. Wells), The Raven (Edgar Allan Poe) and
+  the Constitution of the United States, public domain, transcribed by
+  Project Gutenberg.
+  The disc's CREDITS.TXT has the full list.
+
+ARM-DOS Online (dial 555-0199)
+  The service fetches live data while you are connected:
+    Wikipedia and Wiktionary text, CC BY-SA 4.0 (wikipedia.org,
+      wiktionary.org)
+    Weather data by Open-Meteo.com, CC BY 4.0
+    Technology news from Hacker News
+    Pictures from Wikimedia Commons, each under its own licence; the
+      file name is kept inside every picture you save.
+  Nothing from these services is stored on this disk.
+
+
+==========================================================================
+8. FONTS, DATA AND REFERENCES
+==========================================================================
+
+The screen fonts
+  The Ultimate Oldschool PC Font Pack (C) 2016-2020 VileR,
+  https://int10h.org/oldschool-pc-fonts/ , licensed under CC BY-SA 4.0
+  (https://creativecommons.org/licenses/by-sa/4.0/). The VGA 8x16, CGA
+  8x8 and MDA 9x14 character ROMs were converted from its IBM fonts with
+  the glyphs unchanged. The code page fonts in C:\DOS\EGA.CPI come from
+  the same pack's IBM fonts and their "Plus" variants, also CC BY-SA 4.0.
+
+Dr. ARMitso's voice (DOCTOR, SAY)
+  The letter-to-sound rules follow US Naval Research Laboratory report
+  NRL-7948 by Elovitz, Johnson, McHugh and Shore (1976), a US Government
+  work in the public domain. The doctor's manners were checked against
+  Ralph Caraveo's MIT-licensed "Dr. Sbaitso: Reborn"; none of its data
+  was used.
+
+Checked against
+  The genuine MS-DOS 4.00 programs, run in DOSBox-X, were the yardstick
+  for how ARM-DOS should behave. Debian's game-data-packager helped
+  confirm that the shareware game files are the original releases, and
+  many of the older archives were found through the Internet Archive.
+
+
+==========================================================================
+TRADEMARKS
+==========================================================================
+
+  IBM, PC/AT, MS-DOS, GW-BASIC, DOOM, Quake, Wolfenstein 3D, Duke Nukem,
+  Hexen, Commander Keen, Zork, GEM, Turbo Vision and the other names in
+  this file belong to their owners. ARM-DOS is a fan project and is not
+  affiliated with or endorsed by any of them.
+
+  Thank you, all of you.

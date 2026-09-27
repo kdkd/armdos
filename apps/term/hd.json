@@ -1,0 +1,9 @@
+{
+  "dirs": ["TERM", "TERM\\DOWNLOAD"],
+  "files": [
+    { "src": "build/TERM.EXE", "dst": "TERM\\" },
+    { "src": "apps/term/data/TERM.DIR", "dst": "TERM\\" },
+    { "src": "apps/term/data/TERM.BAT", "dst": "DOS\\TERM.BAT" }
+  ],
+  "excludeFromDos": ["TERM.EXE"]
+}

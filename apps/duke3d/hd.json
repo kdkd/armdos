@@ -1,0 +1,89 @@
+{
+ "dirs": [
+  "GAMES",
+  "GAMES\\DUKE3D"
+ ],
+ "files": [
+  {
+   "src": "build/DUKE3D.EXE",
+   "dst": "GAMES\\DUKE3D\\"
+  },
+  {
+   "src": "apps/duke3d/src/BUILDLIC.TXT",
+   "dst": "GAMES\\DUKE3D\\"
+  },
+  {
+   "src": "3rdparty/duke3d/DUKE3D.GRP",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/DUKE.RTS",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/GAME.CON",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/DEFS.CON",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/USER.CON",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/DEMO1.DMO",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/DEMO2.DMO",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/DEMO3.DMO",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/README.DOC",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/LICENSE.TXT",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1998-07-16 15:56:14"
+  },
+  {
+   "src": "3rdparty/duke3d/ULTRAMID.INI",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/MODEM.PCK",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/FILE_ID.DIZ",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1996-04-24 13:30:00"
+  },
+  {
+   "src": "3rdparty/duke3d/3DDUKE13.ZIP",
+   "dst": "GAMES\\DUKE3D\\",
+   "date": "1998-07-16 15:56:14"
+  }
+ ],
+ "excludeFromDos": [
+  "DUKE3D.EXE"
+ ]
+}

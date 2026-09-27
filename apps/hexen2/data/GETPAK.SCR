@@ -1,0 +1,59 @@
+; ---------------------------------------------------------------------------
+;  GETPAK.SCR - TERM script: call the ARM-DOS Host Link and receive PAK0.PAK
+;  (the Hexen II demo data) from the visitor's own computer.
+;
+;  Run by GETPAK.BAT as   C:\TERM\TERM.EXE /S:C:\GAMES\HEXEN2\GETPAK.SCR
+;  from C:\GAMES\HEXEN2\DATA1; the file lands in the current directory.
+;
+;  Errorlevels for the batch file:
+;     0  got the file            2  could not connect
+;     1  stopped with Esc        3  no file chosen, or the transfer failed
+; ---------------------------------------------------------------------------
+
+        CLEAR
+        MESSAGE "GETPAK - Hexen II data through the ARM-DOS Host Link"
+        MESSAGE ""
+        MESSAGE "Calling the Host Link (555-0100) at 14400..."
+        MESSAGE ""
+
+; The modem card trains at 14400 if asked (AT&B14400); the serial port must
+; run faster than the line, so 19200.  ZMODEM crash recovery on: a broken
+; transfer continues from the partial PAK0.PAK next time.
+        SET BAUDRATE 19200
+        SET INIT "AT&C1&D2&B14400"
+        SET DOWNLOAD "."
+        SET AUTOZMODEM ON
+        SET DIALATTEMPTS 5
+        PAUSE 1
+
+        DIAL "555-0100" "ARM-DOS Host Link"
+        IF FAILURE GOTO NOCALL
+
+        WAITFOR "Your choice" 60
+        IF FAILURE GOTO NOFILE
+        TRANSMIT "D"
+        MESSAGE "Choose pak0.pak in your browser's file window."
+
+; up to ten minutes to find the file; then the Host Link starts ZMODEM
+        WAITFOR "Start your ZMODEM download" 600
+        IF FAILURE GOTO NOFILE
+        DOWNLOAD ZMODEM
+        IF FAILURE GOTO NOFILE
+        MESSAGE "Got it!"
+
+        WAITFOR "Your choice" 60
+        TRANSMIT "G"
+        WAITFOR "NO CARRIER" 30
+        IF FAILURE HANGUP
+        EXIT 0
+
+NOCALL:
+        MESSAGE "Could not connect to the Host Link."
+        PAUSE 3
+        EXIT 2
+
+NOFILE:
+        MESSAGE "No file came - hanging up."
+        HANGUP
+        PAUSE 3
+        EXIT 3

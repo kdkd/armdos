@@ -1,0 +1,67 @@
+@X0F  A HISTORY OF THE ARM PIT@X07   @X08(as remembered by the sysop, who was there)@X07
+
+@X0E1987 - The Pit@X07
+
+  It started with a box that wasn't supposed to leave the lab.  A friend at
+  Europa Micro Systems in Boca Raton, who still can't talk about it, lent me
+  an engineering sample of a machine they were calling the ARM/AT.  Board
+  revision "X2", serial number 00017, a hand-lettered label on the case that
+  said DO NOT REMOVE FROM BLDG 3.  I removed it from building 3.
+
+  I put it in the spare bedroom with a 10 MB disk, a 1200 baud modem and a
+  second phone line my landlord still thinks is for a fax machine.  The
+  board software was a pile of BASIC and hope.  I called it The Pit because
+  that is what the spare bedroom looked like.  Handles were allowed.  We had
+  a Captain Carrier, a NullModem Nancy, and a Phantom Dialer who never once
+  left a message.  Eleven callers the first month.  I knew every one of them
+  by the sound of their modem.
+
+@X0E02-29-88 - The Night the Disk Died@X07
+
+  Leap day.  At 2:10 AM the Florida East Coast freight rolled by, as it does
+  every night, and the house shook, as it does every night.  This time the
+  10 MB disk made a noise like a coffee grinder full of gravel and stopped.
+
+  The message base was gone.  The user file came back from 38 floppies over
+  one long weekend and four large pizzas.  My official position is that the
+  crash happened on a day that doesn't exist, so technically it never
+  happened.  The board was "down for a few weeks".  It was three months.
+
+@X0E06-17-88 - The ARM Pit@X07
+
+  The prototype went back to building 3 (I kept the keyboard; they never
+  asked).  In its place came a real production ARM/AT, a 40 MB disk, a 2400
+  baud modem, and a new name: The ARM Pit.  New rule, too: real names only.
+  The old handles live on in the Wall of Fame (bulletin 7).
+
+@X0E1989 - ARM-DOS 4.00, a dragon, and caller #1,000@X07
+
+  ARM-DOS 4.00 arrived, and so did DOSSHELL, MEM and TERM in the box.  In
+  August the first door opened: Legend of the RISC Dragon.  Productivity in
+  South Florida dropped measurably.  In September Karen Whitfield became
+  caller number 1,000 and won a coffee mug that says I AM CALLER #1000,
+  which she claims to use every day.
+
+  We joined FidoNet as node 1:1989/1.  Yes, I picked the net number to match
+  the phone number.  No, you can't do that.  Mail goes out at 4 AM.
+
+@X0E1990 - The Digital Line@X07
+
+  On April 1st I announced our new DIGITAL LINE at 56,000 bits per second.
+  Everyone laughed.  Bill Tran called from California to laugh personally.
+  Look at the welcome screen and draw your own conclusions.  I'm not saying
+  anything.  The cat isn't saying anything either.
+
+@X0EThe Running Jokes, for new callers@X07
+
+  * Node 2 is down.  The sysop borrowed its modem for the Amiga.
+  * The Byte Bandit is on probation.  The Byte Bandit is always on probation.
+  * Never type three plus signs in a row in a message.  Just trust us.
+  * The sysop's cat, Parity, sleeps on the modem because it is warm.  Her
+    word is final.  Some line noise is Parity.
+  * At 2:10 AM the freight train goes by.  If your download stalls for a
+    second, it's the train.  (A GP40, by the horn.  I can tell.)
+  * Rick Lambert is still on a PCjr.  We have stopped asking.
+
+  Thank you for calling.  It's still eleven callers I know by their modems,
+  there are just a lot more of you now.                        -- Europa

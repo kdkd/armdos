@@ -1,0 +1,7 @@
+
+C:\T>vars hello
+[value] [value] [] 100% [hello]
+p=;c=C:\COMMAND.COM
+trailing
+unterminated tv
+C:\T>

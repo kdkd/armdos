@@ -1,0 +1,6 @@
+Does B2.TXT specify a file name
+or directory name on the target
+(F = file, D = directory)?f
+Reading source file(s)...
+\S\D1\B.TXT
+        1 File(s) copied

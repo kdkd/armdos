@@ -1,0 +1,4 @@
+{
+  "comment": "DISPLAY.SYS goes to C:\\DOS with the other build/*.SYS; this adds its font file",
+  "files": [ { "src": "build/EGA.CPI", "dst": "DOS\\" } ]
+}

@@ -1,0 +1,273 @@
+{
+  "comment": "The Start Programs groups, written by tools/mkmeu.mjs in the DOS 4.00 Shell's .MEU format. cmd: the program startup command lines (joined with the F4 marker, BAh); fc/fd/fe = the built-in Command Prompt, File System, Change Colors. requires: the item is only written if make built that program. The Main Group and DOS Utilities texts are the shipped MS-DOS 4.00 SHELL.MEU/DOSUTIL.MEU ones (SHELL.MEU is in Microsoft's MIT-licensed MS-DOS 4.0 source release, INC/SHELL.MEU).",
+  "SHELL.MEU": [
+    {
+      "title": "Command Prompt",
+      "builtin": "fc",
+      "help": "Choose this item or press the Shift+F9 keys to display the Shell command prompt. This prompt is useful because the Shell does not refresh its screens while this prompt is being used.  To return to the Start Programs or File System from this prompt, type Exit."
+    },
+    {
+      "title": "File System",
+      "builtin": "fd",
+      "help": "Select this item to display the File System part of the Shell.  The File System provides access to common DOS commands through menus.  From the File System, you can perform common DOS functions and select the format of the displayed information."
+    },
+    {
+      "title": "Change Colors",
+      "builtin": "fe",
+      "help": "Select this item to change the colors on the screen.  Systems with color monitors have a choice of four color combinations.&&Note:  Color Change is not available&       when using video mode 11 (/CO2) or&       monochrome monitors.&&       If you have a system with a color&       monitor and it is not displaying in&       color, add the /TEXT parameter to&       the DOSSHELL.BAT file to display&       in color."
+    },
+    {
+      "title": "DOS Utilities...",
+      "group": "DOSUTIL.MEU",
+      "help": "Choose this option to format, diskcopy, or diskcomp diskettes, backup or restore files or set the system's date and time.&&NOTE: The backup and restore options are available only to users with the DOS Shell installed on a fixed disk."
+    },
+    {
+      "title": "Games & Fun...",
+      "group": "GAMES.MEU",
+      "help": "Select this item to play the games and use the programming tools installed on your fixed disk: DOOM, the three Zork adventures, Colossal Cave Adventure, the BASIC interpreter, DEBUG and the ARM-DOS demonstration.&&To return to the Main Group, press the Esc key."
+    }
+  ],
+  "DOSUTIL.MEU": [
+    {
+      "title": "Set Date and Time",
+      "cmd": [
+        "date [/t\"Set Date and Time Utility\"/i\"Enter new date ??-??-??\"/l\"8\"]",
+        "time [/t\"Set Date and Time Utility\"/i\"Enter new time hh:mm\"/l\"5\"]",
+        "pause"
+      ],
+      "help": "Select this item to change the system date and time.&Set Date   mm = month from 1 to 12&           dd = day from 1 to 31&           yy = year from 80 to 99&Set Time   hh = hours from 0 to 23&           mm = minutes from 0 to 59&Use the symbols shown in the examples to separate the parts of the date and time."
+    },
+    {
+      "title": "Disk Copy",
+      "requires": "DISKCOPY.COM",
+      "cmd": [
+        "diskcopy [/t\"Diskcopy Utility\"/i\"Enter source and destination drives.\"/p\"Drives . .  \"/d\"a: b:\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to copy the entire contents of one diskette to another.&Example:  a: b: /optional parameters&Type the letter of the drive containing the source diskette and the letter of the drive containing the destination diskette.  Refer to the \"Using DOS 4.00\" book for the optional parameters you can use."
+    },
+    {
+      "title": "Disk Compare",
+      "requires": "DISKCOMP.COM",
+      "cmd": [
+        "diskcomp [/t\"Diskcomp Utility\"/i\"Enter drive for comparison.\"/p\"Parameters . .  \"/d\"a: b:\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to compare the entire contents of two diskettes.&Example:  a: b: /optional parameters&Type the letters of the drives containing the diskettes to be compared.  Refer to the \"Using DOS 4.00\" book for the optional parameters you can use."
+    },
+    {
+      "title": "Backup Fixed Disk",
+      "requires": "BACKUP.COM",
+      "cmd": [
+        "backup [/t\"Backup Utility\"/i\"Enter source and destination drives.\"/p\"Parameters . .  \"/d\"c:\\*.* a: /s\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to backup files from a fixed disk to diskettes.&Example:&c:\\path\\filename a: /optional parameters&Type the drive letter, path, and filename of the source files, followed by the letter of the destination drive.  Refer to the \"Using DOS 4.00\" book for the optional parameters you can use.&Note:  The /S parameter is used to backup subdirectories."
+    },
+    {
+      "title": "Restore Fixed Disk",
+      "requires": "RESTORE.COM",
+      "cmd": [
+        "restore [/t\"Restore Utility\"/i\"Enter source and destination drive.\"/p\"Parameters . .  \"/d\"a: c:\\*.* /s\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to restore files that were saved to diskette using the BACKUP command.&Example:&a: c:\\path\\filename /optional parameters&Type the letter of the drive containing the backed up files, followed by the drive letter, path, and filename of the destination.  Refer to the \"Using DOS 4.00\" book for optional parameters you can use.&Note  The /S parameter is used to restore subdirectories."
+    },
+    {
+      "title": "Format",
+      "requires": "FORMAT.COM",
+      "cmd": [
+        "format [/t\"Format Utility\"/i\"Enter drive to Format.\"/p\"Parameters . .  \"/d\"a: \"/r]",
+        "pause"
+      ],
+      "help": "Select this item to prepare a disk for use. Format erases all data that exists on a disk and checks the disk for defects.&Example:  a: /optional parameters&Type the letter of the drive to be formatted.  Refer to the \"Using DOS 4.00\" book for the optional parameters you can use.&Warning:&Before formatting a diskette, make sure that the diskette and drive types are compatible.  Refer to the \"Using DOS 4.00\" book for information on diskette and drive compatibility."
+    },
+    {
+      "title": "Check Disk",
+      "requires": "CHKDSK.COM",
+      "cmd": [
+        "chkdsk [/t\"Check Disk Utility\"/i\"Enter drive to check.\"/p\"Parameters . .  \"/d\"c:\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to check a disk for errors and display a status report of the disk and of the memory in your system.&Example:  c: /optional parameters&Type the letter of the drive to be checked.  Use /F to fix the errors found and /V to list every file.  Refer to the \"Using DOS 4.00\" book for the optional parameters you can use."
+    },
+    {
+      "title": "Display Memory Use",
+      "requires": "MEM.EXE",
+      "cmd": [
+        "mem [/t\"Memory Utility\"/i\"Enter /PROGRAM or /DEBUG for detail.\"/p\"Parameters . .  \"]",
+        "pause"
+      ],
+      "help": "Select this item to display the amount of used and free memory in your system.&Example:  /optional parameters&Press Enter for a summary.  Type /PROGRAM to list the programs that are loaded in memory, or /DEBUG to also list the system programs and device drivers."
+    },
+    {
+      "title": "Copy Files and Directories",
+      "requires": "XCOPY.EXE",
+      "cmd": [
+        "xcopy [/t\"Xcopy Utility\"/i\"Enter source and destination.\"/p\"Parameters . .  \"/d\"a:*.* c:\\ /s\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to copy groups of files, including the files in subdirectories, from one disk or directory to another.&Example:  a:*.* c:\\work /s&Type the source files followed by the destination.  The /S parameter copies subdirectories.  Refer to the \"Using DOS 4.00\" book for the optional parameters you can use."
+    },
+    {
+      "title": "Compare Files",
+      "requires": "FC.EXE",
+      "cmd": [
+        "fc [/t\"File Compare Utility\"/i\"Enter the names of the two files.\"/p\"Files . .  \"] | more",
+        "pause"
+      ],
+      "help": "Select this item to compare two files and display the lines that are different.&Example:  c:\\old.txt c:\\new.txt&Type the names of the two files to be compared.  Use /B to compare binary files."
+    },
+    {
+      "title": "Edit a Text File",
+      "requires": "EDIT.EXE",
+      "cmd": [
+        "edit [/t\"Editor\"/i\"Enter the name of the file to edit.\"/p\"Filename . .  \"]"
+      ],
+      "help": "Select this item to create or change a text file with the full-screen editor.&Example:  c:\\autoexec.bat&Type the name of the file, or press Enter to start with a new file.  Press Alt to use the editor's menus; choose Exit from the File menu to return to the Shell."
+    },
+    {
+      "title": "Edlin Line Editor",
+      "requires": "EDLIN.COM",
+      "cmd": [
+        "edlin [/t\"Edlin Line Editor\"/i\"Enter the name of the file to edit.\"/p\"Filename . .  \"]"
+      ],
+      "help": "Select this item to create or change a text file with the Edlin line editor.&Example:  c:\\autoexec.bat&Type the name of the file.  In Edlin, type L to list the lines, a line number to change that line, I to insert lines and E to save the file and end."
+    },
+    {
+      "title": "Print a File",
+      "requires": "PRINT.COM",
+      "cmd": [
+        "print [/t\"Print Utility\"/i\"Enter the name of the file to print.\"/p\"Filename . .  \"]",
+        "pause"
+      ],
+      "help": "Select this item to print a text file in the background while you continue to work.&Example:  c:\\readme.txt&Type the name of the file to be printed.  The first time, PRINT asks for the name of the list device (press Enter for PRN)."
+    },
+    {
+      "title": "Label a Disk",
+      "requires": "LABEL.COM",
+      "cmd": [
+        "label [/t\"Label Utility\"/i\"Enter drive to label.\"/p\"Drive . .  \"/d\"c:\"/r]",
+        "pause"
+      ],
+      "help": "Select this item to create, change, or delete the volume label of a disk.&Example:  a:&Type the letter of the drive.  Label displays the current label and asks you for the new one."
+    },
+    {
+      "title": "Display Directory Tree",
+      "requires": "TREE.COM",
+      "cmd": [
+        "tree [/t\"Tree Utility\"/i\"Enter drive and directory.\"/p\"Parameters . .  \"/d\"c:\\\"/r] | more",
+        "pause"
+      ],
+      "help": "Select this item to display the directories of a disk as a tree.&Example:  c:\\ /f&Type the drive and directory to start from.  The /F parameter also lists the files in each directory."
+    },
+    {
+      "title": "Set Display Mode",
+      "requires": "MODE.COM",
+      "cmd": [
+        "mode [/t\"Mode Utility\"/i\"Enter the display mode.\"/p\"Mode . .  \"/d\"co80\"/r]"
+      ],
+      "help": "Select this item to change the display mode.&Example:  co80&Type CO80 or BW80 for 80 columns, CO40 or BW40 for 40 columns.  Refer to the \"Using DOS 4.00\" book for the other devices MODE can set up."
+    },
+    {
+      "title": "System Information",
+      "requires": "ARMINFO.EXE",
+      "cmd": [
+        "arminfo",
+        "pause"
+      ],
+      "help": "Select this item to display information about your ARM personal computer: the processor, memory, disk drives, display and the other adapters installed."
+    }
+  ],
+  "GAMES.MEU": [
+    {
+      "title": "DOOM",
+      "requires": "DOOM.EXE",
+      "cmd": [
+        "cd \\games\\doom",
+        "doom"
+      ],
+      "help": "Select this item to play DOOM (shareware episode, Knee-Deep in the Dead).&&Keys:  arrow keys move, Ctrl fires,&       Space opens doors, Shift runs,&       1-7 select weapons, Esc shows&       the game menu.&&To return to the Shell, press Esc and choose Quit Game."
+    },
+    {
+      "title": "Wolfenstein 3-D",
+      "requires": "WOLF3D.EXE",
+      "cmd": [
+        "cd \\games\\wolf3d",
+        "wolf3d"
+      ],
+      "help": "Select this item to play Wolfenstein 3-D (shareware episode, Escape from Wolfenstein).&&Keys:  arrow keys move, Ctrl fires,&       Space opens doors, Shift runs,&       Alt with the arrows strafes.&&To return to the Shell, press Esc and choose Quit, or press F10."
+    },
+    {
+      "title": "Quake",
+      "requires": "QUAKE.EXE",
+      "cmd": [
+        "cd \\games\\quake",
+        "quake"
+      ],
+      "help": "Select this item to play Quake (shareware episode, Dimension of the Doomed).&&To return to the Shell, press Esc, choose Quit and press Y."
+    },
+    {
+      "title": "Zork I: The Great Underground Empire",
+      "requires": "ZORK1.EXE",
+      "cmd": [
+        "cd \\games\\zork",
+        "zork1"
+      ],
+      "help": "Select this item to play Zork I, the Great Underground Empire, the text adventure by Infocom.&&Type commands such as LOOK, GO NORTH, TAKE LAMP and INVENTORY, then press Enter.  Type SAVE and RESTORE to save your game and QUIT to return to the Shell."
+    },
+    {
+      "title": "Zork II: The Wizard of Frobozz",
+      "requires": "ZORK2.EXE",
+      "cmd": [
+        "cd \\games\\zork",
+        "zork2"
+      ],
+      "help": "Select this item to play Zork II, the Wizard of Frobozz, the second part of the Zork trilogy by Infocom.&&Type QUIT to return to the Shell."
+    },
+    {
+      "title": "Zork III: The Dungeon Master",
+      "requires": "ZORK3.EXE",
+      "cmd": [
+        "cd \\games\\zork",
+        "zork3"
+      ],
+      "help": "Select this item to play Zork III, the Dungeon Master, the last part of the Zork trilogy by Infocom.&&Type QUIT to return to the Shell."
+    },
+    {
+      "title": "Colossal Cave Adventure",
+      "requires": "ADVENT.EXE",
+      "cmd": [
+        "cd \\games\\advent",
+        "advent"
+      ],
+      "help": "Select this item to explore the Colossal Cave, the original adventure game by Will Crowther and Don Woods.&&Type commands of one or two words, such as ENTER BUILDING or GET LAMP.  Type QUIT to return to the Shell."
+    },
+    {
+      "title": "BASIC",
+      "requires": "BASIC.EXE",
+      "cmd": [
+        "cd \\basic",
+        "basic [/t\"BASIC\"/i\"Enter a program to run, or press Enter.\"/p\"Program . .  \"]"
+      ],
+      "help": "Select this item to program in BASIC.&Example:  guess.bas&Type the name of a program in the BASIC directory to run it, or press Enter to start BASIC with no program.  Type SYSTEM to return to the Shell."
+    },
+    {
+      "title": "DEBUG",
+      "requires": "DEBUG.COM",
+      "cmd": [
+        "debug [/t\"Debug\"/i\"Enter the name of a file to debug.\"/p\"Filename . .  \"]"
+      ],
+      "help": "Select this item to start DEBUG, the program to test and change programs and to examine memory.&&Type ? for a list of the commands.  Type Q to return to the Shell."
+    },
+    {
+      "title": "ARM-DOS Demonstration",
+      "requires": "DEMO.EXE",
+      "cmd": [
+        "cd \\demo",
+        "demo"
+      ],
+      "help": "Select this item to watch the ARM-DOS demonstration: VGA graphics and music from the PC speaker.&&Press Space to skip to the next part, Esc to return to the Shell."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+Current date is Thu 01-01-2026
+Enter new date (mm-dd-yy):
+Current time is 12:00:02.25p
+Enter new time:
+
+
+ARM-DOS(R) Version 4.00
+             (C)Copyright Europa Micro Systems 1988
+
+A>

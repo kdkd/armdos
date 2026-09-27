@@ -1,0 +1,22 @@
+
+C:\T>echo on
+
+C:\T>waitkey
+waiting
+^C
+
+C:\T>waiter
+before
+waiting
+^C
+
+Terminate batch job (Y/N)?n
+after
+C:\T>waiter
+before
+waiting
+^C
+
+Terminate batch job (Y/N)?y
+
+C:\T>

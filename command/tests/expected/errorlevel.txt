@@ -1,0 +1,16 @@
+
+C:\T>ret 3
+
+C:\T>if errorlevel 3 echo three
+three
+
+C:\T>if errorlevel 4 echo four
+
+C:\T>if not errorlevel 4 echo not four
+not four
+
+C:\T>ret 0
+
+C:\T>if errorlevel 1 echo one
+
+C:\T>

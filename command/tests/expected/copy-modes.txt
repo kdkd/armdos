@@ -1,0 +1,25 @@
+C:\T>copy a.txt/a+b.txt/a cc2.txt
+A.TXT
+B.TXT
+        1 File(s) copied
+
+C:\T>dir cc2.txt
+
+ Volume in drive C is ARMDOS
+ Volume Serial Number is 4069-12FF
+ Directory of  C:\T
+
+CC2      TXT        81 01-02-89   1:45p
+        1 File(s)   31528960 bytes free
+
+C:\T>copy /v a.txt cv.txt
+        1 File(s) copied
+
+C:\T>verify
+VERIFY is off
+
+C:\T>del c?.txt
+
+C:\T>del cc2.txt
+
+C:\T>

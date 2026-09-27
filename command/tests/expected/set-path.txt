@@ -1,0 +1,25 @@
+
+C>path
+No Path
+
+
+C>path c:\dos;c:\bin
+
+C>path
+PATH=C:\DOS;C:\BIN
+
+C>set
+COMSPEC=C:\COMMAND.COM
+PATH=C:\DOS;C:\BIN
+
+C>path ;
+
+C>path
+No Path
+
+
+C>set
+COMSPEC=C:\COMMAND.COM
+PATH=
+
+C>
