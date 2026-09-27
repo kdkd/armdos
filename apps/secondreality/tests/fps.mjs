@@ -1,13 +1,15 @@
-// frame rate of Second Reality under ELBOW: runs the demo (setup keys given),
+// Display changes in Second Reality under ELBOW: runs the demo (setup keys given),
 // then at each of the given emulated times samples the display once per
-// 1/70 s for two seconds and counts the distinct pictures (= frames drawn).
+// 1/70 s for two seconds and counts picture changes. Different builds can
+// reach different animation states at the same time; this is not a frame counter.
 //   MHZ=133 node apps/secondreality/tests/fps.mjs "<keys>" "<command>" t1,t2,...   (seconds after the setup)
+//   ELBOW=build/before/ELBOW.EXE selects a translator build for comparisons.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { session } from '../../dosutil/tests/harness.mjs';
 import { renderScreen } from '../../../emu/render.mjs';
 const SR = '3rdparty/secondreality';
-const files = [{ src: 'build/ELBOW.EXE', dst: 'DOS\\' }, { src: 'build/HIMEM.SYS', dst: 'DOS\\' }];
+const files = [{ src: process.env.ELBOW || 'build/ELBOW.EXE', dst: 'DOS\\ELBOW.EXE' }, { src: 'build/HIMEM.SYS', dst: 'DOS\\' }];
 for (const f of fs.readdirSync(SR)) files.push({ src: `${SR}/${f}`, dst: 'SR\\' });
 const s = await session({ name: 'srfps' + (process.env.TAG || ''), files, dirs: ['SR'], sizeMB: 64, boot: process.env.MHZ ? { mhz: +process.env.MHZ } : undefined,
   config: 'DEVICE=C:\\DOS\\HIMEM.SYS\nFILES=30\nSHELL=C:\\T\\TSHELL.EXE\n' });

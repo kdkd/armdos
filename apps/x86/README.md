@@ -126,11 +126,22 @@ Hot x86 code (a block start seen twice) is translated to ARM code:
   write table's tag bit — pages holding translated bytes are tagged, and a
   store that really hits translated code invalidates those blocks (a
   byte-granular code map) and ends the current block: **self-modifying code**
-  works (tests/asm/smc.asm, also when the next instruction is patched).  Data
-  loaded by DOS into x86 memory (EXEC, file reads, INT 13h/25h) invalidates
-  translations in that range.
-* Shifts by constants are inline; shifts by CL, rotates, MUL/DIV, flag ops and
-  string instructions call the interpreter's routines; REP MOVS/STOS copy in
+  works (tests/asm/smc.asm, also when the next instruction is patched).  A
+  256-byte page whose translations keep being killed is left to the
+  interpreter for a while: 256K interpreted instructions, doubling with each
+  kill up to 8M, then it is tried again (`smcp[]`/`cool_until[]` in jit.c).
+  The clock is `cpu.icount`, which cpu_run publishes every 1,024 instructions
+  (it once moved only when cpu_run returned, so a long-running program never
+  left its cooldown; tests/jitcool.mjs).  Data loaded by DOS into x86 memory
+  (EXEC, file reads, INT 13h/25h), and an EMS page mapped in, invalidates
+  translations in that range and clears those pages' penalties.
+* Shifts by constants are inline.  MUL/IMUL (all forms) and SHLD/SHRD of a
+  register by an immediate 1..size-1 are inline ARM (MUL, UMULL/SMULL, shift +
+  ORR) when the liveness pass shows their flags are dead - the usual case, since
+  an ADD or ADC follows; with live flags they call the interpreter's routines,
+  which set every arithmetic flag (`mulflags`, `shxd`, through `szp`), so the
+  flags *before* them are dead either way (a zero-count SHLD/SHRD keeps them).  Shifts by CL, rotates, DIV, flag ops
+  and string instructions call the interpreter's routines; REP MOVS/STOS copy in
   page-sized runs.  386 code: 32-bit operands (66h) for MOV, the ALU, INC/DEC,
   TEST/NOT/NEG/MUL/IMUL/DIV, shifts, XCHG, LEA, PUSH/POP, CWDE/CDQ, string ops;
   FS/GS overrides; MOVZX/MOVSX, IMUL r,r/m, SHLD/SHRD by an immediate, Jcc near
@@ -262,11 +273,11 @@ compatibility shim; `/MEM:n` sets it by hand).
 | file/file.c | FILE.EXE |
 | demo/ | FIRE.COM, HELLO86.COM, bench.c (+ BENCH86.EXE built by OpenWatcom), msdos20/, freedos/, apps/ (the gallery) |
 | dist/ | DEMO.BAT, ASM.BAT, MENU.BAT (the gallery's), README.TXT, X86.BAT |
-| tests/ | run.mjs (`make x86-test`), cputest.mjs, cpu/gen.py, asm/*.asm, profilers |
+| tests/ | run.mjs, jitmath.mjs, jitcool.mjs (`make x86-test`), cputest.mjs, cpu/gen.py, asm/*.asm, bench.mjs, profilers |
 
 ## Tests
 
-`make x86-test` (part of `make test`, ~3 minutes): 50 checks — the CPU suite
+`make x86-test` (part of `make test`, ~3 minutes): 59 checks — the CPU suite
 against the host CPU with both engines, MS-DOS 2.0 tools, EXEC in both
 directions with separate handle tables, INT 08h/1Ch hooks (18 ticks/s), an INT 9
 hook that reads 60h and chains (keys in order, Shift), Ctrl-C into an x86 INT
@@ -282,6 +293,13 @@ GW-BASIC itself computing SIN, COS and double precision.
 VGAEMS.COM: INT 21h AH=55h's memory size from SI, a 1 kHz timer hook that keeps
 ticking through a STI/CLI loop (the lost-IRQ race), EMS, EGA info, mode 12h write
 mode 2 and read map select, a Mode X latch copy with REP MOVSB, DMA page registers.
+Then tests/jitmath.mjs: 12,480 multiply and double-shift cases per engine (MUL,
+IMUL in all its forms, SHLD/SHRD; signed and unsigned extremes, byte to dword,
+AX/DX as inputs and outputs, memory sources, upper register halves, store
+forwarding, zero counts), each routine run 80 times so cold and translated code
+both meet every case, checked against BigInt results; and tests/jitcool.mjs:
+warm a routine, patch it once, and check through the ELBOW descriptor that the
+new code is translated again while the program runs.
 Debugging switches: `/TRACE` (every INT to port E9h, with the file name of opens and EXECs), `/TRACE2`, `/TRACEAT:n`,
 `/SEQAT:n` (the translator's block entry/exit log from the n-th INT on:
 compare it with `/TRACEAT:n` to find a mistranslated block - that is how the
@@ -289,6 +307,37 @@ lost ADC/SBB carry was found), `/JITINVAL` (invalidations and cache refills),
 `/RING`, `/TRACEKB`, `/WATCH:lin`, `/OPHIST`, `/JITDUMP`; tests/profile.mjs and
 tests/jitprof.mjs sample the ARM PC (the latter attributes samples to
 translated x86 blocks).
+
+**Measuring a translator change.** Count ARM instructions for fixed work rather
+than timing the host: `make build/x86-test/mathbench.com build/x86-test/bench.com`,
+then `node apps/x86/tests/bench.mjs OLD/ELBOW.EXE build/ELBOW.EXE` runs
+tests/asm/mathbench.asm (dot products in Second Reality's IMUL / ADD / ADC / SHRD
+style, with checked results) and the sieve/mixed benchmark under each build and
+prints the ARM instructions each took.  apps/secondreality/tests/fps.mjs takes
+`ELBOW=path` too, but it samples display changes at given times, and two builds
+can be in different parts of the demo at the same moment: it is not a frame
+counter.  (With inline multiply and double shifts, the dot products took 46%
+fewer ARM instructions; the sieve, 0.4%.)
+
+## Not done yet
+
+* **Registers across instructions.** Every x86 instruction loads its operands
+  from the CPU struct and stores its result back (only an immediate reload of
+  the register just stored is forwarded).  Keeping x86 registers in ARM
+  registers across a block, flushed at helper calls and exits, is the next big
+  step.  Longer blocks alone don't help: limits of 64, 128 and 256 ARM
+  instructions for the ARM JIT's blocks ran Second Reality's first 100 seconds
+  in the same time.
+* **Aligned word/dword RAM accesses** still go byte by byte.  A fast path must
+  keep unaligned and page-crossing accesses, the VGA latches, code-page tags and
+  live ARM flags right.
+* **Penalty counting**: `smc_killed()` raises a page's penalty once per killed
+  block, for every page the block spans, so one write can raise several.
+  Counting writes per page might be fairer, or might retranslate generated
+  inner loops more often; it wants measuring first.
+* **Compiling in a worker** doesn't fit as things are: the ARM JIT's JavaScript
+  closes over the live CPU and memory, which a worker can't hand back, and
+  compilation is a small share of the time.
 
 ## Building BENCH86.EXE
 

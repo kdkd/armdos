@@ -62,6 +62,8 @@ x86-test: $(BUILD)/ELBOW.EXE $(BUILD)/FILE.EXE $(BUILD)/HIMEM.SYS $(BUILD)/MOUSE
           $(BUILD)/ktest/TSHELL.EXE $(BUILD)/u4test/CLS.EXE $(BUILD)/u4test/REDIR.EXE \
           $(BUILD)/rom.bin $(BUILD)/IO.SYS $(BUILD)/ARMDOS.SYS $(BUILD)/bootsect.bin
 	$(NODE) $(X86_DIR)tests/run.mjs
+	$(NODE) $(X86_DIR)tests/jitmath.mjs
+	$(NODE) $(X86_DIR)tests/jitcool.mjs
 test: x86-test
 
 # the inspector's ELBOW view: the x86 disassembler (web/js/x86disasm.js) against

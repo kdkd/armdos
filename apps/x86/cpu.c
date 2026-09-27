@@ -454,6 +454,9 @@ int cpu_run(void)
     void *mret = 0;
 
     for (;;) {
+        /* SMC cooldowns consult this counter while cpu_run is still active.
+           Publish in batches so a long-running program can leave cooldown. */
+        if (ninsn >= 1024) { cpu.icount += ninsn; ninsn = 0; }
         if (__builtin_expect(irq_pending != 0, 0)) {
             if (irq_pending & PEND_DEBUG) {
             if (__builtin_expect(ophist != 0, 0)) { uint32_t b0 = code[ip]; ophist[b0 == 0x0F ? 256u + code[ip + 1] : (b0 == 0x26 || b0 == 0x2E || b0 == 0x36 || b0 == 0x3E || b0 == 0x66 || b0 == 0xF3 || b0 == 0xF2) ? 512u + b0 : b0]++; }
@@ -488,7 +491,7 @@ int cpu_run(void)
            in ZZT) must not send us round jit_try without progress */
         if (jit_enabled && !irq_pending) {
             SYNC();
-            if (jit_try(ip)) { RELOAD(); if (cpu.stop) { SYNC(); return 1; } continue; }
+            if (jit_try(ip)) { RELOAD(); if (cpu.stop) { cpu.icount += ninsn; SYNC(); return 1; } continue; }
         }
 #endif
         pip = ip;

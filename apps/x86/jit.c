@@ -253,6 +253,11 @@ static void ldsth(int load, int rd, int rn, int off)
 #define LDRH(rd, rn, off) ldsth(1, rd, rn, off)
 #define STRH(rd, rn, off) ldsth(0, rd, rn, off)
 static void stmia(int rn, uint32_t list) { E(0xE8800000u | rn << 16 | list); }
+static void mul(int rd, int rm, int rs) { E(0xE0000090u | rd << 16 | rs << 8 | rm); }
+static void mull(int sgn, int lo, int hi, int rm, int rs)
+{
+    E(0xE0800090u | sgn << 22 | hi << 16 | lo << 12 | rs << 8 | rm);
+}
 static void branch(int cond, int link, uint32_t *target)
 {
     int32_t off = (int32_t)(target - (p + 2));
@@ -635,9 +640,11 @@ static void emit_alu(int aop, int sz)
         if (aop == 2) { dpr(AL, ADD, 0, R6, R4, R5, LSL, 0); dpr(AL, ADD, 0, R6, R6, R3, LSL, 0); }
         else { dpr(AL, SUB, 0, R6, R4, R5, LSL, 0); dpr(AL, SUB, 0, R6, R6, R3, LSL, 0); }
         if (sz == 1) { LSLI(R6, R6, 16); LSRI(R6, R6, 16); } else if (sz == 0) dpi(AL, AND, 0, R6, R6, 0xFF);
-        dpi(AL, ADD, 0, R3, R3, (aop == 2 ? LF_ADD : LF_SUB) | szbits);    /* +1 = ADC/SBB when CF */
-        add_imm(R12, RCPU, O_LFOP);
-        stmia(R12, 1u << R3 | 1u << R4 | 1u << R5 | 1u << R6);
+        if (cur_lazy) {
+            dpi(AL, ADD, 0, R3, R3, (aop == 2 ? LF_ADD : LF_SUB) | szbits);    /* +1 = ADC/SBB when CF */
+            add_imm(R12, RCPU, O_LFOP);
+            stmia(R12, 1u << R3 | 1u << R4 | 1u << R5 | 1u << R6);
+        }
         lfop_known = -1;
         cpsr_valid = 0; fkind = K_NONE;
         break;
@@ -924,6 +931,14 @@ static int emit_insn(const struct insn *in)
     }
     case 0x1AF:                                  /* IMUL r, r/m */
         ld_rm(in, osz, R4);
+        if (!cur_lazy) {
+            ld_reg(R5, osz, in->reg);
+            mul(R6, R4, R5);                    /* only the low half is kept */
+            if (osz == 1) { LSLI(R6, R6, 16); LSRI(R6, R6, 16); }
+            st_reg(R6, osz, in->reg);
+            cpsr_valid = 0; fkind = K_NONE;
+            return 0;
+        }
         ld_reg(R0, osz, in->reg);
         MOVR(R1, R4);
         mov_imm(R2, osz);
@@ -931,8 +946,18 @@ static int emit_insn(const struct insn *in)
         st_reg(R0, osz, in->reg);
         cpsr_valid = 0; fkind = K_NONE;
         return 0;
-    case 0x1A4: case 0x1AC:                      /* SHLD / SHRD r/m, r, imm8 */
+    case 0x1A4: case 0x1AC: {                    /* SHLD / SHRD r/m, r, imm8 */
         ld_rm(in, osz, R4);
+        unsigned cnt = in->imm & 31, bits = 8u << osz;
+        if (!cur_lazy && in->mod == 3 && cnt && cnt < bits) {
+            ld_reg(R5, osz, in->reg);
+            dpr(AL, MOV, 0, R6, 0, R4, op == 0x1AC ? LSR : LSL, cnt);
+            dpr(AL, ORR, 0, R6, R6, R5, op == 0x1AC ? LSL : LSR, bits - cnt);
+            if (osz == 1) { LSLI(R6, R6, 16); LSRI(R6, R6, 16); }
+            st_reg(R6, osz, in->rm);
+            cpsr_valid = 0; fkind = K_NONE;
+            return 0;
+        }
         MOVR(R5, R1);                            /* (the address of a memory operand) */
         mov_imm(R0, (op == 0x1AC) | osz << 1);
         MOVR(R1, R4);
@@ -944,6 +969,7 @@ static int emit_insn(const struct insn *in)
         cpsr_valid = 0; fkind = K_NONE;
         st_rm(in, osz, R6);
         return 0;
+    }
     case 0x180: case 0x181: case 0x182: case 0x183: case 0x184: case 0x185: case 0x186: case 0x187:
     case 0x188: case 0x189: case 0x18A: case 0x18B: case 0x18C: case 0x18D: case 0x18E: case 0x18F: {
         uint32_t taken = next + in->imm;         /* Jcc near (16-bit displacement) */
@@ -1252,7 +1278,29 @@ static int emit_insn(const struct insn *in)
             st_rm(in, sz, R6);
             return 0;
         case 4: case 5:
-            ld_rm(in, sz, R4); MOVR(R1, R4);
+            ld_rm(in, sz, R4);
+            if (!cur_lazy) {
+                /* No observable flags: keep the full product without a C
+                   helper. Read both inputs before writing aliased AX/DX. */
+                ld_reg(R5, sz, 0);
+                if (sz == 2) {
+                    mull(in->reg == 5, R0, R2, R4, R5);
+                    STR(R0, RCPU, O_R(0)); STR(R2, RCPU, O_R(2));
+                } else {
+                    if (in->reg == 5) {
+                        int sh = sz ? 16 : 24;
+                        LSLI(R4, R4, sh); dpr(AL, MOV, 0, R4, 0, R4, ASR, sh);
+                        LSLI(R5, R5, sh); dpr(AL, MOV, 0, R5, 0, R5, ASR, sh);
+                    }
+                    mul(R6, R4, R5);
+                    STRH(R6, RCPU, O_R(0));
+                    if (sz) { LSRI(R6, R6, 16); STRH(R6, RCPU, O_R(2)); }
+                }
+                last_st_p = 0;
+                cpsr_valid = 0; fkind = K_NONE;
+                return 0;
+            }
+            MOVR(R1, R4);
             mov_imm(R0, in->reg == 5); mov_imm(R2, sz);
             BL(jh_mul);
             cpsr_valid = 0; fkind = K_NONE;
@@ -1270,6 +1318,15 @@ static int emit_insn(const struct insn *in)
         }
         return -1;
     case 0x69: case 0x6B:
+        if (!cur_lazy) {
+            ld_rm(in, osz, R4);
+            mov_imm(R5, in->imm & szmask_of(osz));
+            mul(R6, R4, R5);
+            if (osz == 1) { LSLI(R6, R6, 16); LSRI(R6, R6, 16); }
+            st_reg(R6, osz, in->reg);
+            cpsr_valid = 0; fkind = K_NONE;
+            return 0;
+        }
         if (osz == 2) {
             ld_rm(in, 2, R4);
             MOVR(R0, R4);
@@ -1382,16 +1439,21 @@ static int flag_use(const struct insn *in)
         if (in->reg < 2) return FW;
         if (in->reg == 2) return mem ? FX : 0;
         if (in->reg == 3) return FW | (mem ? FX | FM : 0);
-        return FR | FW | FX;                          /* MUL/DIV: helpers */
+        if (in->reg == 4 || in->reg == 5) return FW;   /* mulflags replaces all arithmetic flags */
+        return FR | FW | FX;                          /* DIV may exit to raise INT 0 */
     }
     if ((op >= 0xD0 && op <= 0xD3) || op == 0xC0 || op == 0xC1) {
-        int bits = (op & 1) ? 16 : 8;
+        int bits = (op & 1) ? (in->o32 ? 32 : 16) : 8;
         uint32_t cnt = op <= 0xC1 ? (in->imm & 31) : 1;
         int inl = op < 0xD2 && cnt && cnt < (uint32_t)bits && in->reg >= 4;
         return inl ? FW | (mem ? FX | FM : 0) : FR | FW | FX | FM;
     }
-    if (op == 0x69 || op == 0x6B || op == 0x1AF) return FR | FW;
-    if (op == 0x1A4 || op == 0x1AC) return FR | FW | FX | FM;
+    if (op == 0x69 || op == 0x6B || op == 0x1AF) return FW;
+    if (op == 0x1A4 || op == 0x1AC) {
+        /* A zero count keeps the old flags; otherwise the helper replaces
+           them. Memory stores can exit on self-modifying code. */
+        return (in->imm & 31 ? FW : FR | FW) | (mem ? FX | FM : 0);
+    }
     if (op == 0xF5 || op == 0xF8 || op == 0xF9 || op == 0xFC || op == 0xFD || op == 0x9E || op == 0x9F || op == 0x9C) return FR | FW | FX;
     if (op >= 0xA4 && op <= 0xAF) return FR | FX;
     if (is_cond_branch(op)) return FR | FX | FC;
@@ -1405,7 +1467,8 @@ static int flag_use(const struct insn *in)
     return 0;
 }
 
-static struct jblk *translate(uint32_t cs, uint32_t ip)
+/* Keep compilation's large stack frame and spills off the lookup hot path. */
+static __attribute__((noinline)) struct jblk *translate(uint32_t cs, uint32_t ip)
 {
     uint32_t base = (uint32_t)cs << 4;
     if (nblk >= MAXBLK || cp >= cend || sp_ >= send || nlink >= MAXLINK - 16) {
