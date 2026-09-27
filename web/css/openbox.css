@@ -16,7 +16,7 @@
 .openbox { container-type: inline-size; max-width: 1480px; margin: 28px auto 0; position: relative; }
 .ob-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 .4cqw 10px; }
 .ob-head h2 { margin: 0; font: 700 13px/1.2 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: #efe6d2; }
-.ob-x { display: none; border: 0; background: #2e2820; color: var(--ink); border-radius: 6px; width: 34px; height: 30px; cursor: pointer; font: 600 15px/1 var(--sans); }
+.ob-x { display: none; border: 0; background: var(--room-2); color: var(--ink); border-radius: 6px; width: 34px; height: 30px; cursor: pointer; font: 600 15px/1 var(--sans); }
 .ob-warn {
   display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; margin: 0 0 10px; padding: 9px 14px 9px 40px; border-radius: 8px; position: relative;
   font: 14px/1.4 var(--serif); color: #ffe7de; background: linear-gradient(180deg, #7a1f17, #5c150f); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 6px 16px rgba(0,0,0,.4);
@@ -189,7 +189,7 @@
 html.app .openbox:not([hidden]) {
   display: block; position: fixed; z-index: 28; inset: calc(env(safe-area-inset-top, 0px) + 48px) 0 0 0; width: auto; margin: 0;
   overflow-y: auto; overscroll-behavior: contain; padding: 12px max(12px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
-  background: linear-gradient(180deg, #221d17, #16130f); box-shadow: 0 -10px 30px rgba(0,0,0,.6); border-radius: 14px 14px 0 0;
+  background: var(--room); box-shadow: 0 -10px 30px rgba(0,0,0,.6); border-radius: 0;
   animation: obSheet .35s cubic-bezier(.2,.9,.3,1);
 }
 @keyframes obSheet { from { transform: translateY(40%); opacity: 0; } }

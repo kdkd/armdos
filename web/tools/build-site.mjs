@@ -17,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { makeIcons } from './icons.mjs';
+import { makePcFont } from './pcfont.mjs';
 
 const WEB = dirname(dirname(fileURLToPath(import.meta.url)));
 const ROOT = dirname(WEB);
@@ -50,7 +51,11 @@ const sha = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 16)
 const STAGE = join(OUT, 'r', 'staging');
 for (const dir of ['css', 'js', 'assets', 'fonts']) copyTree(join(WEB, dir), join(STAGE, dir));
 copyTree(join(WEB, 'fonts'), join(OUT, 'fonts'));         // (the manual's own copy: docs/docs.css)
-makeIcons(join(STAGE, 'icons'), readFileSync(join(ROOT, 'emu', 'fonts', 'vga8x16.bin')));
+const vgaFont = readFileSync(join(ROOT, 'emu', 'fonts', 'vga8x16.bin'));
+makeIcons(join(STAGE, 'icons'), vgaFont);
+// the machine's IBM VGA 8x16 face as a web font (web/tools/pcfont.mjs), for the page and the manual
+const vgaTtf = makePcFont(vgaFont, { family: 'PC VGA' });
+for (const dir of [join(STAGE, 'fonts'), join(OUT, 'fonts')]) writeFileSync(join(dir, 'pcvga.ttf'), vgaTtf);
 
 // ---- emulator modules (.mjs -> .js)
 const emuOut = join(STAGE, 'emu');

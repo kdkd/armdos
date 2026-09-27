@@ -102,7 +102,7 @@
 .cdbox-shelf {
   display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-start;
   padding: 22px 20px; border-radius: 10px;
-  background: linear-gradient(180deg, #2b261f, #1f1b16); box-shadow: inset 0 1px 0 rgba(255,255,255,.06), inset 0 -18px 30px rgba(0,0,0,.35);
+  background: linear-gradient(180deg, #23282a, #181b1d); box-shadow: inset 0 1px 0 rgba(255,255,255,.06), inset 0 -18px 30px rgba(0,0,0,.35);
 }
 .jewel-wrap { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; min-width: 0; }
 .jewel {

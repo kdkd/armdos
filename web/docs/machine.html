@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The ARM/AT Machine</title>
 <meta name="description" content="What ARM-DOS emulates: the ARM PC/AT design, the ARM926 processor and its JIT, and every device from the VGA to the modem.">
-<meta name="theme-color" content="#16130f">
+<meta name="theme-color" content="#141718">
 <link rel="stylesheet" href="docs.css">
 </head>
 <body>
@@ -48,7 +48,7 @@
 
 <h2 id="design"><span class="num">1</span>The ARM PC/AT design</h2>
 
-<p>The design rule for the whole machine is "what would IBM and Microsoft have done in 1988 if the PC had shipped with an ARM?" Every PC and DOS interface that makes sense on an ARM is kept, and only what the processor forces is changed. That leaves four real changes.</p>
+<p>The design rule for the whole machine is "what would IBM and Microsoft have done in 1988 if the PC had shipped with an ARM?" Every PC and DOS interface that makes sense on an ARM stays. The only changes are the ones the processor forces, and there are four of them.</p>
 
 <h3>INT n becomes SVC #n</h3>
 <p>On a PC, <code>INT 21h</code> makes the processor fetch a handler address from the vector table at <code>0000:0084</code>. Here a program executes <code>SVC #0x21</code>. The ARM traps into the ROM, the ROM reads the number out of the instruction itself and fetches the handler from the same table at the same address: 256 vectors of four bytes each, vector <var>n</var> at <code>n*4</code>. Programs hook interrupts with <code>INT 21h AH=25h</code> and chain to the old handler, exactly as on a PC. Hardware interrupts arrive the same way, as <code>INT 08h</code>-<code>0Fh</code> for IRQ 0-7 and <code>INT 70h</code>-<code>77h</code> for IRQ 8-15, and handlers send their own end-of-interrupt to port <code>20h</code>.</p>
@@ -65,10 +65,10 @@
 </table></div>
 
 <h3>Segments become flat pointers</h3>
-<p>An ARM has one flat address space, so wherever DOS expects a <code>DS:DX</code> pair, the ARM version passes a single 32-bit pointer in the offset register. Where DOS hands out or takes a segment (memory blocks, PSPs, environments), ARM-DOS still uses a paragraph number, the address divided by 16, exactly as DOS does. All of DOS's own memory is still in the first 640 KB, so every segment still fits in 16 bits and <code>MEM</code> looks the way it did in 1989.</p>
+<p>An ARM has one flat address space, so wherever DOS expects a <code>DS:DX</code> pair, the ARM version passes a single 32-bit pointer in the offset register. Where DOS hands out or takes a segment (memory blocks, PSPs, environments), ARM-DOS still uses a paragraph number, the address divided by 16, just as DOS does. DOS's own memory all sits in the first 640 KB, so every segment fits in 16 bits and <code>MEM</code> looks the way it did in 1989.</p>
 
-<h3>EXE files carry ARM code</h3>
-<p>Every <code>.EXE</code> on this machine starts with a genuine DOS <code>MZ</code> header and a tiny 8086 program. Copy one to a real 1989 PC and it runs, and prints <code>This program requires an ARM processor.</code> At the usual offset <code>3Ch</code>, the header points to an ARM header (signature <code>AR1</code>) that describes the ARM image, its size, stack, entry point and relocation table. Programs are linked at address zero and relocated when they load, at PSP + <code>100h</code>, the same place a <code>.COM</code> file goes. A plain <code>.COM</code> is a flat ARM image loaded at the same spot.</p>
+<h3>EXE files hold ARM code</h3>
+<p>Every <code>.EXE</code> on this machine starts with a proper DOS <code>MZ</code> header and a tiny 8086 program. Copy one to a real 1989 PC and it will run, just long enough to print <code>This program requires an ARM processor.</code> At the usual offset <code>3Ch</code>, the header points to an ARM header (signature <code>AR1</code>) that describes the ARM image, its size, stack, entry point and relocation table. Programs are linked at address zero and relocated when they load, at PSP + <code>100h</code>, the same place a <code>.COM</code> file goes. A plain <code>.COM</code> is a flat ARM image loaded at the same spot.</p>
 
 <p>Even the floppy boot sector follows the rule. On a PC its first bytes jump over the BIOS parameter block; here they are an ARM branch over it, because the parameter block must stay at offset <code>0Bh</code>.</p>
 
@@ -83,9 +83,9 @@
   <tr><td>mixed C benchmark, ARM, bare processor</td><td class="num">~880 MIPS</td><td class="num">~155 MIPS</td></tr>
 </table></div>
 
-<p>At the nominal 100 MHz that is several times faster than the machine needs on a modern computer, so the real-time driver holds it back to its clock and lets the rest of the time go idle. Instruction timing is one cycle per instruction, which keeps emulated time exact: DOOM's timedemo gives the same 77 frames per second at 100 MHz on every computer.</p>
+<p>On a modern computer that is several times what a 100 MHz machine needs, so the real-time driver holds it back to its clock and lets the rest of the time go idle. Every instruction takes one cycle, which keeps emulated time exact: DOOM's timedemo gives the same 77 frames per second at 100 MHz on every computer.</p>
 
-<p>Busy-wait loops (waiting for the vertical retrace, polling the BIOS tick) are fast-forwarded. The emulator single-steps one iteration of a suspected loop, proves it changes nothing but time, and then charges the skipped iterations up to the next moment anything could change. The result is exactly the same as running every iteration.</p>
+<p>Busy-wait loops (waiting for the vertical retrace, polling the BIOS tick) are fast-forwarded. The emulator single-steps one iteration of a suspected loop, proves it changes nothing but time, and then charges the skipped iterations up to the next moment anything could change, which gives exactly the result of running every one.</p>
 
 <p><strong>How we know it is right.</strong> The processor was checked against QEMU's ARM926 with more than half a million random instructions across every instruction class, with and without the JIT, and the floating-point unit with over 150,000 more cases covering rounding modes, NaNs, denormals and infinities. Every result matched.</p>
 
@@ -127,7 +127,7 @@
   <tr><td><code>F0h</code>-<code>FFh</code></td><td>the ARM-PC system board: board ID, clock speed, TURBO, the X86 lamp, and small mailboxes the page reads</td></tr>
 </table></div>
 
-<p>Each device is modelled closely enough for DOS programs of the time to drive it directly, the way they did. The timer can be reprogrammed and counted, the keyboard controller can be hooked at <code>INT 9</code>, and the game port's one-shots take real (emulated) time to settle, so the counting loops old games used give the numbers they expect at any clock speed.</p>
+<p>Each device is modelled closely enough that DOS programs of the time can drive the hardware directly, as they always did. The timer can be reprogrammed and counted, the keyboard controller can be hooked at <code>INT 9</code>, and the game port's one-shots take real (emulated) time to settle, so the counting loops old games used give the numbers they expect at any clock speed.</p>
 
 <p>The <strong>game port</strong> takes real game controllers through the browser's Gamepad API, or the on-screen pad's JOY mode, as analogue PC joysticks.</p>
 
@@ -135,7 +135,7 @@
 
 <h2 id="video"><span class="num">5</span>Video</h2>
 
-<p>The VGA renders from the machine's memory at 70 frames per second; it is not a terminal. It supports:</p>
+<p>The VGA draws the screen straight from the machine's memory, 70 frames a second. It supports:</p>
 <ul>
   <li>text modes (80x25 with 9x16 cells, 40x25), with real blinking text and cursor;</li>
   <li>CGA modes 4, 5 and 6;</li>
@@ -171,8 +171,8 @@
 <h2 id="disks"><span class="num">8</span>Disks</h2>
 
 <ul>
-  <li><strong>Drive C:</strong> a 128 MB ATA hard disk with a partition table and a FAT16 partition. The site cuts the disk image into 256 KB chunks named by their content hash, and the disk fetches each chunk the first time DOS reads from it. While a chunk is on its way the drive simply stays busy. About 0.4 MB is enough to reach the <code>C:\&gt;</code> prompt. Sectors that DOS writes are kept in your browser's IndexedDB, until a new version of the C: image replaces them.</li>
-  <li><strong>Drive D:</strong> a second 128 MB ATA hard disk, the primary IDE slave: yours to keep. The page makes it the first time, formatted and empty but for a README, from the few sectors that aren't blank (under 2 KB of download), and stores every sector DOS writes in an IndexedDB database of its own that no update, new C: image or new build of D: ever touches. Back up, Restore and Erase work on the whole drive.</li>
+  <li><strong>Drive C:</strong> a 128 MB ATA hard disk with a partition table and a FAT16 partition. The site cuts the disk image into 256 KB chunks named by their content hash, and the disk fetches each chunk the first time DOS reads from it. While a chunk is on its way, the drive stays busy. About 0.4 MB is enough to reach the <code>C:\&gt;</code> prompt. Sectors that DOS writes are kept in your browser's IndexedDB, until a new version of the C: image replaces them.</li>
+  <li><strong>Drive D:</strong> a second 128 MB ATA hard disk, the primary IDE slave: yours to keep. The first time, the page builds it from the few sectors that aren't blank (under 2 KB of download), formatted and empty except for a README. Every sector DOS writes goes into an IndexedDB database of its own, which no update, new C: image or new build of D: ever touches. Back up, Restore and Erase work on the whole drive.</li>
   <li><strong>Drive A:</strong> 1.44 MB diskettes, FAT12, with the DOS 4 boot sector layout.</li>
   <li><strong>Drive E:</strong> a double-speed ATAPI CD-ROM drive on the secondary IDE channel, with CD audio mixed into the Sound Blaster's CD input, a headphone jack and a volume knob. DOS reaches it through <code>ARMCD.SYS</code> and <code>ARMCDEX</code>, ARM-DOS's own CD-ROM extensions. The drive takes the Multimedia Sampler '93 disc or any ISO image you drop onto the page, read from your computer on demand.</li>
 </ul>
@@ -184,7 +184,7 @@
 <p>The <strong>ARM inspector</strong> beside the machine is a real debugger. It shows the registers under their x86 names, disassembles around the program counter, pauses and single-steps, sets breakpoints (which turn the JIT off while they exist), logs every interrupt with its DOS function, and dumps memory. The <strong>memory map</strong> draws all 16 MB as a heat map of execution, reads and writes, with each DOS memory block named after its owner; it costs only a percent or two while open and nothing while closed. The <strong>ELBOW view</strong> is described on the <a href="elbow.html#watch">ELBOW page</a>.</p>
 
 <figure>
-  <img src="img/boot.jpg" width="1100" height="833" alt="The ARM-DOS machine just after booting: the monitor lists HIMEM, the CD-ROM driver and ARM-DOS Version 4.00 messages, and the ARM inspector beside it shows the registers under their x86 names, the flags, a disassembly and a log of INT 21h calls.">
+  <img src="img/boot.jpg" width="1100" height="822" alt="The ARM-DOS machine just after booting: the monitor lists HIMEM, the CD-ROM driver and ARM-DOS Version 4.00 messages, and the ARM inspector beside it shows the registers under their x86 names, the flags, a disassembly and a log of INT 21h calls.">
   <figcaption>Just after boot. The inspector shows the registers under their x86 names and the last few <code>INT 21h</code> calls.</figcaption>
 </figure>
 

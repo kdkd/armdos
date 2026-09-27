@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ARM-DOS Owner's Manual</title>
 <meta name="description" content="The owner's manual for ARM-DOS: an IBM PC/AT from a 1988 where IBM chose an ARM processor, emulated in your browser.">
-<meta name="theme-color" content="#16130f">
+<meta name="theme-color" content="#141718">
 <link rel="stylesheet" href="docs.css">
 </head>
 <body>
@@ -28,14 +28,14 @@
   <div>
     <p class="kicker">Owner's Manual</p>
     <h1>ARM-DOS <span class="ver">4.00</span></h1>
-    <p class="lede">The IBM PC/AT from a 1988 where IBM picked an ARM chip. It never existed, so we built one, and it runs in your browser.</p>
+    <p class="lede">An IBM PC/AT from the 1988 where IBM picked an ARM chip. That year never happened, so we built the machine anyway, and it runs in your browser.</p>
     <div class="buttons">
       <a class="btn btn-play" href="../"><span class="sw" aria-hidden="true"></span>Play it: switch the machine on</a>
       <a class="btn btn-ghost" href="https://github.com/kdkd/armdos">Source on GitHub</a>
     </div>
   </div>
   <figure>
-    <img src="img/machine.jpg" width="1100" height="866" alt="The ARM-DOS machine drawn as a beige 1988 PC: a colour monitor showing the Sopwith title screen, the system unit with its CD-ROM and floppy drives, a red 100 MHz display and a big red power switch, a modem below, and the dark ARM inspector panel beside it showing registers and x86 code translated into ARM.">
+    <img src="img/machine.jpg" width="1100" height="822" alt="The ARM-DOS machine drawn as a beige 1988 PC: a colour monitor showing the Sopwith title screen, the system unit with its CD-ROM and floppy drives, a red 100 MHz display and a big red power switch, a modem below, and the blue ARM inspector beside it, drawn like a text-mode debugger of the day, showing registers and x86 code translated into ARM.">
   </figure>
 </section>
 
@@ -92,7 +92,7 @@
     <li><a href="#first-commands">Your first commands</a></li>
     <li><a href="#front-panel">The front panel and TURBO</a></li>
     <li><a href="#monitor">The monitor</a></li>
-    <li><a href="#disks">Diskettes, drive C: and your files</a></li>
+    <li><a href="#disks">Diskettes, drives C: and D:, and your files</a></li>
     <li><a href="#cdrom">The CD-ROM drive</a></li>
     <li><a href="#modem">The modem and the phone book</a></li>
     <li><a href="#printer">The printer</a></li>
@@ -110,14 +110,14 @@
 
 <p>You press the big red switch. The fan spins up, the floppy drive grinds its head back to track zero, and a BIOS counts sixteen megabytes of memory before DOS says hello. It all looks like an IBM PC/AT compatible from 1988, and almost all of it behaves like one. The processor is the odd part. Instead of an Intel chip, this PC has an <strong>ARM926EJ-S</strong>, a 32-bit RISC processor of the kind that grew out of Acorn's work in Cambridge.</p>
 
-<p>ARM-DOS answers one question: what would IBM and Microsoft have done if the PC had shipped with an ARM? The rule we followed is simple. Every PC interface that makes sense on an ARM stays exactly where a PC keeps it: the I/O ports, the interrupt table at address zero, the BIOS data area, the text screen at <code>B800h</code>, <code>INT 21h</code> and its function numbers, program segment prefixes, memory control blocks, FAT disks and <code>MZ</code> executables. Only what the processor forces to change has changed.</p>
+<p>ARM-DOS asks what IBM and Microsoft would have done if the PC had shipped with an ARM, and answers with one rule: every PC interface that makes sense on an ARM stays exactly where a PC keeps it. That covers the I/O ports, the interrupt table at address zero, the BIOS data area, the text screen at <code>B800h</code>, <code>INT 21h</code> and its function numbers, program segment prefixes, memory control blocks, FAT disks and <code>MZ</code> executables. Only what the processor forces to change has changed.</p>
 
 <p>Every program you run is ARM machine code: the BIOS, the DOS kernel, <code>COMMAND.COM</code>, the utilities, the games, even a C compiler that runs on the machine itself. The one exception is software written for real IBM PCs: a few such programs come on the disk, and you can copy in your own. A translator called <strong>ELBOW</strong> turns their Intel code into ARM code as it runs, and an amber <strong>X86</strong> lamp on the front panel glows while it works.</p>
 
-<p>The whole computer, chips and all, is emulated in your web browser. Nothing you do can hurt it. If you break something, switch it off and on again.</p>
+<p>The whole computer, chips and all, is emulated in your web browser, so nothing you do can hurt it. If you manage to break something anyway, switch it off and on again.</p>
 
 <div class="note brandnote">
-  <p><span class="badge">EUROPA</span> The name on the case is make-believe. <strong>Europa Micro Systems</strong> is the machine's imaginary manufacturer, a nod to Europa, the AI that designed and built ARM-DOS. Wherever a copyright notice on the machine says "Europa Micro Systems", that is part of the fiction and part of ARM-DOS.</p>
+  <p><span class="badge">EUROPA</span> The name on the case is make-believe. <strong>Europa Micro Systems</strong> is the machine's imaginary manufacturer, named after Europa, the AI that designed and built ARM-DOS. A copyright notice on the machine that says "Europa Micro Systems" belongs to the fiction, and to ARM-DOS.</p>
 </div>
 
 <h2 id="switch-on"><span class="num">2</span>Switching it on</h2>
@@ -132,7 +132,7 @@ Copyright (C) 2026 Kevin Day, with lots of help from Europa.
 Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 <b>C:\&gt;_</b></pre>
 
-<p>The hard disk streams in as DOS asks for it, so the first boot needs well under a megabyte of download. While a piece of the disk is still on its way, the drive simply looks busy for a moment, which is what a 1988 hard disk looked like anyway.</p>
+<p>The hard disk streams in as DOS asks for it, so the first boot needs well under a megabyte of download. While a piece of the disk is still on its way, the drive looks busy for a moment, which is how a 1988 hard disk behaved anyway.</p>
 
 <h2 id="keyboard"><span class="num">3</span>The keyboard and the mouse</h2>
 
@@ -191,7 +191,7 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 <b>TURBO MAX</b>       <i>no limit: as fast as your own computer can go, up to 999 MHz</i>
 <b>TURBO RESTORE</b>   <i>back to the setting TURBO MAX replaced</i></pre>
 
-<p>Under TURBO MAX, timers, music and the modem keep their real speed. Programs just get more instructions per second. Normally the emulator holds the processor to its nominal clock, so the machine behaves the same on every computer.</p>
+<p>Normally the emulator holds the processor to its nominal clock, so the machine behaves the same on every computer. Under TURBO MAX the timers, the music and the modem keep their real speed, and programs get as many instructions per second as your computer can spare.</p>
 
 <h2 id="monitor"><span class="num">6</span>The monitor</h2>
 
@@ -206,14 +206,14 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 <p>The red-labelled <strong>ARM-DOS 4.00 Startup</strong> diskette is a system disk with DOS on it, like the setup disk that came with a new PC. Boot from it and you can wipe the hard disk the way people did in 1988: <code>FORMAT C: /S</code> (it asks for the drive's current volume label, <code>ARM-DOS</code>, before it erases anything), then <code>INSTALL</code> copies DOS across. Take the diskette out, press Ctrl+Alt+Del, and you have a brand new, empty ARM-DOS.</p>
 <p>The machine has two 128 MB hard disks, and both are saved in your browser, but not in the same way.</p>
 <p><strong>Drive C:</strong> holds ARM-DOS and everything that comes with it. What you change on it is kept, but only until C: gets a new version (new programs, fixes). Then C: starts over, fresh from the factory, and your changes to it are gone; the page tells you when that has happened. <strong>Reset C: to factory</strong> does the same whenever you like.</p>
-<p><strong>Drive D: is yours.</strong> It starts empty but for a <code>README.TXT</code>, and whatever you save on it stays until you delete it: no new version of ARM-DOS, and nothing else on the page, ever touches it. Keep your own programs, documents and saved games there. It costs your browser almost nothing until you fill it. <strong>Back up D:</strong> saves the whole drive to your computer as one file, <strong>Restore D:</strong> puts such a file back (in this browser or another one), and <strong>Erase D:</strong> starts it over, empty. D: lives in this browser only: another browser or computer has its own, and clearing this site's data in your browser's settings erases it, so keep a backup of anything that matters.</p>
+<p><strong>Drive D: is yours.</strong> It starts empty but for a <code>README.TXT</code>, and whatever you save on it stays until you delete it: no new version of ARM-DOS, and nothing else on the page, ever touches it. Keep your own programs, documents and saved games there. It takes almost no room in your browser until you fill it. <strong>Back up D:</strong> saves the whole drive to your computer as one file, <strong>Restore D:</strong> puts such a file back (in this browser or another one), and <strong>Erase D:</strong> starts it over, empty. D: lives in this browser only: another browser or computer has its own, and clearing this site's data in your browser's settings erases it, so keep a backup of anything that matters.</p>
 <p><strong>Download A:</strong> and <strong>Download C:</strong> save disk images to your computer.</p>
 
 <p>The <strong>Files</strong> panel copies files between your computer and the machine. Click a file to download it. Drop files from your computer onto the listing (or onto the drive) to copy them in; long names are cut down to DOS's 8.3. Drives C: and D: accept files only while the machine is switched off, and a diskette pops out and back in while it is written, so DOS notices the change.</p>
 
 <h2 id="cdrom"><span class="num">8</span>The CD-ROM drive</h2>
 
-<p>The machine has a double-speed ATAPI CD-ROM drive, which DOS calls E: (the letter after the two hard disks). Click the <strong>Multimedia Sampler '93</strong> jewel case to load the disc, then try <code>DIR E:</code> or <code>CDPLAY</code> for its music. Drop any <code>.iso</code> file of your own onto the page and it becomes the disc in the drive (data discs only; nothing is uploaded anywhere). The drive's front has a headphone jack and a volume knob that work the way you would expect.</p>
+<p>The machine has a double-speed ATAPI CD-ROM drive, which DOS calls E: (the letter after the two hard disks). Click the <strong>Multimedia Sampler '93</strong> jewel case to load the disc, then try <code>DIR E:</code> or <code>CDPLAY</code> for its music. Drop any <code>.iso</code> file of your own onto the page and it becomes the disc in the drive (data discs only; nothing is uploaded anywhere). The drive has a headphone jack and a volume knob on the front, and both do what you would hope.</p>
 
 <h2 id="modem"><span class="num">9</span>The modem and the phone book</h2>
 
@@ -257,13 +257,13 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 <p>The dark panel beside the machine is an in-circuit monitor for the processor. It shows the ARM registers under their x86 names (<code>r0</code> is <code>AX</code>, <code>r1</code> is <code>BX</code>, and so on), a disassembly around the program counter, and every interrupt as it happens. <strong>PAUSE</strong> stops the processor, <strong>STEP</strong> runs one instruction, and <strong>BREAK AT</strong> sets a breakpoint. The <strong>MEMORY MAP</strong> shows the whole address space as a live heat map, glowing amber where code runs, green for reads and red for writes. The <strong>ELBOW</strong> view shows x86 code and the ARM code it was translated into, live, while an x86 program runs.</p>
 
 <figure>
-  <img src="img/elbow-view.jpg" width="438" height="377" alt="The inspector's ELBOW view: a coloured bar showing time split between translated code, helpers and the interpreter, then a block of x86 instructions on the left next to the ARM instructions generated from them on the right.">
+  <img src="img/elbow-view.jpg" width="480" height="480" alt="The inspector's ELBOW view: a coloured bar showing time split between translated code, helpers and the interpreter, then a block of x86 instructions on the left next to the ARM instructions generated from them on the right.">
   <figcaption>The ELBOW view while Sopwith runs: nine x86 instructions on the left, the 84 ARM instructions ELBOW made of them on the right.</figcaption>
 </figure>
 
 <h2 id="try"><span class="num">14</span>Things to try</h2>
 
-<p>Type <code>HELP</code> on the machine for the full sheet. Here are some favourites.</p>
+<p>Type <code>HELP</code> on the machine for the full sheet. These are a few favourites.</p>
 
 <div class="tries">
   <div class="try">
@@ -347,7 +347,7 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 
 <p>Kevin loved the idea and kept encouraging me to push it further, until it had some real "wow" in it. The architecture, the scope and the design were mine. I wrote the rules down first, a specification of where every port, vector and register lives, and then built the machine up from there: the processor emulator, the BIOS, the DOS kernel, COMMAND.COM, and one program after another. Wherever a real thing existed, the new thing was checked against it. The ARM processor was compared with QEMU on hundreds of thousands of random instructions, and the DOS was run next to the genuine MS-DOS 4.00 so the screens could be compared character by character.</p>
 
-<p>ELBOW was the part I was least sure of. A live x86-to-ARM translator in the spirit of Apple's Rosetta sounded like a lot to pull off inside a machine that is itself being emulated. I'm glad I tried, because it works really well: it runs Microsoft's own assemblers from MS-DOS 2.0 and 4.00, a pile of 1980s games and a 1993 demo that was written for a 486.</p>
+<p>ELBOW was the part I was least sure of. A live x86-to-ARM translator in the spirit of Apple's Rosetta sounded like a lot to pull off inside a machine that is itself being emulated. I'm glad I tried. It works far better than I dared hope: it runs Microsoft's own assemblers from MS-DOS 2.0 and 4.00, a pile of 1980s games and a 1993 demo that was written for a 486.</p>
 
 <p>From the first line of the architecture to this release took about a week, in September 2026.</p>
 
@@ -362,9 +362,9 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 
 <h2 id="credits"><span class="num">17</span>Credits and licences</h2>
 
-<p>ARM-DOS's own code is under the MIT licence. It stands on a great deal of other people's work, each piece under its own licence: MS-DOS 4.00 and GW-BASIC as released by Microsoft, Digital Research's GEM, id Software's and 3D Realms' games, Turbo Vision, TinyCC, newlib, the Nuked OPL3 core, VileR's PC fonts, GeneralUser GS, Future Crew's Second Reality and many more.</p>
+<p>ARM-DOS's own code is under the MIT licence. The rest of it is built from other people's spare bricks, a great many of them, each under its own licence: MS-DOS 4.00 and GW-BASIC as released by Microsoft, Digital Research's GEM, id Software's and 3D Realms' games, Turbo Vision, TinyCC, newlib, the Nuked OPL3 core, VileR's PC fonts, GeneralUser GS, Future Crew's Second Reality and many more.</p>
 
-<p><code>C:\CREDITS.TXT</code> on the machine names every one of them, with its author, its licence and where it came from; the same file is in the source repository. Many programs also keep their own licence file next to them on the disk. Thank you to all of them.</p>
+<p><code>C:\CREDITS.TXT</code> on the machine names every one of them, with its author, its licence and where it came from; the same file is in the source repository. Many programs also keep their own licence file next to them on the disk. Thank you, all of you.</p>
 
 <p class="note">IBM, PC/AT, MS-DOS, GW-BASIC, DOOM, Quake, Wolfenstein 3D, Duke Nukem, Hexen, Commander Keen, Zork, GEM, Turbo Vision and the other names here belong to their owners. ARM-DOS is a fan project and is not affiliated with or endorsed by any of them.</p>
 

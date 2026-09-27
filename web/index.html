@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>What if the IBM PC used an ARM instead of x86? How overboard can we take this idea?</title>
 <meta name="description" content="An IBM PC/AT that never existed: an ARM926 inside, MS-DOS 4.00 ported to it, running as real ARM machine code in your browser.">
-<meta name="theme-color" content="#16130f">
+<meta name="theme-color" content="#141718">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
@@ -176,7 +176,7 @@
     </button>
     <div class="insp-body" id="inspBody">
       <div class="insp-head">
-        <div class="insp-title">ARM926EJ-S <span>IN-CIRCUIT MONITOR</span></div>
+        <div class="insp-title">ARM926EJ-S <span>in-circuit monitor</span></div>
         <div class="insp-state"><span class="lamp" id="runLamp"></span><span id="runState">NO POWER</span></div>
       </div>
 
@@ -187,20 +187,16 @@
           <canvas id="spark" width="240" height="44" aria-label="MIPS history"></canvas>
         </div>
         <div class="meter narrow">
-          <div class="cap">ALT CPU (X86)</div>
-          <div class="readout"><span id="x86Val">--</span><small>%</small></div>
-          <div class="cap">ASLEEP (WFI)</div>
-          <div class="readout"><span id="wfiVal">--</span><small>%</small></div>
-          <div class="cap">HOST SPEED</div>
-          <div class="readout"><span id="hostVal">---</span><small>MIPS</small></div>
-          <div class="cap">RETIRED</div>
-          <div class="readout small"><span id="icountVal">0</span></div>
+          <div class="cap">LOAD</div>
+          <div class="mrow"><span title="Share of time spent running x86 code under ELBOW">x86</span><span class="readout"><span id="x86Val">--</span><small>%</small></span></div>
+          <div class="mrow"><span title="Share of time the processor sat in WFI, waiting for an interrupt">asleep</span><span class="readout"><span id="wfiVal">--</span><small>%</small></span></div>
+          <div class="mrow"><span title="How fast this computer could run the emulator flat out">host</span><span class="readout"><span id="hostVal">---</span><small>MIPS</small></span></div>
+          <div class="mrow"><span title="Instructions retired since power on">retired</span><span class="readout"><span id="icountVal">0</span></span></div>
         </div>
       </div>
 
-      <div class="panel-row">
-        <div class="win regs" id="regs"></div>
-      </div>
+      <div class="section-cap"><span>REGISTERS</span></div>
+      <div class="win regs" id="regs"></div>
       <div class="panel-row cpsr" id="cpsr"></div>
 
       <div class="panel-row debug-keys">
@@ -210,9 +206,8 @@
         <button class="hwkey run" id="dbgRun">RUN</button>
       </div>
 
-      <div class="panel-row">
-        <div class="win disasm" id="disasm" aria-label="Disassembly around PC"></div>
-      </div>
+      <div class="section-cap"><span>CODE</span></div>
+      <div class="win disasm" id="disasm" aria-label="Disassembly around PC"></div>
       <div class="panel-row bp-row">
         <label class="cap" for="bpAddr">BREAK AT</label>
         <input id="bpAddr" class="lcd-input" spellcheck="false" placeholder="7C00" maxlength="8">
@@ -307,8 +302,8 @@
 <section class="about">
   <div class="col">
     <h2>What is this?</h2>
-    <p>Picture a 1988 in which IBM put Acorn's new RISC chip in the AT instead of an Intel 286, and Microsoft ported DOS 4.00 to it over a long weekend. The ports, the BIOS data area, the text buffer at <code>B8000</code> and every <code>INT 21h</code> function are where a PC keeps them. Only the processor is different.</p>
-    <p>Everything on that screen is drawn by real ARM machine code. The BIOS that counts memory, the boot sector, the DOS kernel and COMMAND.COM are all compiled for an ARM926 and executed instruction by instruction by an emulator running in this tab. Open the inspector on the right and you can watch the registers move, pause the processor and step through it one instruction at a time.</p>
+    <p>It's 1988, and IBM has put Acorn's new RISC chip in the AT instead of an Intel 286. Microsoft ported DOS 4.00 to it over a long weekend. The ports, the BIOS data area, the text buffer at <code>B8000</code> and every <code>INT 21h</code> function are right where a PC keeps them; only the processor is different.</p>
+    <p>Everything on that screen is drawn by real ARM machine code. The BIOS that counts memory, the boot sector, the DOS kernel and COMMAND.COM are all compiled for an ARM926 and executed instruction by instruction by an emulator running in this tab. Open the inspector on the right to watch the registers change, pause the processor, and step through its code yourself.</p>
   </div>
   <div class="col">
     <h2>Things to try</h2>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ARM-DOS 4.00 Internals</title>
 <meta name="description" content="How ARM-DOS 4.00 follows MS-DOS 4.00 on an ARM processor: the kernel, COMMAND.COM, the commands, and how programs are written for it.">
-<meta name="theme-color" content="#16130f">
+<meta name="theme-color" content="#141718">
 <link rel="stylesheet" href="docs.css">
 </head>
 <body>
@@ -29,7 +29,7 @@
 <h1>ARM-DOS 4.00</h1>
 <p class="lede">MS-DOS 4.00, as Microsoft might have ported it to an ARM over a long weekend in 1988.</p>
 
-<p>Type <code>VER</code> and the machine says <code>ARM-DOS Version 4.00</code>, because it follows MS-DOS 4.00 command for command. Microsoft released the MS-DOS 4.00 source under the MIT licence, which made it possible to check every message, every column of a <code>DIR</code> listing and every error code against the real thing. The genuine MS-DOS 4.00, running in DOSBox-X, was the yardstick throughout: the same keystrokes were typed into both, and the screens compared.</p>
+<p>Type <code>VER</code> and the machine says <code>ARM-DOS Version 4.00</code>, because it follows MS-DOS 4.00 command for command. Microsoft released the MS-DOS 4.00 source under the MIT licence, which made it possible to check every message, every column of a <code>DIR</code> listing and every error code against the real thing. The real MS-DOS 4.00, running in DOSBox-X, was the yardstick throughout: the same keystrokes went into both machines, and the screens had to match.</p>
 
 <nav class="toc" aria-label="On this page">
   <b>On this page</b>
@@ -46,7 +46,7 @@
 
 <h2 id="boot"><span class="num">1</span>From power switch to prompt</h2>
 
-<p>The same division of labour as MS-DOS 4.00, for the same reasons:</p>
+<p>Booting splits the work the same way MS-DOS 4.00 does, and for the same reasons:</p>
 
 <ol>
   <li><strong>The ROM BIOS</strong> (ARM code and C) runs the power-on self test: it counts the memory, identifies the processor, finds the drives and fitted cards, and beeps. It loads the first sector of the boot disk to <code>7C00h</code>, checks for <code>55AAh</code> and jumps there in ARM state.</li>
@@ -60,7 +60,7 @@
 
 <h2 id="kernel"><span class="num">2</span>The kernel</h2>
 
-<p>The kernel is new C code, with a little ARM assembly, written to behave the way the MS-DOS 4.00 source does and to say what it says. It is compiled to Thumb code to keep it small. DOS itself takes about 60 KB of conventional memory, much as DOS 4.00 did on a PC.</p>
+<p>The kernel is new C code, with a little ARM assembly, written to behave the way the MS-DOS 4.00 source does and to say what it says. It is compiled to Thumb code to keep it small, and DOS itself takes about 60 KB of conventional memory, much as DOS 4.00 did on a PC.</p>
 
 <p>It implements nearly all of the DOS 4 <code>INT 21h</code> functions: console input with the DOS line editor and its function-key template, files and directories through handles and FCBs, IOCTL, memory allocation, EXEC and terminate-and-stay-resident, country information and code pages. The file system reads and writes FAT12 and FAT16 with a write-back buffer cache, extended partitions become logical drives, and <code>SUBST</code> and <code>JOIN</code> work through the current directory structure the way DOS 4 did. The in-memory structures keep their DOS 4 layouts (the system file table, the list of lists, the memory control blocks), widened only where a far pointer has to hold a 32-bit address.</p>
 
@@ -70,9 +70,9 @@
 
 <h2 id="command"><span class="num">3</span>COMMAND.COM</h2>
 
-<p>COMMAND.COM is a C re-creation of the DOS 4.00 shell, following the MIT-released assembly source routine by routine, with every message taken from it. Like the original, it splits into a small <strong>resident part</strong> (the Ctrl-C and critical-error handlers, program loading, and the state that must survive a program run) and a <strong>transient part</strong> (the command processor) that sits at the top of memory. When a program needs that memory, the transient part is dropped and read back from disk afterwards, with DOS 4's <code>Insert disk with \COMMAND.COM in drive A</code> when the disk is not there.</p>
+<p>COMMAND.COM is a C re-creation of the DOS 4.00 shell, following the MIT-released assembly source routine by routine, with every message taken from it. Like the original, it splits into a small <strong>resident part</strong> (the Ctrl-C and critical-error handlers, program loading, and the state that has to outlast a program run) and a <strong>transient part</strong> (the command processor) that sits at the top of memory. When a program needs that memory, the transient part is dropped and read back from disk afterwards, with DOS 4's <code>Insert disk with \COMMAND.COM in drive A</code> when the disk is not there.</p>
 
-<p>Batch files, <code>FOR</code>, <code>IF</code>, <code>GOTO</code>, <code>CALL</code>, pipes, redirection, <code>PROMPT</code>, <code>PATH</code> and the internal commands all behave like the original. The test suite types commands into both shells and compares the screens.</p>
+<p>Batch files, <code>FOR</code>, <code>IF</code>, <code>GOTO</code>, <code>CALL</code>, pipes, redirection, <code>PROMPT</code>, <code>PATH</code> and the internal commands all behave like the original, and the test suite checks it by typing the same commands into both shells and comparing the screens.</p>
 
 <h2 id="commands"><span class="num">4</span>The commands</h2>
 
@@ -85,9 +85,9 @@
   <tr><td>Re-created in C from Microsoft's assembly source, step by step</td><td><code>ANSI.SYS</code>, <code>CHKDSK</code>, <code>COMP</code>, <code>DEBUG</code>, <code>DISKCOMP</code>, <code>DISKCOPY</code>, <code>DISPLAY.SYS</code>, <code>EDLIN</code>, <code>FIND</code>, <code>FORMAT</code>, <code>KEYB</code>, <code>LABEL</code>, <code>MODE</code>, <code>MORE</code>, <code>NLSFUNC</code>, <code>PRINT</code>, <code>REPLACE</code>, <code>SORT</code>, <code>SYS</code>, <code>TREE</code>, <code>XCOPY</code></td></tr>
 </table></div>
 
-<p>When <code>FDISK</code> writes a partition table here, it is the table the real FDISK writes, byte for byte, because it is the same code.</p>
+<p>When <code>FDISK</code> writes a partition table here, it writes exactly the bytes the real FDISK would, because it is the same code.</p>
 
-<p><strong>DOSSHELL</strong>, the DOS 4.00 Shell, is not part of Microsoft's source release, so it is new code written from the real Shell's screens, captured character by character, with its menus, the File System, colour schemes, help and the mouse.</p>
+<p><strong>DOSSHELL</strong>, the DOS 4.00 Shell, wasn't in Microsoft's source release, so it was written fresh from the real Shell's screens, captured character by character. It has the menus, the File System, the colour schemes, help and mouse support.</p>
 
 <p><strong>DEBUG</strong> keeps DOS 4's prompt, one-letter commands and output layouts, with an ARM register set, an ARM and Thumb disassembler, a line-by-line ARM assembler and ARM breakpoints underneath:</p>
 
@@ -111,16 +111,16 @@ Program terminated normally</pre>
 
 <p><strong>Ports</strong> are existing programs whose source code was released, compiled for the ARM with a platform layer that talks to the hardware the way the original DOS versions did. DOOM sets VGA mode 13h through the BIOS, loads its palette through the DAC ports, hooks <code>INT 9</code> to read scan codes from port <code>60h</code>, reprograms the timer to 140 Hz while chaining the BIOS tick, and plays its effects through the Sound Blaster's DMA and its music on the OPL3 or General MIDI. Quake does its floating point on the VFP. The ports include DOOM, Wolfenstein 3D, Quake, Duke Nukem 3D with Ken Silverman's Build engine, Keen Dreams, the Hexen II engine, Zork I to III, Colossal Cave, Bywater BASIC, TinyCC and Digital Research's GEM/3, whose 8086 assembly and screen driver were rewritten in C and ARM code.</p>
 
-<p><strong>Native programs</strong> were written for ARM-DOS: the ARM Commander file manager, EDIT, ARM Turbo C and ARM QuickBASIC (on Turbo Vision), TERM, ONLINE, ARM Paint and Banner, the CD player and CD-ROM extensions, ARMINFO, the talking Dr. ARMitso, POPUP, the demo, The ARM Pit BBS and its door game, and ELBOW. Their looks are homages to programs of the era, with none of those programs' code.</p>
+<p><strong>Native programs</strong> were written for ARM-DOS: the ARM Commander file manager, EDIT, ARM Turbo C and ARM QuickBASIC (on Turbo Vision), TERM, ONLINE, ARM Paint and Banner, the CD player and CD-ROM extensions, ARMINFO, the talking Dr. ARMitso, POPUP, the demo, The ARM Pit BBS and its door game, and ELBOW. They borrow their looks from programs of the era, but none of their code.</p>
 
-<p><strong>x86 guests</strong> are genuine IBM PC programs, byte for byte as released, run by <a href="elbow.html">ELBOW</a>.</p>
+<p><strong>x86 guests</strong> are real IBM PC programs, byte for byte as released, run by <a href="elbow.html">ELBOW</a>.</p>
 
 <p><code>FILE</code> tells them apart: <code>FILE C:\DOS\*.EXE</code> shows which files are ARM programs and which are x86.</p>
 
 <h2 id="writing"><span class="num">6</span>Writing programs for ARM-DOS</h2>
 
 <h3>On the machine</h3>
-<p><code>TC</code> is ARM Turbo C, a blue-screen IDE with the TinyCC compiler built in: <kbd>F9</kbd> builds, <kbd>Ctrl</kbd>+<kbd>F9</kbd> runs, and errors land in the Message window. <code>TCC</code> is the same compiler on the command line. Every program it produces is real ARM code, and TCC can compile its own source code on ARM-DOS. <code>QB</code> is ARM QuickBASIC with the Bywater BASIC interpreter inside; <code>BASIC</code> is a GW-BASIC-style interpreter; <code>DEBUG</code> assembles ARM instructions directly.</p>
+<p><code>TC</code> is ARM Turbo C, a blue-screen IDE with the TinyCC compiler built in: <kbd>F9</kbd> builds, <kbd>Ctrl</kbd>+<kbd>F9</kbd> runs, and errors land in the Message window. <code>TCC</code> is the same compiler on the command line. Every program it produces is real ARM code, and TCC can even compile itself on ARM-DOS. <code>QB</code> is ARM QuickBASIC with the Bywater BASIC interpreter inside; <code>BASIC</code> is a GW-BASIC-style interpreter; <code>DEBUG</code> assembles ARM instructions directly.</p>
 
 <pre><b>C:\&gt;TCC SQUARES.C</b>
 <b>C:\&gt;SQUARES</b>

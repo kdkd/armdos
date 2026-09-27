@@ -159,18 +159,13 @@ export class Inspector {
     const c = this.sctx, W = this.spark.width, H = this.spark.height, h = this.history, n = h.length;
     c.clearRect(0, 0, W, H);
     let max = Math.max(mhz, 1); for (let k = 0; k < n; k++) if (h[k] > max) max = h[k];
-    c.strokeStyle = 'rgba(255,179,64,.12)'; c.lineWidth = 1;
-    for (let y = 0.25; y < 1; y += 0.25) { c.beginPath(); c.moveTo(0, Math.round(H * y) + 0.5); c.lineTo(W, Math.round(H * y) + 0.5); c.stroke(); }
-    const x = (k) => (k / (n - 1)) * W, y = (v) => H - 2 - (v / max) * (H - 5);
-    c.beginPath();
-    for (let k = 0; k < n; k++) { const v = h[(this.histPos + k) % n]; if (k === 0) c.moveTo(x(k), y(v)); else c.lineTo(x(k), y(v)); }
-    c.lineTo(W, H); c.lineTo(0, H); c.closePath();
-    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(255,179,64,.35)'); g.addColorStop(1, 'rgba(255,179,64,0)');
-    c.fillStyle = g; c.fill();
-    c.beginPath();
-    for (let k = 0; k < n; k++) { const v = h[(this.histPos + k) % n]; if (k === 0) c.moveTo(x(k), y(v)); else c.lineTo(x(k), y(v)); }
-    c.strokeStyle = '#ffb340'; c.lineWidth = 1.5; c.shadowColor = 'rgba(255,170,50,.8)'; c.shadowBlur = 4; c.stroke(); c.shadowBlur = 0;
-    c.fillStyle = 'rgba(255,179,64,.55)'; c.font = '600 9px "IBM Plex Mono", monospace'; c.fillText(`${mhz} MHz clock`, 4, 10);
+    const x = (k) => Math.round((k / (n - 1)) * W), y = (v) => Math.round(H - 1 - (v / max) * (H - 18));
+    for (let k = 0; k < n; k++) {                              // solid columns in the text palette, a bright top edge, no glow
+      const v = h[(this.histPos + k) % n], x0 = x(k), w = Math.max(1, (k < n - 1 ? x(k + 1) : W) - x0), top = y(v);
+      c.fillStyle = '#00aaaa'; c.fillRect(x0, top, w, H - top);
+      c.fillStyle = '#55ffff'; c.fillRect(x0, top, w, 1);
+    }
+    c.fillStyle = '#aaaaaa'; c.font = '16px "PC VGA", monospace'; c.textBaseline = 'top'; c.fillText(`${mhz} MHz clock`, 0, 0);
   }
 
   renderDisasm(cpu) {

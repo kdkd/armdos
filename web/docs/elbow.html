@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ELBOW x86 Translator</title>
 <meta name="description" content="How ELBOW runs genuine x86 DOS programs on the ARM PC by translating their code into ARM machine code as they run.">
-<meta name="theme-color" content="#16130f">
+<meta name="theme-color" content="#141718">
 <link rel="stylesheet" href="docs.css">
 </head>
 <body>
@@ -27,16 +27,16 @@
 
 <p class="kicker">Technical note</p>
 <h1>ELBOW</h1>
-<p class="lede">Emulated Legacy Binaries On Workstation: how an ARM PC runs software written for Intel chips, by translating it into ARM code while it runs.</p>
+<p class="lede">Emulated Legacy Binaries On Workstation: how an ARM PC runs software written for Intel chips, by translating it into ARM code on the fly.</p>
 
-<p>Type the name of an old IBM PC program at the ARM-DOS prompt and DOS notices the file is x86 code. It hands the program to <code>ELBOW.EXE</code>, much as Windows NT started its DOS box for a DOS program. ELBOW gives the program an Intel processor, a megabyte of PC memory, a BIOS and DOS to talk to, and then runs it. The amber <strong>X86</strong> lamp on the front panel glows while it does. When you are curious, open the inspector and its ELBOW view shows you the x86 instructions next to the ARM code they became.</p>
+<p>Type the name of an old IBM PC program at the ARM-DOS prompt and DOS notices the file is x86 code. It hands the program to <code>ELBOW.EXE</code>, much as Windows NT started its DOS box for a DOS program. ELBOW gives the program an Intel processor, a megabyte of PC memory, a BIOS and DOS to talk to, and then runs it. The amber <strong>X86</strong> lamp on the front panel glows while it does. If you are curious, open the inspector: its ELBOW view shows the x86 instructions side by side with the ARM code they became.</p>
 
 <pre><b>C:\&gt;ELBOW [/JIT | /NOJIT] [/STATS] [/MEM:n] [/NOEMS] program [parameters]</b></pre>
 
 <p>You rarely need to type <code>ELBOW</code> yourself. <code>X86GAMES</code> opens the gallery of x86 games, <code>X86APPS</code> the office programs, and <code>CD \ELBOW</code> followed by <code>DEMO</code> shows Microsoft's MS-DOS 2.0 assembler and linker building a program on the ARM.</p>
 
 <figure>
-  <img src="img/elbow-view.jpg" width="438" height="377" alt="The inspector's ELBOW view while Sopwith runs: a bar showing the time split between translated code, helpers and the interpreter, and a block of nine x86 instructions next to the 84 ARM instructions generated from them.">
+  <img src="img/elbow-view.jpg" width="480" height="480" alt="The inspector's ELBOW view while Sopwith runs: a bar showing the time split between translated code, helpers and the interpreter, and a block of nine x86 instructions next to the 84 ARM instructions generated from them.">
   <figcaption>The inspector's ELBOW view. Left, a block of Sopwith's x86 code; right, the ARM code ELBOW generated for it. The bar above says where the processor's time goes.</figcaption>
 </figure>
 
@@ -44,25 +44,25 @@
 
 <p><strong>A processor.</strong> An 8086, 80186 and 80286 in real mode, plus the 80386's real-mode extensions: 32-bit registers and operand and address size prefixes, FS and GS, the two-byte <code>0F</code> opcodes (near conditional jumps, <code>SETcc</code>, <code>MOVZX</code>/<code>MOVSX</code>, bit tests, <code>SHLD</code>/<code>SHRD</code> and friends), and the 486's <code>BSWAP</code>, <code>XADD</code> and <code>CMPXCHG</code>. It identifies itself as a 386. There is no floating-point unit, so the usual <code>FNINIT</code>/<code>FNSTSW</code> probe reports none.</p>
 
-<p><strong>Memory.</strong> A megabyte plus 64 KB of x86 memory, taken from the machine's extended memory, 640 KB of it conventional with its own chain of DOS memory control blocks. Page tables with 256-byte pages map the x86 program's video memory at <code>A0000h</code>-<code>BFFFFh</code> and its BIOS data area onto the machine's real ones, so a program that writes to <code>B800:0000</code> writes the real screen, and one that reads <code>40:17</code> sees the real keyboard flags. There is 2.5 MB of LIM EMS 4.0 expanded memory as well, with its page frame at <code>E000h</code>.</p>
+<p><strong>Memory.</strong> A megabyte plus 64 KB of x86 memory, carved out of the machine's extended memory. Of that, 640 KB is conventional memory, with its own chain of DOS memory control blocks. Page tables with 256-byte pages map the x86 program's video memory at <code>A0000h</code>-<code>BFFFFh</code> and its BIOS data area onto the machine's real ones, so a program that writes to <code>B800:0000</code> writes the real screen, and one that reads <code>40:17</code> sees the real keyboard flags. There is 2.5 MB of LIM EMS 4.0 expanded memory as well, with its page frame at <code>E000h</code>.</p>
 
-<p><strong>DOS and the BIOS.</strong> An x86 program's <code>INT 21h</code> is translated into an ARM-DOS <code>INT 21h</code>: the x86 registers go into the ARM registers that stand for them, and every segment:offset pointer becomes the flat address of that x86 location. File handles are ARM-DOS handles, so files, devices, redirection and pipes are the real ones. Memory allocation, interrupt vectors, program segment prefixes and EXEC are handled inside the x86 world. An x86 program can start another x86 program, which runs nested in the same box, or an ARM program, which goes to the real ARM-DOS. The BIOS services (video, disk, keyboard, mouse, printer, time) are provided in the same way.</p>
+<p><strong>DOS and the BIOS.</strong> An x86 program's <code>INT 21h</code> is translated into an ARM-DOS <code>INT 21h</code>: the x86 registers go into the ARM registers that stand for them, and every segment:offset pointer becomes the flat address of that x86 location. File handles are ARM-DOS handles, so files, devices, redirection and pipes are the real ones. Memory allocation, interrupt vectors, program segment prefixes and EXEC are handled inside the x86 world. An x86 program can start another x86 program, which runs nested in the same box, or an ARM program, which goes to the real ARM-DOS. The BIOS services (video, disk, keyboard, mouse, printer, time) work the same way.</p>
 
-<p><strong>Ports and hardware interrupts.</strong> <code>IN</code> and <code>OUT</code> reach the machine's real ports, so a program can program the VGA's registers and palette, the timer and the speaker directly. The hard part is hardware interrupts. Games hook the timer and the keyboard and expect their own handlers to run; TSRs hook them and chain to the BIOS. ELBOW takes the ARM interrupt, and if the x86 program has hooked that vector, raises it inside the x86 world at the next instruction boundary without sending the end-of-interrupt, the way an 8259 holds an interrupt in service. The program's handler then reads port <code>60h</code>, sends its own EOI or chains on, as it would on a PC. Both styles of handler work, and so does Kermit's serial port handler on the modem.</p>
+<p><strong>Ports and hardware interrupts.</strong> <code>IN</code> and <code>OUT</code> reach the machine's real ports, so a program can program the VGA's registers and palette, the timer and the speaker directly. The hard part is hardware interrupts. Games hook the timer and the keyboard and expect their own handlers to run; TSRs hook them and chain to the BIOS. ELBOW takes the ARM interrupt and, if the x86 program has hooked that vector, raises it inside the x86 world at the next instruction boundary. It holds back the end-of-interrupt, the way an 8259 holds an interrupt in service. The program's handler then reads port <code>60h</code>, sends its own EOI or chains on, as it would on a PC. Both styles of handler work, and so does Kermit's serial port handler on the modem.</p>
 
-<p><strong>Sound Blaster DMA.</strong> The x86 memory is 128 KB aligned, so ELBOW only has to move a program's writes to the DMA page registers. Address and count registers pass through untouched, and Sound Blaster music plays.</p>
+<p><strong>Sound Blaster DMA.</strong> The x86 memory is 128 KB aligned, so ELBOW only has to adjust a program's writes to the DMA page registers. Address and count registers pass through untouched, and Sound Blaster music plays.</p>
 
 <h2 id="translator"><span class="num">2</span>The translator</h2>
 
-<p>ELBOW has two engines. The <strong>interpreter</strong> decodes and executes one x86 instruction at a time. The <strong>translator</strong>, used by default, turns hot x86 code into ARM machine code and runs that. A block becomes hot once its start address has been seen twice. Rare instructions still fall back to the interpreter.</p>
+<p>ELBOW has two engines. The <strong>interpreter</strong> decodes and executes one x86 instruction at a time. The <strong>translator</strong>, which is the default, turns hot x86 code into ARM machine code and runs that; a block counts as hot the second time its start address comes up. Rare instructions still fall back to the interpreter.</p>
 
 <h3>Superblocks and chaining</h3>
 <p>The translator follows unconditional jumps as it goes and turns conditional jumps into side exits, so the body of a loop becomes a single block whose back edge branches to its own entry. Each exit to a known address is an ARM <code>LDR pc, [pc, #lit]</code> through a literal. That literal first points at a small stub that asks for the target; once the target block is translated, the literal is patched to point straight at it. After a while the hot code runs from block to block without coming back to C at all. <code>RET</code> and indirect jumps look the next block up without leaving translated code either.</p>
 
 <h3>Flags for free</h3>
-<p>Every x86 arithmetic instruction sets flags, and most of them are never read. ELBOW does 16-bit arithmetic on values shifted into the top half of an ARM register (and 8-bit arithmetic in the top byte). Done that way, the ARM's own N, Z, C and V flags <em>are</em> the x86 sign, zero, carry and overflow flags (the ARM's carry is inverted after a subtraction, which the translator accounts for). A <code>CMP</code> followed by a conditional jump becomes one ARM compare and one conditional branch.</p>
+<p>Every x86 arithmetic instruction sets flags, and most of them are never read. ELBOW does 16-bit arithmetic on values shifted into the top half of an ARM register (and 8-bit arithmetic in the top byte). That way, the ARM's own N, Z, C and V flags <em>are</em> the x86 sign, zero, carry and overflow flags (the ARM's carry is inverted after a subtraction, which the translator accounts for). A <code>CMP</code> followed by a conditional jump becomes one ARM compare and one conditional branch.</p>
 
-<p>For the cases where a later instruction, a helper or the interpreter might want the flags, each flag-setting instruction also records its operands with one store-multiple instruction. A liveness pass removes even that when it can prove nothing can look before the next flag setter. <code>INC</code> and <code>DEC</code>, which leave the carry alone, recover it from the ARM flags or the recorded state.</p>
+<p>For the cases where a later instruction, a helper or the interpreter might want the flags, each flag-setting instruction also records its operands with one store-multiple instruction. A liveness pass removes even that store when it can prove nothing reads the flags before the next flag setter. <code>INC</code> and <code>DEC</code>, which leave the carry alone, recover it from the ARM flags or the recorded state.</p>
 
 <h3>Memory and self-modifying code</h3>
 <p>Loads and stores do their page-table lookups inline. Pages that hold translated code are tagged in the write table, and a store to one of them is checked against a byte-by-byte map of translated code. If it really hits, the affected blocks are thrown away and the current block ends, so self-modifying code works, even when a program patches the very next instruction. Data that DOS loads into x86 memory (a program being EXECed, a file being read, a disk sector) invalidates translations in the same way.</p>
@@ -71,7 +71,7 @@
 <p>Moves, the ALU, shifts by constants, <code>INC</code>/<code>DEC</code>, <code>TEST</code>, <code>NOT</code>, <code>NEG</code>, multiplication and division, <code>LEA</code>, pushes and pops, string instructions, far calls, jumps and returns, <code>LES</code>/<code>LDS</code>, <code>PUSHA</code>/<code>POPA</code>, <code>IN</code>/<code>OUT</code>, and the 386 forms of most of these with 32-bit operands. Shifts by <code>CL</code>, rotates, multiply and divide call the interpreter's routines from translated code; <code>REP MOVS</code> and <code>REP STOS</code> copy in page-sized runs. Instructions like <code>INT</code>, <code>IRET</code>, <code>STI</code> and <code>POPF</code> end a block and go to the interpreter. Teaching the translator the 386 instructions took Second Reality from 11% to 66% of the processor's time spent in translated code.</p>
 
 <h3>The code cache</h3>
-<p>Translated code lives in a 2 MB cache, found through a chained hash table. When the cache fills, it is dropped and refilled. An earlier, smaller cache with a direct-mapped table made Microsoft's MASM 5.10 retranslate its own code thirty times over; the current one assembles the same module five times faster.</p>
+<p>Translated code lives in a 2 MB cache, found through a chained hash table. When it fills up, ELBOW empties it and starts over. An earlier, smaller cache with a direct-mapped table made Microsoft's MASM 5.10 retranslate its own code thirty times over; the current one assembles the same module five times faster.</p>
 
 <h2 id="double"><span class="num">3</span>The double JIT</h2>
 
@@ -81,11 +81,11 @@
 
 <h2 id="watch"><span class="num">4</span>Watching it work</h2>
 
-<p>ELBOW writes the address of a small table describing its state to four ports on the system board (<code>FCh</code>-<code>FFh</code>) when it starts, and clears it when it ends. The page's inspector reads that table out of the machine's memory. About ten times a second it samples the ARM program counter, finds the translated block it is in, and shows that block's x86 instructions next to the ARM code made from them, with the lines the processor was seen on glowing. It holds on to the busiest block for a second or two so a loop stays on screen. The bar above says where the time goes: translated code, ELBOW's helpers, the x86 interpreter, or DOS, the BIOS and interrupts. ELBOW does no extra work for any of this, and the view costs nothing while it is closed.</p>
+<p>When it starts, ELBOW writes the address of a small table describing its state to four ports on the system board (<code>FCh</code>-<code>FFh</code>), and clears the address when it ends. The page's inspector reads that table out of the machine's memory. About ten times a second it samples the ARM program counter, finds the translated block it is in, and shows that block's x86 instructions next to the ARM code made from them, with the lines the processor was seen on glowing. It holds on to the busiest block for a second or two so a loop stays on screen. The bar above says where the time goes: translated code, ELBOW's helpers, the x86 interpreter, or DOS, the BIOS and interrupts. ELBOW does no extra work for any of this, and the view costs nothing while it is closed.</p>
 
 <h2 id="speed"><span class="num">5</span>How fast it is</h2>
 
-<p>Measured with the emulated ARM926 at its nominal 100 MHz. <strong>BENCH</strong> is the same C program compiled twice, once with Open Watcom for 16-bit x86 and once with gcc for ARM, so ELBOW can be compared with native ARM code.</p>
+<p>Measured with the emulated ARM926 at its nominal 100 MHz. <strong>BENCH</strong> is the same C program compiled twice, once with Open Watcom for 16-bit x86 and once with gcc for ARM, which gives ELBOW a fair race against native ARM code.</p>
 
 <div class="table-wrap"><table>
   <tr><th>Workload</th><th class="num">Interpreter</th><th class="num">Translator</th><th class="num">Native ARM</th></tr>
@@ -97,7 +97,7 @@
   <tr><td><strong>average against native ARM</strong></td><td class="num">132&times; slower</td><td class="num"><strong>8.4&times; slower</strong></td><td class="num">1&times;</td></tr>
 </table></div>
 
-<p>In practice that is plenty for the software of the day. Kroz and Sopwith run at nearly six million x86 instructions a second with 99% of their time in translated code, and the timer-paced games run at their intended speed. For Second Reality, ELBOW translates 85% of the demo's time into ARM code, at about twelve ARM instructions per x86 instruction, which makes the 100 MHz ARM PC roughly a 386DX-33. Future Crew wrote the demo for a 486-33, and like on a real 386, a few heavy scenes arrive late for their cue in the music. <code>TURBO MAX</code>, or the 133 MHz clock jumper inside the case, lets it keep up.</p>
+<p>In practice that is plenty for the software of the day. Kroz and Sopwith run at nearly six million x86 instructions a second with 99% of their time in translated code, and the timer-paced games run at their intended speed. Second Reality spends 85% of its time in translated code, at about twelve ARM instructions per x86 instruction, and that makes the 100 MHz ARM PC roughly a 386DX-33. Future Crew wrote the demo for a 486-33, so, just as on a real 386, a few heavy scenes arrive late for their cue in the music. <code>TURBO MAX</code>, or the 133 MHz clock jumper inside the case, lets it keep up.</p>
 
 <h2 id="runs"><span class="num">6</span>What runs</h2>
 
@@ -110,7 +110,7 @@
   <li><strong>FreeDOS</strong> TREE, FIND, MORE and CHOICE, with their errorlevels coming back through ELBOW.</li>
 </ul>
 
-<p>To be sure the translated code computes exactly what an Intel chip computes, 7,800 test cases over about 330 instruction patterns run twice: once as a DOS program under ELBOW and once as a Linux program on the host's own x86 processor. Results and flags must match, with both engines.</p>
+<p>To be sure the translated code computes exactly what an Intel chip computes, 7,800 test cases over about 330 instruction patterns run twice: once as a DOS program under ELBOW and once as a Linux program on the host's own x86 processor. Results and flags have to match, for both engines.</p>
 
 <h2 id="limits"><span class="num">7</span>Limits</h2>
 
