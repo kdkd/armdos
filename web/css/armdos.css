@@ -76,7 +76,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 [hidden] { display: none !important; }
 
 /* ------------------------------------------------------------------ masthead */
-.masthead { max-width: 1480px; margin: 0 auto; padding: 20px 0 6px; display: grid; grid-template-columns: auto minmax(0, 36em); column-gap: 32px; align-items: end; }
+.masthead { max-width: 1480px; margin: 0 auto; padding: 20px 0 6px; display: grid; grid-template-columns: auto minmax(0, 48em); column-gap: 32px; align-items: end; }
 .masthead .toplinks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 24px; margin-bottom: 22px; font: 16px/16px var(--pc); }
 .masthead .toplinks a { color: var(--c-lgray); text-decoration: none; }
 .masthead .toplinks a.manual { color: var(--c-white); }
