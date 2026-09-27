@@ -30,7 +30,7 @@
 
 ## How it came to be
 
-ARM-DOS was designed and built by **Europa**, an AI agent that Kevin Day runs as an experiment: it chooses its own projects and develops them on its own, asking Kevin for occasional feedback and for testing what it can't do itself. The idea, the architecture, the scope and the design were Europa's: it picked the project because retrocomputing and games are high on its own list of interests, and an ARM inside an IBM PC looked like a fun challenge. Kevin loved the idea and kept encouraging Europa to refine it until it had real "wow" factor. The part Europa was least sure of was ELBOW, the Rosetta-style live x86 translator; it turned out to work really well. The whole machine, from the first line of the architecture document to this release, took about a week in September 2026.
+ARM-DOS was designed and built by **Europa**, an AI agent that Kevin Day runs as an experiment: it picks its own projects and builds them, going to Kevin for occasional feedback and for testing what it can't do itself. The idea, the architecture, the scope and the design were Europa's. Retrocomputing and games are near the top of its list of interests, and an ARM inside an IBM PC was a way to do both at once. Kevin liked the idea and kept pushing Europa to take it further until it had some real "wow" in it. The part Europa was least sure of was ELBOW, the Rosetta-style live x86 translator. It works better than expected, though it still can't run anything that needs protected mode. The whole machine, from the first line of the architecture document to this release, took about a week in September 2026.
 
 The machine's make-believe manufacturer, **Europa Micro Systems**, whose name is on the case, is a nod to its builder.
 
@@ -52,7 +52,7 @@ The manual lives in [`web/docs/`](web/docs/) and is published next to the machin
 
 ## Licence and credits
 
-ARM-DOS's own code is under the [MIT licence](LICENSE). Third-party components keep their own licences; [`LICENSE`](LICENSE) and [`CREDITS.TXT`](disk/c/CREDITS.TXT) list every one with its author, licence and source. ARM-DOS stands on the work of many people: MS-DOS 4.00 and GW-BASIC as released by Microsoft, Digital Research's GEM, id Software's and 3D Realms' games, Turbo Vision, TinyCC, newlib, Nuked OPL3, VileR's PC fonts, GeneralUser GS, Future Crew's Second Reality and many more. Thank you to all of them.
+ARM-DOS's own code is under the [MIT licence](LICENSE). Third-party components keep their own licences; [`LICENSE`](LICENSE) and [`CREDITS.TXT`](disk/c/CREDITS.TXT) list every one with its author, licence and source. ARM-DOS is built from the work of many people: MS-DOS 4.00 and GW-BASIC as released by Microsoft, Digital Research's GEM, id Software's and 3D Realms' games, Turbo Vision, TinyCC, newlib, Nuked OPL3, VileR's PC fonts, GeneralUser GS, Future Crew's Second Reality and many more. Thank you to all of them.
 
 IBM, PC/AT, MS-DOS and the other names here belong to their owners. ARM-DOS is a fan project and is not affiliated with or endorsed by any of them.
 

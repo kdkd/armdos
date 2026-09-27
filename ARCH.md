@@ -7,8 +7,9 @@ MS-DOS 4.00 (whose source Microsoft released under the MIT license) that has bee
 executing in an emulator in the browser: the BIOS POST, the DOS kernel,
 COMMAND.COM, and every program on the disk.
 
-The design rule is **"what would IBM and Microsoft have done in 1988 if the PC had
-shipped with an ARM?"** Keep every PC/DOS interface that makes sense (I/O port
+Every design decision comes back to one question: **what would IBM and Microsoft
+have done in 1988 if the PC had shipped with an ARM?** The working answer: keep
+every PC/DOS interface that makes sense (I/O port
 numbers, the interrupt-vector table at address 0, the BIOS data area at 0x400,
 the text buffer at 0xB8000, INT 21h function numbers, PSPs, MCBs, FAT, the EXE
 "MZ" signature) and change only what the CPU forces to change (registers, the
