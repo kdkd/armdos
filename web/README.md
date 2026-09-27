@@ -229,9 +229,12 @@ releases, so browsers and the service worker keep them.
   so every URL there is immutable and any cache (browser, CDN, service worker) may keep it
   forever. Disk images carry their hash in the file name (`images/rom.bin.<hash>.gz`,
   C: chunks `images/c/<hash>.gz`), the manual's stylesheet and pictures too. No URL has a
-  query string (some CDN configurations won't cache those). Only `index.html`,
-  `manifest.webmanifest`, `images.json`, `disks.json` and the manual's pages change under
-  the same name. A page therefore runs exactly one release, whatever any cache holds.
+  query string (some CDN configurations won't cache those). `images.json` and `disks.json`
+  are part of the release too, so the page and its disks always come as a pair. Only
+  `index.html` (which names the release), `manifest.webmanifest` and the manual's pages
+  change under the same name; a CDN may cache those briefly too, since whichever
+  `index.html` a visitor gets decides everything else. `sw.js` and top-level copies of
+  `images.json`/`disks.json` are kept for pages from before release directories.
 * **Offline** (`sw-<release>.js`, from web/sw.js): the page registers its release's worker
   (a new name each release, so no cache can hand out an old one; `sw.js` is the same file
   for pages from before release directories). The page itself is network-first (4 s, then
@@ -241,9 +244,8 @@ releases, so browsers and the service worker keep them.
   installed, the new worker takes over when the page running that release asks (no reload
   needed), and not while another ARM-DOS window is open. A worker leaves other releases'
   files to the browser: relaying them would keep it busy, and browsers switch workers only
-  once the old one is idle. `images.json`/`disks.json` are network-first; disk images are
-  cache-first in `armdos-data`, pruned to what the current manifests name. `?nosw` skips
-  it all. `web/tests/test_sw_update.py` covers updates, failures and the switch-over.
+  once the old one is idle. Disk images are cache-first in `armdos-data`, pruned to what
+  the installed release's manifests name. `?nosw` skips it all. `web/tests/test_sw_update.py` covers updates, failures and the switch-over.
 
 ## Full screen, the POST seek, your own ISO
 

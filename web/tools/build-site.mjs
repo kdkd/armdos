@@ -6,10 +6,10 @@
 // * stages css, js, fonts, icons and the emulator into r/<release id>/ (below), and web/docs (the manual) to docs/
 // * copies the emulator (emu/*.mjs, emu/dev/*.mjs) to site/emu/*.js, rewriting
 //   the relative imports, so no web server needs to know the .mjs MIME type
-// * gzips rom.bin / hd.img / floppy images into site/images/*.gz (the page
-//   inflates them with DecompressionStream) and writes site/images.json with
+// * gzips rom.bin / hd.img / floppy images into site/images/*.<hash>.gz (the page
+//   inflates them with DecompressionStream) and writes images.json, into the release, with
 //   sizes and content hashes (the hash keys the hard disk's saved sectors)
-// * turns web/disks.json into site/disks.json (entries whose image does not
+// * turns web/disks.json into the release's disks.json (entries whose image does not
 //   exist yet are kept, marked "missing", so the disk box shows them as blanks)
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync, rmSync, copyFileSync, renameSync } from 'node:fs';
 import { join, dirname, basename, relative, resolve } from 'node:path';
@@ -75,21 +75,6 @@ for (const f of ['vga8x16.bin', 'cga8x8.bin', 'mda9x14.bin', 'README.md']) copyF
 const pageHtml = readFileSync(join(WEB, 'index.html'), 'utf8').replace(/\b(href|src)="(css|js|icons|assets|fonts)\//g, '$1="r/@R@/$2/');
 const manifest = readFileSync(join(WEB, 'manifest.webmanifest'), 'utf8').replace(/"src": "icons\//g, '"src": "r/@R@/icons/');
 const swTemplate = readFileSync(join(WEB, 'sw.js'), 'utf8');
-const releaseFiles = [];
-(function walk(d, pre) {
-  for (const n of readdirSync(d).sort()) {
-    const p = join(d, n);
-    if (statSync(p).isDirectory()) walk(p, pre + n + '/'); else releaseFiles.push([pre + n, readFileSync(p)]);
-  }
-})(STAGE, '');
-const RELEASE = (() => {
-  const h = createHash('sha256').update(pageHtml).update(manifest).update(swTemplate);
-  for (const [f, b] of releaseFiles) h.update(f).update(b);
-  return h.digest('hex').slice(0, 12);
-})();
-renameSync(STAGE, join(OUT, 'r', RELEASE));
-writeFileSync(join(OUT, 'index.html'), pageHtml.replaceAll('@R@', RELEASE));
-writeFileSync(join(OUT, 'manifest.webmanifest'), manifest.replaceAll('@R@', RELEASE));
 
 // ---- the manual (web/docs, plain HTML), linked from the page's header: its stylesheet and pictures
 // get their hash in the name, so a cached copy can never be the wrong one for the page
@@ -144,7 +129,6 @@ const need = (p) => { if (!existsSync(p)) { console.error(`build-site: missing $
 const images = {
   rom: stageImage(need(join(BUILD, 'rom.bin'))),
   hd: stageChunked(need(join(BUILD, 'hd.img'))),
-  built: new Date().toISOString(),
 };
 // the ARM Pit BBS's hard disk (docs/MODEM.md; built by apps/bbs), booted in a worker on demand
 if (existsSync(join(BUILD, 'bbs.img'))) images.bbs = stageImage(join(BUILD, 'bbs.img'));
@@ -184,7 +168,8 @@ for (const id of ['sampler93']) {
   }
   images.cdroms.push(disc);
 }
-writeFileSync(join(OUT, 'images.json'), JSON.stringify(images, null, 1) + '\n');
+// (in the release: the page and its disks can only ever come as a pair - index.html alone decides both)
+writeFileSync(join(STAGE, 'images.json'), JSON.stringify(images, null, 1) + '\n');
 
 // ---- the disk box
 const box = JSON.parse(readFileSync(join(WEB, 'disks.json'), 'utf8'));
@@ -199,7 +184,26 @@ for (const d of box.disks) {
     d.missing = true; delete d.file;
   }
 }
-writeFileSync(join(OUT, 'disks.json'), JSON.stringify(box, null, 1) + '\n');
+writeFileSync(join(STAGE, 'disks.json'), JSON.stringify(box, null, 1) + '\n');
+
+// ---- the release id: a hash of the whole release directory and of index.html, the manifest and sw.js
+const releaseFiles = [];
+(function walk(d, pre) {
+  for (const n of readdirSync(d).sort()) {
+    const p = join(d, n);
+    if (statSync(p).isDirectory()) walk(p, pre + n + '/'); else releaseFiles.push([pre + n, readFileSync(p)]);
+  }
+})(STAGE, '');
+const RELEASE = (() => {
+  const h = createHash('sha256').update(pageHtml).update(manifest).update(swTemplate);
+  for (const [f, b] of releaseFiles) h.update(f).update(b);
+  return h.digest('hex').slice(0, 12);
+})();
+renameSync(STAGE, join(OUT, 'r', RELEASE));
+// (copies at the top, read by pages from before release directories)
+for (const f of ['images.json', 'disks.json']) copyFileSync(join(OUT, 'r', RELEASE, f), join(OUT, f));
+writeFileSync(join(OUT, 'index.html'), pageHtml.replaceAll('@R@', RELEASE));
+writeFileSync(join(OUT, 'manifest.webmanifest'), manifest.replaceAll('@R@', RELEASE));
 
 // ---- the service worker: sw-<release>.js, which the page registers - a new name for every release,
 // so like everything under r/ it never changes and any cache may keep it - plus the same as sw.js
@@ -208,7 +212,6 @@ writeFileSync(join(OUT, 'disks.json'), JSON.stringify(box, null, 1) + '\n');
 {
   const shell = [['index.html', sha(readFileSync(join(OUT, 'index.html')))]];
   for (const [f, b] of releaseFiles) if (!/\.(md|txt)$/.test(f)) shell.push([`r/${RELEASE}/${f}`, sha(b)]);
-  shell.push(['images.json', null], ['disks.json', null]);       // (for launching offline; the page reads them network-first)
   const sw = swTemplate.replace("'__BUILD__'", JSON.stringify(RELEASE)).replace('__SHELL__', JSON.stringify(shell));
   writeFileSync(join(OUT, `sw-${RELEASE}.js`), sw);
   writeFileSync(join(OUT, 'sw.js'), sw);

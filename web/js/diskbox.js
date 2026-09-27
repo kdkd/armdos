@@ -39,7 +39,7 @@ export class DiskBox {
 
   async load() {
     let manifest = { disks: [] };
-    try { manifest = await (await fetch('disks.json', { cache: 'no-cache' })).json(); } catch (e) { console.warn('disks.json', e); }
+    try { manifest = await (await fetch(new URL('../disks.json', import.meta.url))).json(); } catch (e) { console.warn('disks.json', e); }
     this.disks = manifest.disks.map((d) => ({ ...d, data: null, modified: false }));
     this.render();
   }

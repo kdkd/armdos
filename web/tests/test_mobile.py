@@ -176,18 +176,6 @@ def main():
             ctx.set_offline(True)
             check('sw: launches and boots offline', boot(pg, url2))
             ctx.set_offline(False)
-            # new data: the ROM under a new name (same bytes); a new app release is test_sw_update.py's job
-            img = json.load(open(os.path.join(site, 'images.json')))
-            old_rom = img['rom']['file']
-            img['rom']['file'] = 'images/rom.bin.newrelease.gz'
-            shutil.copy(os.path.join(site, old_rom), os.path.join(site, img['rom']['file']))
-            json.dump(img, open(os.path.join(site, 'images.json'), 'w'))
-            pg.goto(url2)
-            check('sw: images.json is never stale (network-first)', pg.evaluate("fetch('images.json', {cache: 'no-cache'}).then(r => r.json()).then(j => j.rom.file.endsWith('newrelease.gz'))"))
-            check('sw: boots the new release', boot(pg, url2))
-            check('sw: old disk image dropped from the cache, new one cached',
-                  wait_for(pg, f"caches.open('armdos-data').then(c => c.keys()).then(ks => {{ const u = ks.map(r => r.url); return u.some(x => x.endsWith('newrelease.gz')) && !u.includes(new URL({json.dumps(hd)}, location.href).href); }})", 20),
-                  pg.evaluate("caches.open('armdos-data').then(c => c.keys()).then(ks => ks.map(r => r.url.split('/').pop()))"))
             ctx.close(); b.close()
             srv2.shutdown()
             shutil.rmtree(tmp, ignore_errors=True)

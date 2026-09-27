@@ -2,10 +2,10 @@
 // downloaded once per release.
 //
 //   index.html (the page)                              network-first (a few seconds), else this release's copy
-//   r/<release>/ (css, js, emulator, fonts, icons)     cache "armdos-app-<release>", precached; immutable URLs
-//   images.json, disks.json                            network-first (never stale), cached copy offline
-//   images/*.<hash>.gz, images/c/<hash>.gz (C: chunks)  cache "armdos-data", cache-first by URL; entries that the
-//                                                      current images.json/disks.json no longer name are deleted
+//   r/<release>/ (css, js, emulator, fonts, icons,     cache "armdos-app-<release>", precached; immutable URLs
+//     images.json, disks.json)
+//   images/*.<hash>.gz, images/c/<hash>.gz (C: chunks)  cache "armdos-data", cache-first by URL; entries that this
+//                                                      release's images.json/disks.json don't name are deleted
 //
 // Every release lives in its own directory (web/tools/build-site.mjs), so a page loads one release's
 // files and nothing else, whatever any cache holds. The worker installs a release all or nothing:
@@ -19,7 +19,7 @@ const BUILD = '__BUILD__';
 const SHELL = __SHELL__;      // [path, the first hex digits of its SHA-256; null: optional, unchecked]
 const SHELL_CACHE = 'armdos-app-' + BUILD;
 const DATA_CACHE = 'armdos-data';
-const MANIFESTS = ['images.json', 'disks.json'];
+const MANIFESTS = [`r/${BUILD}/images.json`, `r/${BUILD}/disks.json`];
 
 const here = (p) => new URL(p, self.registration.scope).href;
 const relOf = (u) => { const s = self.registration.scope; return u.startsWith(s) ? u.slice(s.length).split(/[?#]/)[0] : null; };
@@ -94,13 +94,13 @@ self.addEventListener('activate', (e) => {
   })());
 });
 
-/** Drop cached images that the current manifests no longer reference. */
-async function prune(fresh) {
+/** Drop cached images that this release's manifests don't name. */
+async function prune() {
   try {
     const want = new Set();
     for (const m of MANIFESTS) {
-      const r = fresh?.[m] || await fetch(here(m), { cache: 'no-store' });
-      if (!r.ok) return;
+      const r = await caches.match(here(m), { cacheName: SHELL_CACHE });
+      if (!r) return;
       const j = await r.json();
       const walk = (o) => {
         if (!o || typeof o !== 'object') return;
@@ -121,7 +121,6 @@ self.addEventListener('fetch', (e) => {
   if (url.origin !== location.origin) return;
   const rel = relOf(req.url);
 
-  if (rel !== null && MANIFESTS.includes(rel)) { e.respondWith(networkFirst(req, rel)); return; }
   if (rel !== null && rel.startsWith('images/')) { e.respondWith(cacheFirst(req)); return; }
   // the page itself (the site root or index.html); other pages in scope (docs/) are ordinary files
   if (req.mode === 'navigate' && (rel === '' || rel === 'index.html')) { e.respondWith(page(req)); return; }
@@ -146,20 +145,6 @@ async function page(req) {
   }
 }
 
-// (Reads go through caches.match and writes check caches.has: caches.open would re-create this
-// release's cache after a newer release has deleted it, from a fetch still in flight here.)
-async function networkFirst(req, rel) {
-  try {
-    const r = await fetch(req, { cache: 'no-store' });
-    if (r.ok) {
-      if (await caches.has(SHELL_CACHE)) await (await caches.open(SHELL_CACHE)).put(here(rel), r.clone());
-      if (rel === 'images.json') prune({ [rel]: r.clone() });
-    }
-    return r;
-  } catch {
-    return (await caches.match(here(rel), { cacheName: SHELL_CACHE })) || Response.error();
-  }
-}
 async function cacheFirst(req) {
   const hit = await caches.match(req, { cacheName: DATA_CACHE, ignoreVary: true });
   if (hit) return hit;

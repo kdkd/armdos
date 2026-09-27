@@ -174,7 +174,7 @@ function blink(id, ms = 90) { led(id, true); clearTimeout(blinkTimers[id]); blin
 const vgaFont = fetch(new URL('../emu/fonts/vga8x16.bin', import.meta.url)).then((r) => r.arrayBuffer()).then((b) => (state.vgaFont = new Uint8Array(b)));
 const loading = (async () => {
   await swEarly;
-  const images = await (await fetch('images.json', { cache: 'no-cache' })).json();
+  const images = await (await fetch(new URL('../images.json', import.meta.url))).json();     // (this release's: r/<id>/images.json)
   state.images = images;
   cd.load(images);
   gm.setImages(images);

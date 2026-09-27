@@ -8,7 +8,7 @@ directories (r/<release>/, sw-<release>.js; web/tools/build-site.mjs):
  2. a site half way through an upload (a file still the old one) fails the install the same
     way (every shell file is hash-checked), and the next try fetches only what was missing;
  3. once it is all there, the new release takes over without a reload, and the old release's
-    cache goes; it then launches offline;
+    cache goes, as do disk images only the old release named; it then launches offline;
  4. nothing changes under a running machine: a release published meanwhile arrives with the
     next page load;
  5. with a second ARM-DOS window open on an older release, the new one waits for it to close;
@@ -19,7 +19,7 @@ directories (r/<release>/, sw-<release>.js; web/tools/build-site.mjs):
 
 usage: python3 web/tests/test_sw_update.py [chromium|firefox ...]   (after ./build.sh; default both)
 """
-import hashlib, os, re, shutil, socket, sys, tempfile, threading, time
+import hashlib, json, os, re, shutil, socket, sys, tempfile, threading, time
 sys.path.insert(0, os.path.dirname(__file__))
 import serve
 from playwright.sync_api import sync_playwright
@@ -78,7 +78,7 @@ def run(p, name):
     util_a = open(os.path.join(site, 'r', first, 'js', 'util.js'), 'rb').read()
     sha = lambda b: hashlib.sha256(b).hexdigest()[:16]
 
-    def release(tag, util=None, keep_old=False):
+    def release(tag, util=None, keep_old=False, new_rom=False):
         """Publish a new release the way build-site.mjs does: a new r/<id>/ (util.js with a marker),
         index.html pointing at it, sw-<id>.js (and sw.js) listing it. The old directory and worker
         go, as an rsync --delete would take them, unless keep_old."""
@@ -86,11 +86,18 @@ def run(p, name):
         shutil.copytree(os.path.join(site, 'r', old), os.path.join(site, 'r', new))
         body = util_a + f"\nexport const RELEASE = '{tag}';\n".encode()
         open(os.path.join(site, 'r', new, 'js', 'util.js'), 'wb').write(util if util is not None else body)
+        if new_rom:          # new data too: the ROM under a new name (same bytes), in this release's images.json
+            ij = os.path.join(site, 'r', new, 'images.json')
+            img = json.load(open(ij)); rom = img['rom']['file']
+            img['rom']['file'] = f'images/rom.bin.{tag}.gz'
+            shutil.copy(os.path.join(site, rom), os.path.join(site, img['rom']['file']))
+            open(ij, 'w').write(json.dumps(img))
         html = open(idx).read().replace(old, new)
         open(idx, 'w').write(html)
         sw = open(os.path.join(site, f'sw-{old}.js')).read().replace(old, new)
         sw = re.sub(r'\["r/%s/js/util\.js","[0-9a-f]+"\]' % new, f'["r/{new}/js/util.js","{sha(body)}"]', sw)
         sw = re.sub(r'\["index\.html","[0-9a-f]+"\]', f'["index.html","{sha(html.encode())}"]', sw)
+        sw = re.sub(r'\["r/%s/images\.json","[0-9a-f]+"\]' % new, lambda m: f'["r/{new}/images.json","{sha(open(os.path.join(site, "r", new, "images.json"), "rb").read())}"]', sw)
         open(os.path.join(site, f'sw-{new}.js'), 'w').write(sw)
         open(os.path.join(site, 'sw.js'), 'w').write(sw)
         if not keep_old: shutil.rmtree(os.path.join(site, 'r', old)); os.remove(os.path.join(site, f'sw-{old}.js'))
@@ -121,7 +128,8 @@ def run(p, name):
         check('A: installed and in control', wait_for(pg, f"{ACTIVE} === '{first}'", 10) and wait_for(pg, f"caches.has('armdos-app-{first}')", 10), pg.evaluate(CACHES))
 
         # ============ 1. release B, its download for offline use cut off part way
-        rb, util_b = release('B')
+        rom_a = json.load(open(os.path.join(site, 'r', first, 'images.json')))['rom']['file']
+        rb, util_b = release('B', new_rom=True)
         Handler.fail = {f'r/{rb}/js/util.js': 'cut'}
         warnings.clear(); navs.clear()
         pg.goto(url)
@@ -151,6 +159,9 @@ def run(p, name):
         navs.clear()
         pg.goto(url)
         check('complete: B takes over without a reload', wait_for(pg, f"{ACTIVE} === '{rb}'", 15) and len(navs) == 1 and pg.evaluate(RUNNING) == rb, [pg.evaluate(ACTIVE), navs])
+        check("complete: the ROM B's images.json no longer names is dropped from the cache, B's is there",
+              wait_for(pg, f"caches.open('armdos-data').then(c => c.keys()).then(k => k.map(r => r.url)).then(u => u.some(x => x.endsWith('rom.bin.B.gz')) && !u.some(x => x.endsWith('{rom_a}')))", 15),
+              pg.evaluate("caches.open('armdos-data').then(c => c.keys()).then(k => k.map(r => r.url.split('/').pop()))"))
         check("complete: A's cache deleted", wait_for(pg, f"caches.keys().then(k => k.includes('armdos-app-{rb}') && !k.includes('armdos-app-{first}'))", 10), pg.evaluate(CACHES))
         Handler.down = True
         pg.reload()
