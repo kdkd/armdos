@@ -224,17 +224,26 @@ releases, so browsers and the service worker keep them.
   sides like a handheld). Safe-area insets are padded.
 * **Installable**: `manifest.webmanifest` (standalone, start_url `./?app`), icons drawn
   by `tools/icons.mjs` (180 apple-touch, 192, 512, 512 maskable), iOS web-app meta tags.
-* **Offline** (`sw.js`): app shell cache-first under `armdos-app-<build id>` (the id is a
-  hash of every shell file, so any change ships a new worker, which deletes old shells);
-  `images.json`/`disks.json` network-first; disk images cache-first in `armdos-data` by
-  their `?v=<hash>` URL, pruned to what the current manifests name. `?nosw` skips it.
-  A new release installs all or nothing: `sw.js` lists every shell file with its hash, and
-  one that fails to arrive or doesn't match (a site half way through an upload) fails the
-  install, so the old release keeps running; the next try fetches only what is missing. It
-  then waits: the page, as it starts, checks for it (`reg.update()`, up to 4 s), lets it
-  finish (up to 20 s, "Updating ARM-DOS" on the screen if the power is already on), asks
-  it to take over and reloads once. Never under a running machine, and not while another
-  ARM-DOS window is open. `web/tests/test_sw_update.py` interrupts an update.
+* **Releases and caching** (web/tools/build-site.mjs): everything the page loads (css, js,
+  the emulator, fonts, icons) is staged into `r/<release id>/`, the id a hash of all of it,
+  so every URL there is immutable and any cache (browser, CDN, service worker) may keep it
+  forever. Disk images carry their hash in the file name (`images/rom.bin.<hash>.gz`,
+  C: chunks `images/c/<hash>.gz`), the manual's stylesheet and pictures too. No URL has a
+  query string (some CDN configurations won't cache those). Only `index.html`,
+  `manifest.webmanifest`, `images.json`, `disks.json` and the manual's pages change under
+  the same name. A page therefore runs exactly one release, whatever any cache holds.
+* **Offline** (`sw-<release>.js`, from web/sw.js): the page registers its release's worker
+  (a new name each release, so no cache can hand out an old one; `sw.js` is the same file
+  for pages from before release directories). The page itself is network-first (4 s, then
+  the installed release's copy); `r/<release>/` is precached under `armdos-app-<release>`,
+  all or nothing: every file is hash-checked, and a failed attempt (cut off, or a site half
+  way through an upload) leaves the old release installed and resumes next time. Once
+  installed, the new worker takes over when the page running that release asks (no reload
+  needed), and not while another ARM-DOS window is open. A worker leaves other releases'
+  files to the browser: relaying them would keep it busy, and browsers switch workers only
+  once the old one is idle. `images.json`/`disks.json` are network-first; disk images are
+  cache-first in `armdos-data`, pruned to what the current manifests name. `?nosw` skips
+  it all. `web/tests/test_sw_update.py` covers updates, failures and the switch-over.
 
 ## Full screen, the POST seek, your own ISO
 

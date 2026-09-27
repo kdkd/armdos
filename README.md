@@ -8,12 +8,12 @@
 
 <table>
 <tr>
-<td><img src="docs/screenshots/doom.jpg" alt="DOOM on the ARM PC's colour monitor"><br><sub>DOOM, compiled for ARM, driving the VGA, timer and Sound Blaster the DOS way</sub></td>
-<td><img src="docs/screenshots/dosshell.jpg" alt="The DOS 4.00 Shell"><br><sub>DOSSHELL, re-created from the real DOS 4.00 Shell's screens</sub></td>
+<td valign="top" width="50%"><img src="docs/screenshots/doom.jpg" alt="DOOM on the ARM PC's colour monitor"><br><sub>DOOM, compiled for ARM, driving the VGA, timer and Sound Blaster the DOS way</sub></td>
+<td valign="top" width="50%"><img src="docs/screenshots/dosshell.jpg" alt="The DOS 4.00 Shell"><br><sub>DOSSHELL, re-created from the real DOS 4.00 Shell's screens</sub></td>
 </tr>
 <tr>
-<td><img src="docs/screenshots/second-reality.jpg" alt="Future Crew's Second Reality title picture"><br><sub>Second Reality (1993), unmodified x86 code, translated to ARM live by ELBOW</sub></td>
-<td><img src="docs/screenshots/gem.jpg" alt="The GEM desktop in 640x480 colour"><br><sub>Digital Research's GEM/3, compiled natively for the ARM</sub></td>
+<td valign="top" width="50%"><img src="docs/screenshots/second-reality.jpg" alt="Future Crew's Second Reality title picture"><br><sub>Second Reality (1993), unmodified x86 code, translated to ARM live by ELBOW</sub></td>
+<td valign="top" width="50%"><img src="docs/screenshots/gem.jpg" alt="The GEM desktop in 640x480 colour"><br><sub>Digital Research's GEM/3, compiled natively for the ARM</sub></td>
 </tr>
 </table>
 

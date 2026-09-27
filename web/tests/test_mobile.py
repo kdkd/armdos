@@ -154,7 +154,7 @@ def main():
             pg.goto(url + '?nosw')
             man = pg.evaluate("fetch(document.querySelector('link[rel=manifest]').href).then(r => r.json())")
             check('manifest: names, display, icons', man['short_name'] == 'ARM-DOS' and man['display'] == 'standalone' and {'192x192', '512x512'} <= {i['sizes'] for i in man['icons']} and any(i.get('purpose') == 'maskable' for i in man['icons']))
-            sizes = pg.evaluate("""Promise.all(['icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png'].map(u => new Promise(r => { const i = new Image(); i.onload = () => r(i.naturalWidth); i.onerror = () => r(0); i.src = u; })))""")
+            sizes = pg.evaluate("""Promise.all(['apple-touch-icon.png','icon-192.png','icon-512.png','icon-maskable-512.png'].map((n) => document.querySelector('link[rel=manifest]').href.replace(/manifest\.webmanifest$/, '') + document.querySelector('link[rel=icon]').getAttribute('href').replace(/[^/]+$/, n)).map(u => new Promise(r => { const i = new Image(); i.onload = () => r(i.naturalWidth); i.onerror = () => r(0); i.src = u; })))""")
             check('icons decode at 180/192/512/512', sizes == [180, 192, 512, 512], sizes)
             check('iOS web-app meta tags', pg.evaluate("!!document.querySelector('meta[name=apple-mobile-web-app-capable][content=yes]') && document.querySelector('meta[name=apple-mobile-web-app-status-bar-style]').content === 'black-translucent'"))
             ctx.close()
@@ -173,26 +173,20 @@ def main():
             check('sw: first launch boots', boot(pg, url2))
             hd = json.load(open(os.path.join(site, 'images.json')))['rom']['file']
             check('sw: disk image cached', wait_for(pg, f"caches.open('armdos-data').then(c => c.match(new URL({json.dumps(hd)}, location.href).href)).then(r => !!r)", 15))
-            build1 = re.search(r'const BUILD = "(\w+)"', open(os.path.join(site, 'sw.js')).read()).group(1)
             ctx.set_offline(True)
             check('sw: launches and boots offline', boot(pg, url2))
             ctx.set_offline(False)
-            # a new release: new shell build id, a new hard disk URL (the file itself unchanged)
-            sw = open(os.path.join(site, 'sw.js')).read().replace(build1, build1[:-4] + 'beef')
-            open(os.path.join(site, 'sw.js'), 'w').write(sw)
+            # new data: the ROM under a new name (same bytes); a new app release is test_sw_update.py's job
             img = json.load(open(os.path.join(site, 'images.json')))
-            img['rom']['file'] = img['rom']['file'].split('?')[0] + '?v=newrelease'
+            old_rom = img['rom']['file']
+            img['rom']['file'] = 'images/rom.bin.newrelease.gz'
+            shutil.copy(os.path.join(site, old_rom), os.path.join(site, img['rom']['file']))
             json.dump(img, open(os.path.join(site, 'images.json'), 'w'))
             pg.goto(url2)
-            # (the page reloads itself into the new release, then loads: armdos.rom)
-            check('sw: new release installs a new shell cache and drops the old one',
-                  wait_for(pg, f"!!(window.armdos && armdos.rom) && caches.keys().then(k => k.includes('armdos-app-{build1[:-4]}beef') && !k.includes('armdos-app-{build1}'))", 40),
-                  safe_eval(pg, "caches.keys()"))
-            pg.goto(url2)
-            check('sw: images.json is never stale (network-first)', pg.evaluate("fetch('images.json', {cache: 'no-cache'}).then(r => r.json()).then(j => j.rom.file.endsWith('newrelease'))"))
+            check('sw: images.json is never stale (network-first)', pg.evaluate("fetch('images.json', {cache: 'no-cache'}).then(r => r.json()).then(j => j.rom.file.endsWith('newrelease.gz'))"))
             check('sw: boots the new release', boot(pg, url2))
             check('sw: old disk image dropped from the cache, new one cached',
-                  wait_for(pg, f"caches.open('armdos-data').then(c => c.keys()).then(ks => {{ const u = ks.map(r => r.url); return u.some(x => x.endsWith('newrelease')) && !u.includes(new URL({json.dumps(hd)}, location.href).href); }})", 20),
+                  wait_for(pg, f"caches.open('armdos-data').then(c => c.keys()).then(ks => {{ const u = ks.map(r => r.url); return u.some(x => x.endsWith('newrelease.gz')) && !u.includes(new URL({json.dumps(hd)}, location.href).href); }})", 20),
                   pg.evaluate("caches.open('armdos-data').then(c => c.keys()).then(ks => ks.map(r => r.url.split('/').pop()))"))
             ctx.close(); b.close()
             srv2.shutdown()

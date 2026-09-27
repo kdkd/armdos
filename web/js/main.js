@@ -108,45 +108,60 @@ box.mount($('case'));
 state.box = box;
 line.onSpeed = () => box.external();
 
-// the offline cache (web/sw.js): the app shell plus the hash-versioned disk images. A new release
-// downloads in the background, all or nothing, then waits; it takes over only here, as the page
-// starts and before the machine has loaded anything, so a reload is enough to update (the page
-// reloads itself once into the new release) and a running machine never sees two releases mixed.
-const swStart = (async () => {
-  if (!('serviceWorker' in navigator) || q.has('nosw') || location.protocol === 'file:') return;
-  const sw = navigator.serviceWorker;
-  const reg = sw.register('sw.js', { updateViaCache: 'none' });
+// the offline cache (web/sw.js). This page's files all come from one release directory, r/<id>/
+// (web/tools/build-site.mjs), and each release has its own service worker, sw-<id>.js: registering
+// it is what brings a new release in. It installs in the background, all or nothing, and then takes
+// over from the old one - nothing to reload, this page already runs the release it caches.
+const RELEASE = (import.meta.url.match(/\/r\/([0-9a-f]{6,})\//) || [])[1] || null;
+// Ask a worker to take over; resolves once it has (or after `ms`) with its answer.
+async function swTakeover(sw, w, ms) {
   const before = sw.controller;
-  if (!before) { reg.catch((e) => console.warn('service worker', e)); return; }    // a first visit: this page came from the network
-  const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+  const answer = await new Promise((res) => {
+    const ch = new MessageChannel(); ch.port1.onmessage = (e) => res(e.data); w.postMessage({ takeover: RELEASE }, [ch.port2]);
+    setTimeout(() => res('no answer'), Math.min(ms, 5000));
+  });
+  if (answer === 'ok' && w.state !== 'installing')
+    await new Promise((res) => { if (sw.controller !== before) res(); else { sw.addEventListener('controllerchange', res, { once: true }); setTimeout(res, ms); } });
+  return answer;
+}
+const swUsable = !!RELEASE && 'serviceWorker' in navigator && !q.has('nosw') && location.protocol !== 'file:';
+// A release already installed and waiting (another ARM-DOS window was open then) switches now,
+// before this page has loaded anything through the old worker: Chrome switches only once the old
+// worker is idle, and meanwhile holds up page loads. Loading waits for this (at most 3 s).
+const swEarly = (async () => {
+  if (!swUsable) return;
   try {
-    const r = await reg;
-    if (!r.installing && !r.waiting) await Promise.race([r.update().catch(() => {}), sleep(4000)]);   // (offline: fails at once)
-    const w = r.installing || r.waiting;
-    if (!w) return;
-    sw.startMessages();
-    sw.addEventListener('message', (e) => { if (e.data?.armdosUpdate) state.updating = e.data.armdosUpdate; });
-    state.updating = state.updating || { done: 0, total: 0 };
-    const got = await Promise.race([new Promise((res) => {
-      const settled = () => { if (w.state !== 'installing') { w.removeEventListener('statechange', settled); res(w.state === 'redundant' ? 'failed' : 'ready'); } };
-      w.addEventListener('statechange', settled); settled();
-    }), sleep(20000).then(() => 'slow')]);
-    if (got === 'failed') console.warn('ARM-DOS: the new release did not arrive complete; running the one already here');
-    if (got !== 'ready') return;            // (a slow one goes on downloading and takes over next time)
-    if (w.state === 'installed') {
-      const answer = await Promise.race([new Promise((res) => {
-        const ch = new MessageChannel(); ch.port1.onmessage = (e) => res(e.data); w.postMessage('takeover', [ch.port2]);
-      }), sleep(3000)]);
-      if (answer !== 'ok') return;          // another ARM-DOS window is open: the new release waits for it to close
+    const sw = navigator.serviceWorker, known = await sw.getRegistration();
+    if (sw.controller && known?.waiting?.scriptURL.endsWith(`/sw-${RELEASE}.js`)) await swTakeover(sw, known.waiting, 3000);
+  } catch (e) { console.warn('service worker', e); }
+})();
+const swStart = (async () => {
+  if (!swUsable) return;
+  await swEarly;
+  const sw = navigator.serviceWorker;
+  try {
+    const reg = await sw.register(`sw-${RELEASE}.js`, { updateViaCache: 'none' });
+    const before = sw.controller;
+    if (!before) return;                   // a first visit: the worker takes over by itself
+    if ((reg.active?.scriptURL || '').endsWith(`/sw-${RELEASE}.js`)) return;      // this release is the one installed
+    // Ask the new worker at once, while it is installing: it then switches as its install ends
+    // (web/sw.js), the way browsers do reliably. Ask again if the browser installs a second copy.
+    for (let tries = 0; tries < 4 && sw.controller === before; tries++) {
+      const w = reg.installing || reg.waiting || await new Promise((res) => {
+        reg.addEventListener('updatefound', () => res(reg.installing), { once: true });
+        setTimeout(() => res(reg.installing || reg.waiting), 15000);
+      });
+      if (!w) return;
+      const answer = await swTakeover(sw, w, 3000);
+      if (answer !== 'ok' && answer !== 'no answer') { console.info(`ARM-DOS: release ${RELEASE} is ready offline once the other ARM-DOS windows are closed (${answer})`); return; }
+      const ok = await new Promise((res) => {
+        const settled = () => { if (w.state !== 'installing') { w.removeEventListener('statechange', settled); res(w.state !== 'redundant'); } };
+        w.addEventListener('statechange', settled); settled();
+      });
+      if (!ok && !(reg.installing || reg.waiting)) { console.warn('ARM-DOS: this release did not download completely for offline use; the next visit tries again'); return; }
+      await new Promise((res) => { if (sw.controller !== before) res(); else { sw.addEventListener('controllerchange', res, { once: true }); setTimeout(res, 3000); } });
     }
-    await Promise.race([new Promise((res) => { if (sw.controller !== before) res(); else sw.addEventListener('controllerchange', res, { once: true }); }), sleep(5000)]);
-    try {                                   // (once a minute at most, whatever goes wrong)
-      if (Date.now() - (+sessionStorage.getItem('armdos-updated') || 0) < 60000) return;
-      sessionStorage.setItem('armdos-updated', String(Date.now()));
-    } catch { return; }
-    location.reload();
-    await new Promise(() => {});            // (the page is going away)
-  } catch (e) { console.warn('service worker', e); } finally { state.updating = null; }
+  } catch (e) { console.warn('service worker', e); }
 })();
 
 // ------------------------------------------------------------------ LEDs
@@ -156,9 +171,9 @@ const blinkTimers = {};
 function blink(id, ms = 90) { led(id, true); clearTimeout(blinkTimers[id]); blinkTimers[id] = setTimeout(() => led(id, false), ms); }
 
 // ------------------------------------------------------------------ loading (in the background after first paint)
-const vgaFont = fetch('emu/fonts/vga8x16.bin').then((r) => r.arrayBuffer()).then((b) => (state.vgaFont = new Uint8Array(b)));
+const vgaFont = fetch(new URL('../emu/fonts/vga8x16.bin', import.meta.url)).then((r) => r.arrayBuffer()).then((b) => (state.vgaFont = new Uint8Array(b)));
 const loading = (async () => {
-  await swStart;
+  await swEarly;
   const images = await (await fetch('images.json', { cache: 'no-cache' })).json();
   state.images = images;
   cd.load(images);
@@ -296,8 +311,7 @@ async function powerOn() {
   const splash = setInterval(() => {
     if (!state.vgaFont) return;
     const dots = '.'.repeat(1 + (Math.floor((performance.now() - t0) / 300) % 3));
-    const u = state.updating, pct = u?.total ? ` ${Math.floor((100 * u.done) / u.total)}%` : '';
-    display.setImage(textImage(state.vgaFont, ['', '', u ? '  Updating ARM-DOS to the new release' + pct + dots : '  Reading the ROM' + dots], ph ? { fg: ph.text[0], hi: ph.text[1] } : {}));
+    display.setImage(textImage(state.vgaFont, ['', '', '  Reading the ROM' + dots], ph ? { fg: ph.text[0], hi: ph.text[1] } : {}));
   }, 150);
   try { await loading; } catch { /* handled below */ }
   clearInterval(splash);

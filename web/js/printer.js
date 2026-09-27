@@ -83,7 +83,7 @@ export class Printer {
   }
   async loadFont() {
     if (this.font) return;
-    const r = await fetch('emu/fonts/cga8x8.bin');
+    const r = await fetch(new URL('../emu/fonts/cga8x8.bin', import.meta.url));
     this.font = new Uint8Array(await r.arrayBuffer());
   }
   setOnline(on) { $('prOnline').classList.toggle('on', on); }

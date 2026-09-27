@@ -34,7 +34,7 @@ def run(bt, url):
     def block(route):
         blocked['n'] += 1
         route.abort('connectionrefused')
-    page.route('**/images/bbs.img.gz*', block)
+    page.route('**/images/bbs.img.*', block)
     page.goto(url + '?nosw'); page.wait_for_selector('#powerBtn')
     page.click('#powerBtn')
     check(f'{bt.name}: boots', wait_for(page, PROMPT, 90))
@@ -42,7 +42,7 @@ def run(bt, url):
     check(f'{bt.name}: the download fails three times, then the panel says to dial again',
           wait_for(page, f"{STATE}.includes('dial again')", 30), f"{blocked['n']} attempts: " + page.evaluate(STATE))
     check(f'{bt.name}: no BBS worker yet', page.evaluate("!armdos.line.worker"))
-    page.unroute('**/images/bbs.img.gz*')
+    page.unroute('**/images/bbs.img.*')
     page.evaluate("armdos.machine.modem.hangup()"); time.sleep(1)
     page.evaluate("armdos.machine.typeText('ECHO ATDT5551989>COM2\\r')")
     check(f'{bt.name}: the next call starts the BBS after all', wait_for(page, "!!armdos.line.worker", 30), page.evaluate(STATE))

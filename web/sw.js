@@ -1,58 +1,54 @@
-// ARM-DOS service worker: the app launches offline and the disk images are
+// ARM-DOS service worker (sw-<release>.js): the app launches offline and the disk images are
 // downloaded once per release.
 //
-//   app shell (html, css, js, emulator, fonts, icons)  cache "armdos-app-<build>", cache-first;
-//                                                      a new build = a new sw.js = a new cache, old ones deleted
+//   index.html (the page)                              network-first (a few seconds), else this release's copy
+//   r/<release>/ (css, js, emulator, fonts, icons)     cache "armdos-app-<release>", precached; immutable URLs
 //   images.json, disks.json                            network-first (never stale), cached copy offline
-//   images/*.gz?v=<hash>, images/c/<hash>.gz (C: chunks) cache "armdos-data", cache-first by URL; entries that the
+//   images/*.<hash>.gz, images/c/<hash>.gz (C: chunks)  cache "armdos-data", cache-first by URL; entries that the
 //                                                      current images.json/disks.json no longer name are deleted
 //
-// A new release installs all or nothing: every shell file must arrive and match the hash
-// build-site.mjs recorded for it, or the install fails and the release already here keeps
-// running (a later visit tries again, fetching only what is still missing). A complete release
-// then waits: it takes over when the page asks as it starts (web/js/main.js), never under a
-// running machine, which would mix the files of two releases.
-// build-site.mjs fills in BUILD, MODV and SHELL.
+// Every release lives in its own directory (web/tools/build-site.mjs), so a page loads one release's
+// files and nothing else, whatever any cache holds. The worker installs a release all or nothing:
+// every shell file must arrive and match the hash listed for it, or the install fails and the
+// release already here keeps serving offline (a later visit tries again, fetching only what is still
+// missing). A complete release takes over when the page running that same release asks (web/js/main.js),
+// and not while another ARM-DOS window is open on an older one.
+// build-site.mjs fills in BUILD (the release id) and SHELL.
 
 const BUILD = '__BUILD__';
-const MODV = '__MODV__';
 const SHELL = __SHELL__;      // [path, the first hex digits of its SHA-256; null: optional, unchecked]
 const SHELL_CACHE = 'armdos-app-' + BUILD;
 const DATA_CACHE = 'armdos-data';
 const MANIFESTS = ['images.json', 'disks.json'];
 
 const here = (p) => new URL(p, self.registration.scope).href;
-// the URLs a shell file is cached under: modules also as they import each other, index.html also as the site root
-const urls = (p) => [here(p), ...(/^(js|emu)\/.*\.js$/.test(p) ? [here(p + '?v=' + MODV)] : []), ...(p === 'index.html' ? [here('./')] : [])];
-const isApp = (u) => { const s = self.registration.scope; const r = u.startsWith(s) ? u.slice(s.length).split(/[?#]/)[0] : null; return r === '' || r === 'index.html'; };
+const relOf = (u) => { const s = self.registration.scope; return u.startsWith(s) ? u.slice(s.length).split(/[?#]/)[0] : null; };
+const isApp = (u) => { const r = relOf(u); return r === '' || r === 'index.html'; };
 const hex = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join('');
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
-    // (a worker from before this scheme, "armdos-shell-*", never asks a new one to take over: replace it at once, as it did)
+    // (a worker from before release directories never asks a new one to take over: replace it at once, as it did)
     const legacy = (await caches.keys()).some((k) => k.startsWith('armdos-shell-'));
     const c = await caches.open(SHELL_CACHE);
     const bad = [];
-    let done = 0;
-    const tell = async () => {
-      for (const w of await self.clients.matchAll({ type: 'window', includeUncontrolled: true })) w.postMessage({ armdosUpdate: { done, total: SHELL.length } });
-    };
     await Promise.all(SHELL.map(async ([p, sha]) => {
       try {
-        const ks = urls(p);
-        if (!(await Promise.all(ks.map((k) => c.match(k)))).every(Boolean)) {      // (already here from an attempt that failed part way)
+        if (!(await c.match(here(p)))) {                 // (already here from an attempt that failed part way)
           const { buf, type } = await fetchShellFile(p, sha);
-          await Promise.all(ks.map((k) => c.put(k, new Response(buf, { headers: type ? { 'Content-Type': type } : {} }))));
+          await c.put(here(p), new Response(buf, { headers: type ? { 'Content-Type': type } : {} }));
         }
       } catch (err) { if (sha) bad.push(`${p}: ${err.message || err}`); }
-      if (++done % 10 === 0 || done === SHELL.length) tell().catch(() => {});
     }));
     if (bad.length) throw new Error(`ARM-DOS release ${BUILD} incomplete, ${bad.length} of ${SHELL.length} files missing (${bad.slice(0, 3).join('; ')})`);
-    if (legacy) await self.skipWaiting();
+    // (an install resumed from an earlier attempt ends in moments, before the page's request can
+    // arrive: give it a few seconds to - the switch then happens here, the way that works reliably)
+    if (!legacy && !takeoverAsked) await Promise.race([asked, new Promise((res) => setTimeout(res, 3000))]);
+    if (legacy || (takeoverAsked && await alone())) self.skipWaiting();
   })());
 });
 
-/** One shell file, checked against this build's hash (a site half way through an upload fails here). One retry. */
+/** One shell file, checked against this release's hash (a site half way through an upload fails here). One retry. */
 async function fetchShellFile(p, sha) {
   for (let attempt = 0; ; attempt++) {
     try {
@@ -69,17 +65,24 @@ async function fetchShellFile(p, sha) {
   }
 }
 
-// The page, as it starts, asks a waiting release to take over. Not while another ARM-DOS window
-// runs the old one: that window would go on loading files from the new release.
+// A page running this release asks it to take over ({ takeover: <release> }), as soon as it sees
+// it: while it is still installing, the switch then happens as the install ends (the browser does
+// that reliably; asked only once installed, Chrome sometimes never switched, and held up new page
+// loads meanwhile). A page from before release directories asks with 'takeover' once it is
+// installed, and reloads itself afterwards. Not while another ARM-DOS window is open: it may be
+// running an older release, whose files this one would delete.
+let takeoverAsked = false, askedNow;
+const asked = new Promise((res) => { askedNow = res; });
+// (includeUncontrolled: from a waiting worker, Chrome counts only the windows controlled by that worker, none)
+const alone = async () => (await self.clients.matchAll({ type: 'window', includeUncontrolled: true })).filter((w) => isApp(w.url)).length <= 1;
 self.addEventListener('message', (e) => {
-  if (e.data !== 'takeover') return;
-  const port = e.ports[0];
+  const d = e.data, port = e.ports[0];
+  if (d !== 'takeover' && !(d && d.takeover === BUILD)) { if (d && d.takeover) port?.postMessage('other release'); return; }
   e.waitUntil((async () => {
-    // (includeUncontrolled: from a waiting worker, Chrome counts only the windows controlled by that worker, none)
-    const wins = (await self.clients.matchAll({ type: 'window', includeUncontrolled: true })).filter((w) => isApp(w.url));
-    if (wins.length > 1) { port?.postMessage('busy'); return; }
-    await self.skipWaiting();
+    if (!(await alone())) { port?.postMessage('busy'); return; }
+    takeoverAsked = true; askedNow();
     port?.postMessage('ok');
+    if (self.serviceWorker?.state !== 'installing') self.skipWaiting();     // (installing: the install's end does it)
   })());
 });
 
@@ -116,31 +119,40 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
-  const scope = self.registration.scope;
-  const inScope = req.url.startsWith(scope);
-  const rel = inScope ? req.url.slice(scope.length).split('?')[0] : null;
+  const rel = relOf(req.url);
 
   if (rel !== null && MANIFESTS.includes(rel)) { e.respondWith(networkFirst(req, rel)); return; }
-  if (rel !== null && rel.startsWith('images/')) { e.respondWith(cacheFirst(req, DATA_CACHE)); return; }
+  if (rel !== null && rel.startsWith('images/')) { e.respondWith(cacheFirst(req)); return; }
   // the page itself (the site root or index.html); other pages in scope (docs/) are ordinary files
-  if (req.mode === 'navigate' && (rel === '' || rel === 'index.html')) {
-    e.respondWith((async () => (await caches.match(here('./'), { cacheName: SHELL_CACHE })) || (await caches.match(here('index.html'), { cacheName: SHELL_CACHE })) || fetch(req))());
-    return;
-  }
-  e.respondWith(cacheFirst(req, SHELL_CACHE));
+  if (req.mode === 'navigate' && (rel === '' || rel === 'index.html')) { e.respondWith(page(req)); return; }
+  // this release's files from its cache; anything else (a newer release's, the manual's) is left to the
+  // browser: relaying it would keep this worker busy, and the browser switches to a new worker only
+  // once the old one has nothing in flight
+  if (rel === null || !rel.startsWith(`r/${BUILD}/`)) return;
+  e.respondWith((async () => (await caches.match(req, { cacheName: SHELL_CACHE, ignoreSearch: true })) || fetch(req))());
 });
 
-// (Reads go through caches.match and writes check caches.has: caches.open would re-create this
-// release's shell cache after a newer release has deleted it, from a fetch still in flight here.)
-async function store(name, key, r) {
-  if (name === SHELL_CACHE && !(await caches.has(name))) return;
-  await (await caches.open(name)).put(key, r);
+/** The page: the network's (so a new release is seen at once), else - offline, or no answer within
+ *  4 s - this release's copy. */
+async function page(req) {
+  const mine = () => caches.match(here('index.html'), { cacheName: SHELL_CACHE });
+  try {
+    const r = await Promise.race([fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }),
+      new Promise((_, no) => setTimeout(() => no(new Error('no answer')), 4000))]);
+    if (r.ok) return r.redirected ? new Response(r.body, r) : r;     // (a followed redirect can't answer a navigation)
+    return (await mine()) || r;
+  } catch {
+    return (await mine()) || Response.error();
+  }
 }
+
+// (Reads go through caches.match and writes check caches.has: caches.open would re-create this
+// release's cache after a newer release has deleted it, from a fetch still in flight here.)
 async function networkFirst(req, rel) {
   try {
     const r = await fetch(req, { cache: 'no-store' });
     if (r.ok) {
-      await store(SHELL_CACHE, here(rel), r.clone());
+      if (await caches.has(SHELL_CACHE)) await (await caches.open(SHELL_CACHE)).put(here(rel), r.clone());
       if (rel === 'images.json') prune({ [rel]: r.clone() });
     }
     return r;
@@ -148,10 +160,10 @@ async function networkFirst(req, rel) {
     return (await caches.match(here(rel), { cacheName: SHELL_CACHE })) || Response.error();
   }
 }
-async function cacheFirst(req, name) {
-  const hit = await caches.match(req, { cacheName: name, ignoreVary: true });
+async function cacheFirst(req) {
+  const hit = await caches.match(req, { cacheName: DATA_CACHE, ignoreVary: true });
   if (hit) return hit;
   const r = await fetch(req);
-  if (r.ok && r.status === 200) store(name, req, r.clone()).catch(() => {});
+  if (r.ok && r.status === 200) { const copy = r.clone(); caches.open(DATA_CACHE).then((c) => c.put(req, copy)).catch(() => {}); }
   return r;
 }

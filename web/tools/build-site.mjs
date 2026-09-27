@@ -3,7 +3,7 @@
 //
 //   node web/tools/build-site.mjs [--out build/site]
 //
-// * copies web/{index.html,css,js,assets,fonts} as they are, and web/docs (the manual) to docs/
+// * stages css, js, fonts, icons and the emulator into r/<release id>/ (below), and web/docs (the manual) to docs/
 // * copies the emulator (emu/*.mjs, emu/dev/*.mjs) to site/emu/*.js, rewriting
 //   the relative imports, so no web server needs to know the .mjs MIME type
 // * gzips rom.bin / hd.img / floppy images into site/images/*.gz (the page
@@ -11,7 +11,7 @@
 //   sizes and content hashes (the hash keys the hard disk's saved sectors)
 // * turns web/disks.json into site/disks.json (entries whose image does not
 //   exist yet are kept, marked "missing", so the disk box shows them as blanks)
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync, rmSync, copyFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync, rmSync, copyFileSync, renameSync } from 'node:fs';
 import { join, dirname, basename, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
@@ -41,32 +41,19 @@ function copyTree(src, dst, filter = () => true) {
 }
 const sha = (buf) => createHash('sha256').update(buf).digest('hex').slice(0, 16);
 
-// ---- page
-copyFileSync(join(WEB, 'index.html'), join(OUT, 'index.html'));
-for (const dir of ['css', 'js', 'assets', 'fonts']) copyTree(join(WEB, dir), join(OUT, dir));
-// the manual (web/docs, plain HTML), linked from the page's header
-copyTree(join(WEB, 'docs'), join(OUT, 'docs'));
-copyFileSync(join(WEB, 'manifest.webmanifest'), join(OUT, 'manifest.webmanifest'));
-makeIcons(join(OUT, 'icons'), readFileSync(join(ROOT, 'emu', 'fonts', 'vga8x16.bin')));
-
-// ---- module version: every relative module import (and the BBS worker's URL) gets
-// ?v=<hash of the emulator + page sources>, so a page and a Web Worker can never mix modules of
-// two releases out of a heuristic HTTP cache or an old service worker (docs/MODEM.md: the BBS
-// worker once ran last release's modem.js while the page was new). The service worker's shell
-// list carries the same URLs, so offline start still works.
-const MODV = (() => {
-  const h = createHash('sha256');
-  for (const d of [join(ROOT, 'emu'), join(ROOT, 'emu', 'dev'), join(ROOT, 'emu', 'online'), join(WEB, 'js')])
-    for (const n of readdirSync(d).sort()) if (/\.(mjs|js)$/.test(n)) h.update(n).update(readFileSync(join(d, n)));
-  return h.digest('hex').slice(0, 10);
-})();
-const versionImports = (code) => code
-  .replace(/((?:\bfrom|\bimport)\s*\(?\s*['"])(\.{1,2}\/[^'"?]+\.js)(['"])/g, `$1$2?v=${MODV}$3`)
-  .replace(/(new URL\(\s*['"])(\.{1,2}\/[^'"?]+\.js)(['"])/g, `$1$2?v=${MODV}$3`);
-for (const n of readdirSync(join(OUT, 'js'))) if (n.endsWith('.js')) { const f = join(OUT, 'js', n); writeFileSync(f, versionImports(readFileSync(f, 'utf8'))); }
+// ---- the release directory: everything the page loads (css, js, the emulator, fonts, icons) goes
+// under r/<release id>/, the id a hash of all of it (and of index.html, the manifest and sw.js), so
+// every URL there is immutable and any cache - the browser's, a CDN's, the service worker's - may
+// keep it forever. index.html (and the manifest, and the service worker's name) are the only files
+// whose content changes under the same name; they point at the release. The modules import each
+// other relatively, so a page and its Web Workers can only ever load one release's files.
+const STAGE = join(OUT, 'r', 'staging');
+for (const dir of ['css', 'js', 'assets', 'fonts']) copyTree(join(WEB, dir), join(STAGE, dir));
+copyTree(join(WEB, 'fonts'), join(OUT, 'fonts'));         // (the manual's own copy: docs/docs.css)
+makeIcons(join(STAGE, 'icons'), readFileSync(join(ROOT, 'emu', 'fonts', 'vga8x16.bin')));
 
 // ---- emulator modules (.mjs -> .js)
-const emuOut = join(OUT, 'emu');
+const emuOut = join(STAGE, 'emu');
 function copyModules(src, dst) {
   mkdirSync(dst, { recursive: true });
   for (const name of readdirSync(src)) {
@@ -74,7 +61,7 @@ function copyModules(src, dst) {
     const code = readFileSync(join(src, name), 'utf8')
       .replace(/(from\s+['"]\.{1,2}\/[^'"]+)\.mjs(['"])/g, '$1.js$2')
       .replace(/(import\(\s*['"]\.{1,2}\/[^'"]+)\.mjs(['"])/g, '$1.js$2');
-    writeFileSync(join(dst, name.replace(/\.mjs$/, '.js')), versionImports(code));
+    writeFileSync(join(dst, name.replace(/\.mjs$/, '.js')), code);
   }
 }
 copyModules(join(ROOT, 'emu'), emuOut);
@@ -84,16 +71,53 @@ copyFileSync(join(ROOT, 'emu', 'dev', 'OPL3-LICENSE.txt'), join(emuOut, 'dev', '
 mkdirSync(join(emuOut, 'fonts'), { recursive: true });
 for (const f of ['vga8x16.bin', 'cga8x8.bin', 'mda9x14.bin', 'README.md']) copyFileSync(join(ROOT, 'emu', 'fonts', f), join(emuOut, 'fonts', f));
 
+// the page and the manifest point into the release ("@R@" until its id is known)
+const pageHtml = readFileSync(join(WEB, 'index.html'), 'utf8').replace(/\b(href|src)="(css|js|icons|assets|fonts)\//g, '$1="r/@R@/$2/');
+const manifest = readFileSync(join(WEB, 'manifest.webmanifest'), 'utf8').replace(/"src": "icons\//g, '"src": "r/@R@/icons/');
+const swTemplate = readFileSync(join(WEB, 'sw.js'), 'utf8');
+const releaseFiles = [];
+(function walk(d, pre) {
+  for (const n of readdirSync(d).sort()) {
+    const p = join(d, n);
+    if (statSync(p).isDirectory()) walk(p, pre + n + '/'); else releaseFiles.push([pre + n, readFileSync(p)]);
+  }
+})(STAGE, '');
+const RELEASE = (() => {
+  const h = createHash('sha256').update(pageHtml).update(manifest).update(swTemplate);
+  for (const [f, b] of releaseFiles) h.update(f).update(b);
+  return h.digest('hex').slice(0, 12);
+})();
+renameSync(STAGE, join(OUT, 'r', RELEASE));
+writeFileSync(join(OUT, 'index.html'), pageHtml.replaceAll('@R@', RELEASE));
+writeFileSync(join(OUT, 'manifest.webmanifest'), manifest.replaceAll('@R@', RELEASE));
+
+// ---- the manual (web/docs, plain HTML), linked from the page's header: its stylesheet and pictures
+// get their hash in the name, so a cached copy can never be the wrong one for the page
+{
+  const docs = join(OUT, 'docs');
+  copyTree(join(WEB, 'docs'), docs);
+  const renamed = new Map();
+  for (const f of ['docs.css', ...readdirSync(join(docs, 'img')).map((n) => 'img/' + n)]) {
+    const p = join(docs, f), dot = f.lastIndexOf('.');
+    const to = `${f.slice(0, dot)}.${sha(readFileSync(p)).slice(0, 10)}${f.slice(dot)}`;
+    renameSync(p, join(docs, to)); renamed.set(f, to);
+  }
+  for (const n of readdirSync(docs)) if (n.endsWith('.html')) {
+    const p = join(docs, n);
+    writeFileSync(p, readFileSync(p, 'utf8').replace(/\b(href|src)="([^"#?]+)"/g, (m, k, u) => (renamed.has(u) ? `${k}="${renamed.get(u)}"` : m)));
+  }
+}
+
 // ---- images
 const imgDir = join(OUT, 'images');
 mkdirSync(imgDir, { recursive: true });
 function stageImage(path) {
   const raw = readFileSync(path);
-  const name = basename(path) + '.gz';
-  writeFileSync(join(imgDir, name), gzipSync(raw, { level: 9 }));
   const h = sha(raw);
-  // the hash in the URL: a new image is a new URL, so no browser or proxy cache can serve a stale disk
-  return { file: 'images/' + name + '?v=' + h, size: raw.length, sha: h };
+  // the hash in the name: a new image is a new URL, so no browser or proxy cache can serve a stale disk
+  const name = `${basename(path)}.${h}.gz`;
+  writeFileSync(join(imgDir, name), gzipSync(raw, { level: 9 }));
+  return { file: 'images/' + name, size: raw.length, sha: h };
 }
 // The hard disk is streamed: fixed 256 KB chunks of the raw image, each gzipped and named by
 // its own content hash (images/c/<hash>.gz), so a chunk that doesn't change between releases
@@ -143,16 +167,17 @@ for (const id of ['sampler93']) {
   for (const t of disc.tracks) {
     if (t.type === 'data') {
       const raw = readFileSync(join(dir, t.file)), h = sha(raw);
-      writeFileSync(join(out, t.file + '.gz'), gzipSync(raw, { level: 9 }));
-      t.data = { file: rel + t.file + '.gz?v=' + h, size: raw.length, sha: h };
+      writeFileSync(join(out, `${t.file}.${h}.gz`), gzipSync(raw, { level: 9 }));
+      t.data = { file: `${rel}${t.file}.${h}.gz`, size: raw.length, sha: h };
       delete t.file;
     } else {
       t.audio = {};
       for (const k of ['opus', 'mp3']) {
         if (!t.files?.[k] || !existsSync(join(dir, t.files[k]))) continue;
-        const raw = readFileSync(join(dir, t.files[k]));
-        copyFileSync(join(dir, t.files[k]), join(out, t.files[k]));
-        t.audio[k] = { file: rel + t.files[k] + '?v=' + sha(raw), size: raw.length };
+        const raw = readFileSync(join(dir, t.files[k])), f = t.files[k], dot = f.lastIndexOf('.');
+        const named = `${f.slice(0, dot)}.${sha(raw)}${f.slice(dot)}`;
+        copyFileSync(join(dir, f), join(out, named));
+        t.audio[k] = { file: rel + named, size: raw.length };
       }
       delete t.files;
     }
@@ -176,23 +201,18 @@ for (const d of box.disks) {
 }
 writeFileSync(join(OUT, 'disks.json'), JSON.stringify(box, null, 1) + '\n');
 
-// ---- the service worker: the app shell list (each file with its hash, which the worker checks as it
-// installs) and a build id that changes whenever any of it does
+// ---- the service worker: sw-<release>.js, which the page registers - a new name for every release,
+// so like everything under r/ it never changes and any cache may keep it - plus the same as sw.js
+// for pages from before release directories, which registered that. It lists the shell -
+// index.html and the release directory - with each file's hash, which it checks as it installs.
 {
-  const shell = [];
-  (function walk(d, pre) {
-    for (const n of readdirSync(d).sort()) {
-      const p = join(d, n), rel = pre + n;
-      if (statSync(p).isDirectory()) { if (rel !== 'images' && rel !== 'docs') walk(p, rel + '/'); continue; }
-      if (['images.json', 'disks.json', 'sw.js'].includes(rel) || rel.endsWith('.md') || rel.endsWith('.txt')) continue;
-      shell.push([rel, createHash('sha256').update(readFileSync(p)).digest('hex').slice(0, 16)]);
-    }
-  })(OUT, '');
-  const tmpl = readFileSync(join(WEB, 'sw.js'), 'utf8');
-  const build = createHash('sha256').update(tmpl).update(MODV).update(JSON.stringify(shell)).digest('hex').slice(0, 12);
-  const sw = tmpl.replace("'__BUILD__'", JSON.stringify(build))
-    .replace("'__MODV__'", JSON.stringify(MODV)).replace('__SHELL__', JSON.stringify(shell));
+  const shell = [['index.html', sha(readFileSync(join(OUT, 'index.html')))]];
+  for (const [f, b] of releaseFiles) if (!/\.(md|txt)$/.test(f)) shell.push([`r/${RELEASE}/${f}`, sha(b)]);
+  shell.push(['images.json', null], ['disks.json', null]);       // (for launching offline; the page reads them network-first)
+  const sw = swTemplate.replace("'__BUILD__'", JSON.stringify(RELEASE)).replace('__SHELL__', JSON.stringify(shell));
+  writeFileSync(join(OUT, `sw-${RELEASE}.js`), sw);
   writeFileSync(join(OUT, 'sw.js'), sw);
+  console.log(`build-site: release ${RELEASE}: ${shell.length} files in the app shell`);
 }
 
 let total = 0;

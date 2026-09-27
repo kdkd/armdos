@@ -76,7 +76,7 @@ def main():
 
             # ---- 2. what a chunk must be before it becomes disk contents
             r = pg.evaluate("""async () => {
-              const { StreamedDisk } = await import('./js/hdstream.js');
+              const { StreamedDisk } = await import(new URL('../js/hdstream.js', document.querySelector('script[type=module]').src).href);
               const info = (await (await fetch('images.json', { cache: 'no-cache' })).json()).hd;
               const k = info.chunks.findIndex((h) => h);            // a stored chunk
               const out = { k };
@@ -89,7 +89,7 @@ def main():
               };
               await try1('html', '<!doctype html><html><body>Not Found (but 200 OK)</body></html>');
               const good = new Uint8Array(await (await fetch(info.chunkBase + info.chunks[k] + '.gz')).arrayBuffer());
-              const { maybeGunzip } = await import('./js/util.js');
+              const { maybeGunzip } = await import(new URL('../js/util.js', document.querySelector('script[type=module]').src).href);
               const raw = await maybeGunzip(good);
               await try1('short', raw.slice(0, raw.length - 512));
               const bad = raw.slice(); bad[100] ^= 0xFF;
