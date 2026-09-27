@@ -110,7 +110,6 @@ so the names were checked against every app on the disks (none clash).
 | `SUDO` | It's 1988. Nobody has heard of sudo. Besides, this is DOS: you are already root. (Ignores its arguments, so `SUDO DEL *.*` deletes nothing.) |
 | `LS` | This is not Unix. Did you mean DIR? Running DIR. - then DIR with the same arguments (`LS /W`). |
 | `ELIZA` | ELIZA has retired. Her colleague will see you now. - then runs DOCTOR (found on the PATH) with the same arguments. |
-
 | `UNAME` | GNU-style `uname` with the ARM/AT's answers: no flags = `-s` (`ARM-DOS`); `-s -n -r -v -m -p -i -o` (also combined, `-snrm`, and as `--kernel-name` etc.), `-a`/`--all` = `ARM-DOS ARMAT 4.00 4.00-1988.06.17 armv5tel ARM926EJ-S ARM/AT ARM-DOS`; `--help` (ends "(This is still not Unix.)"), `--version`. GNU's errors on stderr, ERRORLEVEL 1: `uname: invalid option -- 'x'`, `uname: unrecognized option '--foo'`, `uname: extra operand 'bar'`, each followed by `Try 'uname --help' for more information.` Options are case-insensitive (DOS habit). |
 
 Tests: cases `eggs`, `eggs2`, `eggs-uname`, `eggs-uname-help`, `eggs-ls` (ARM-DOS only). The `bad-command`
