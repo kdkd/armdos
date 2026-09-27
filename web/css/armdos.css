@@ -563,7 +563,13 @@ label.mini input { accent-color: var(--amber); margin: 0; }
   .led { width: 2.2cqw; height: 2.2cqw; } .led.small { width: 1.8cqw; height: 1.8cqw; }
   .postit { width: 22cqw; font-size: 3cqw; right: 1cqw; top: -7cqw; }
 }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+/* "Reduce motion": animations and transitions finish at once rather than not at all, so what
+   an animation leaves behind still happens (the case's lid is lifted off by one; without it the lid
+   stayed on); looping ones stop after their one instant pass */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important; transition-delay: 0s !important; }
+}
 
 /* ------------------------------------------------------------------ files (A: / C: browser) */
 .files { margin-top: 18px; border-radius: 10px; overflow: hidden; background: #0a0b0c; box-shadow: inset 0 2px 10px #000, 0 0 0 1px #2b2620, 0 10px 24px rgba(0,0,0,.4); font: 13px/1.4 var(--mono); color: #cfd3cf; }

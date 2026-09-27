@@ -193,6 +193,21 @@ def main():
             check('app: ✕ closes it', page.evaluate("document.getElementById('openbox').hidden"))
             ctx.close()
             b.close()
+
+            # ---- "Reduce motion" (the OS setting): animations end at once but still end where they
+            # would have - the lid was left on, since its lifting off is an animation's final frame
+            for bt in (p.chromium, p.firefox):
+                b = bt.launch()
+                ctx = b.new_context(viewport={'width': 1440, 'height': 2000}, reduced_motion='reduce')
+                page = ctx.new_page()
+                page.goto(url + '?nosw'); page.wait_for_selector('#openCaseBtn')
+                page.click('#openCaseBtn'); time.sleep(0.5)
+                lid = page.evaluate("(() => { const l = document.querySelector('.ob-lid').getBoundingClientRect(), s = document.querySelector('.ob-stage').getBoundingClientRect(); return [l.bottom, s.top]; })()")
+                check(f'{bt.name}, reduced motion: the lid comes off', lid[0] <= lid[1] + 2, str(lid))
+                page.click('.ob-close'); time.sleep(0.9)
+                check(f'{bt.name}, reduced motion: the lid goes back on', page.evaluate("document.getElementById('openbox').hidden"))
+                ctx.close()
+                b.close()
     finally:
         srv.shutdown()
     print('FAILED: %d' % fails if fails else 'all passed')
