@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
-"""The pictures of the whole machine in the README and the manual, taken from the staged site
-(./build.sh first): the page at 1440 px wide, the desk (machine and inspector) scaled to 1100 px.
+"""Pictures of the machine for the README and the manual, taken from the staged site (./build.sh
+first). The whole desk (machine and inspector; the page at 1440 px wide, scaled to 1100 px),
+to docs/screenshots/ and web/docs/img/:
 
-  machine.jpg  Sopwith's title screen under ELBOW, the inspector's ELBOW view open
-               (README.md, web/docs/index.html)
-  boot.jpg     just after booting, at the C:\\> prompt (web/docs/machine.html)
+  machine.jpg   Sopwith's title screen under ELBOW, the inspector's ELBOW view open
+                (README.md, web/docs/index.html)
+  boot.jpg      just after booting, at the C:\\> prompt (web/docs/machine.html)
 
-Each goes to docs/screenshots/ and web/docs/img/. The <img> sizes in the pages must match what
-this prints. Needs Python with Playwright (pip install playwright && playwright install chromium).
+and the monitor alone (738 x 601, the machine at full size), to docs/screenshots/ (README.md):
 
-usage: python3 tools/screenshots.py [machine|boot ...]   (default: both)
+  qb.jpg        ARM QuickBASIC's welcome
+  term-bbs.jpg  TERM, called through to the ARM Pit BBS's logon screen
+  tc.jpg        ARM Turbo C with the inline-assembler sample, C:\\TC\\SAMPLES\\ASMDEMO.C
+
+The <img> sizes in the pages must match what this prints. Needs Python with Playwright
+(pip install playwright && playwright install chromium).
+
+usage: python3 tools/screenshots.py [NAME ...]   (default: all of them)
 """
 import os, sys, time
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -53,6 +60,35 @@ def machine(page):
 def boot_shot(page):
     time.sleep(3)                                    # the MIPS meter and the interrupt log settle
 
+def on_screen(page, text, timeout):
+    wait_for(page, f"{SCREEN}.includes({text!r})", timeout)
+
+def qb(page):
+    dos(page, 'QB')
+    on_screen(page, 'Welcome to ARM QuickBASIC', 30)
+    time.sleep(1.5)
+
+def term_bbs(page):
+    dos(page, 'TERM')
+    on_screen(page, 'Communications for ARM-DOS', 30)
+    dos(page, 'ATDT5551989')                         # (the BBS machine boots on its first call)
+    on_screen(page, 'FIRST name?', 150)
+    time.sleep(1)
+
+def tc(page):
+    dos(page, 'TC C:\\TC\\SAMPLES\\ASMDEMO.C')
+    on_screen(page, 'mrc p15', 30)
+    time.sleep(1.5)
+
+def shoot_monitor(page, name):
+    data = page.locator('#monitor').screenshot(type='jpeg', quality=88)
+    with open(os.path.join(ROOT, 'docs/screenshots', name), 'wb') as f: f.write(data)
+    b = page.locator('#monitor').bounding_box()
+    print(f'{name}: {round(b["width"])} x {round(b["height"])}, {len(data) // 1024} KB')
+
+# name: (scene, whole desk or monitor alone)
+SHOTS = {'machine': (machine, True), 'boot': (boot_shot, True), 'qb': (qb, False), 'term-bbs': (term_bbs, False), 'tc': (tc, False)}
+
 def shoot(page, name):
     desk = page.locator('#desk').bounding_box()
     rig = page.locator('.rig').bounding_box()
@@ -60,22 +96,24 @@ def shoot(page, name):
     data = page.screenshot(type='jpeg', quality=86, clip={'x': desk['x'], 'y': desk['y'], 'width': desk['width'], 'height': height})
     for d in ('docs/screenshots', 'web/docs/img'):
         with open(os.path.join(ROOT, d, name), 'wb') as f: f.write(data)
-    print(f'{name}: {round(desk["width"] * OUT_W / desk["width"])} x {round(height * OUT_W / desk["width"])}, {len(data) // 1024} KB')
+    print(f'{name}: {OUT_W} x {int(height * OUT_W / desk["width"])}, {len(data) // 1024} KB')     # (the height rounds down, as the browser's does)
 
 def main():
-    want = sys.argv[1:] or ['machine', 'boot']
+    want = sys.argv[1:] or list(SHOTS)
     srv, url = serve.start()
     try:
         with sync_playwright() as p:
             b = p.chromium.launch(args=['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'])
             for name in want:
-                ctx = b.new_context(viewport={'width': WIDTH, 'height': 1400}, device_scale_factor=OUT_W / (WIDTH - 32))
+                scene, desk = SHOTS[name]
+                ctx = b.new_context(viewport={'width': WIDTH, 'height': 1400}, device_scale_factor=OUT_W / (WIDTH - 32)) if desk else \
+                      b.new_context(viewport={'width': 1600, 'height': 1400})          # (the machine at its full 900 px)
                 # a returning visitor: no "click the screen to type" nudge on the monitor
                 ctx.add_init_script("localStorage.setItem('armdos.prefs', JSON.stringify({ typedOnce: true, seen: true }))")
                 page = ctx.new_page()
                 boot(page, url)
-                {'machine': machine, 'boot': boot_shot}[name](page)
-                shoot(page, name + '.jpg')
+                scene(page)
+                (shoot if desk else shoot_monitor)(page, name + '.jpg')
                 ctx.close()
             b.close()
     finally:

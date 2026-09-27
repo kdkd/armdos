@@ -9,11 +9,15 @@
 <table>
 <tr>
 <td valign="top" width="50%"><img src="docs/screenshots/doom.jpg" alt="DOOM on the ARM PC's colour monitor"><br><sub>DOOM, compiled for ARM, driving the VGA, timer and Sound Blaster the DOS way</sub></td>
-<td valign="top" width="50%"><img src="docs/screenshots/dosshell.jpg" alt="The DOS 4.00 Shell"><br><sub>DOSSHELL, re-created from the real DOS 4.00 Shell's screens</sub></td>
+<td valign="top" width="50%"><img src="docs/screenshots/qb.jpg" alt="ARM QuickBASIC's editor with its Welcome dialog"><br><sub>ARM QuickBASIC: the 1991-style BASIC editor, with Bywater BASIC inside, native ARM code</sub></td>
 </tr>
 <tr>
 <td valign="top" width="50%"><img src="docs/screenshots/second-reality.jpg" alt="Future Crew's Second Reality title picture"><br><sub>Second Reality (1993), unmodified x86 code, translated to ARM live by ELBOW</sub></td>
 <td valign="top" width="50%"><img src="docs/screenshots/gem.jpg" alt="The GEM desktop in 640x480 colour"><br><sub>Digital Research's GEM/3, compiled natively for the ARM</sub></td>
+</tr>
+<tr>
+<td valign="top" width="50%"><img src="docs/screenshots/term-bbs.jpg" alt="TERM connected to The ARM Pit BBS: its ANSI welcome screen and logon prompt"><br><sub>TERM dialling The ARM Pit BBS, a second ARM PC in the background, through the emulated modem</sub></td>
+<td valign="top" width="50%"><img src="docs/screenshots/tc.jpg" alt="ARM Turbo C's editor showing a C program with inline ARM assembly"><br><sub>ARM Turbo C: an IDE around TinyCC, compiling on the machine itself, here with inline ARM assembly</sub></td>
 </tr>
 </table>
 
