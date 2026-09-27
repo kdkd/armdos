@@ -21,10 +21,11 @@ GETTING STARTED
 
         C:\DOS\ARMCDEX /D:ARMCD001
 
-  2. Change to the CD-ROM drive (usually D:) and start the menu:
+  2. Change to the CD-ROM drive (the letter after your last hard disk:
+     D: on a PC with one, E: on a PC with two) and start the menu:
 
-        C:\>D:
-        D:\>MENU
+        C:\>E:
+        E:\>MENU
 
   3. Type the number of the item you want and press Enter.
 
@@ -59,9 +60,9 @@ NOTES
 
   * A CD-ROM is read-only: programs run from it cannot save their games or
     settings on it. Copy a program to your hard disk if you want to keep
-    saved games, e.g.  MD C:\ZORK  and  COPY D:\ZORK\*.* C:\ZORK
+    saved games, e.g.  MD C:\ZORK  and  COPY E:\ZORK\*.* C:\ZORK
   * The pictures are GIF files (GIF89a). Use your favourite GIF viewer.
-  * If DIR D: says "Invalid drive specification", the CD-ROM extensions are
+  * If DIR E: says "Invalid drive specification", the CD-ROM extensions are
     not loaded (see step 1) or LASTDRIVE in CONFIG.SYS is too low.
 
 Enjoy the disc!

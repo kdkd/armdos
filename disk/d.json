@@ -1,0 +1,12 @@
+{
+  "comment": "Drive D: - build/d.img, the drive that is the user's to keep (web/js/keepdisk.js): a freshly formatted 128 MB disk with only D:\\README.TXT on it. The page copies it into the browser once, the first time; nothing a later build does can change a D: that exists (so its README is only ever the one the drive was created with).",
+  "base": "..",
+  "format": "hd",
+  "sizeMB": 128,
+  "heads": 16,
+  "sectorsPerTrack": 63,
+  "label": "MY FILES",
+  "serial": "4D59-4431",
+  "date": "1988-06-17 12:00:00",
+  "files": [ { "src": "disk/d/README.TXT", "dst": "README.TXT" } ]
+}

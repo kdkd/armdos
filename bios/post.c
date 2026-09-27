@@ -404,7 +404,10 @@ static void detect_devices(int quick)
     kprintf("%s\n", m ? fdn[m] : "1.44M 3.5\" (no diskette)");
     kprintf("Detecting IDE primary master ... ");
     if (!quick) delay_ticks(4);
-    if (hd_sectors()) kprintf("%s, %u MB\n", hd_model, hd_sectors() / 2048);
+    if (hd_sectors()) kprintf("%s, %u MB\n", hd_model[0], hd_sectors() / 2048);
+    else kprintf("None\n");
+    kprintf("Detecting IDE primary slave ... ");
+    if (hd_sectors_of(1)) kprintf("%s, %u MB\n", hd_model[1], hd_sectors_of(1) / 2048);
     else kprintf("None\n");
     kprintf("Detecting IDE secondary master ... ");
     cd_found = detect_cdrom();
@@ -437,15 +440,16 @@ static void box_row(char *b, const char *l1, const char *v1, const char *l2, con
 
 static void config_box(void)
 {
-    const int r = 1, nrows = 7;
+    const int r = 1, nrows = 8;
     video_set_mode(video_default_mode());
     video_fill(r, 1, 1, 0xC9, 0x0B); video_fill(r, 2, 76, 0xCD, 0x0B); video_fill(r, 78, 1, 0xBB, 0x0B);
     const char *title = " ARM/AT System Configuration (C) 1988 Europa Micro Systems ";
     video_write_at(r, 40 - (int)strlen(title) / 2, title, 0x0F);
     int m = floppy_media();
     static const char *const fdn[] = { "1.44 MB, 3\xAB\"", "360 KB, 5\xAB\"", "1.2 MB, 5\xAB\"", "720 KB, 3\xAB\"", "1.44 MB, 3\xAB\"" };
-    char hd[24], clk[16], ext[16], ser[16];
+    char hd[24], hd2[24], clk[16], ext[16], ser[16];
     if (hd_sectors()) snprintf(hd, sizeof hd, "%u MB, LBA", hd_sectors() / 2048); else snprintf(hd, sizeof hd, "None");
+    if (hd_sectors_of(1)) snprintf(hd2, sizeof hd2, "%u MB, LBA", hd_sectors_of(1) / 2048); else snprintf(hd2, sizeof hd2, "None");
     snprintf(clk, sizeof clk, "%d MHz, RISC", cpu_mhz());
     snprintf(ext, sizeof ext, "%u KB", (ram_end - EXT_MEM_START) / 1024);
     ser[0] = 0;
@@ -453,14 +457,15 @@ static void config_box(void)
     if (!com_ports) snprintf(ser, sizeof ser, "None");
     const char *disp = video_card == VID_HERCULES ? "Monochrome (Hercules)" : video_mono() ? "Monochrome" : "VGA/EGA";
     static const char *const snd[] = { "None", "AdLib 388h", "SB16 220h" };
-    char rows[7][80];
+    char rows[8][80];
     box_row(rows[0], "Main Processor", "ARM926EJ-S", "Base Memory Size", "640 KB");
     box_row(rows[1], "Math Coprocessor", "VFP9-S", "Ext. Memory Size", ext);
     box_row(rows[2], "Clock / ISA", clk, "Display Type", disp);
     box_row(rows[3], "Floppy Drive A:", fdn[m], "Hard Disk C:", hd);
-    box_row(rows[4], "Pointing Device", (BDA16(BDA_EQUIP) & 4) ? "PS/2" : "None", "CD-ROM Drive", cd_found ? "ATAPI, 2nd IDE" : "None");
-    box_row(rows[5], "Sound Card", snd[sound_card], "Serial Port(s)", ser);
-    box_row(rows[6], "MIDI Interface", midi_card ? "MPU-401 330h" : "None", "Parallel Port(s)", "378");
+    box_row(rows[4], "Floppy Drive B:", "None", "Hard Disk D:", hd2);
+    box_row(rows[5], "Pointing Device", (BDA16(BDA_EQUIP) & 4) ? "PS/2" : "None", "CD-ROM Drive", cd_found ? "ATAPI, 2nd IDE" : "None");
+    box_row(rows[6], "Sound Card", snd[sound_card], "Serial Port(s)", ser);
+    box_row(rows[7], "MIDI Interface", midi_card ? "MPU-401 330h" : "None", "Parallel Port(s)", "378");
     for (int i = 0; i < nrows; i++) {
         video_fill(r + 1 + i, 1, 1, 0xBA, 0x0B);
         video_fill(r + 1 + i, 2, 76, ' ', 0x07);

@@ -13,7 +13,7 @@ import { PIC } from './dev/pic.mjs';
 import { PIT } from './dev/pit.mjs';
 import { KBC } from './dev/kbc.mjs';
 import { CMOS } from './dev/cmos.mjs';
-import { ATA } from './dev/ata.mjs';
+import { ATA, ATAChannel } from './dev/ata.mjs';
 import { ATAPI } from './dev/atapi.mjs';
 import { FDC } from './dev/fdc.mjs';
 import { UART } from './dev/uart.mjs';
@@ -120,7 +120,9 @@ export class Machine {
     this.pit = new PIT(this);
     this.kbc = new KBC(this);
     this.cmos = new CMOS(this, { rtcBaseMs: o.rtcBaseMs, ram: o.cmos, onRamWrite: o.onCmosWrite });
-    this.ata = new ATA(this, o.hd || null);
+    this.ata = new ATA(this, o.hd || null, 0);                       // primary master: C:
+    this.ata1 = o.hd2 ? new ATA(this, o.hd2, 1) : null;              // primary slave: D: (optional)
+    this.ide0 = new ATAChannel(this.ata, this.ata1);
     this.cdrom = new ATAPI(this, { onChange: o.onCdrom, onActivity: o.onCdActivity });   // secondary IDE master, IRQ 15
     this.fdc = new FDC(this, o.fd || null, o.fdWriteProtected);
     this.uart = new UART(this);
@@ -266,7 +268,7 @@ export class Machine {
     // FCh-FFh: the address of ELBOW's debug descriptor (ARCH.md 4.7), for the page's ELBOW view
     this.elbowDesc = 0; this.elbowLatch = 0;
     this.cpu.reset();
-    this.pic.reset(); this.pit.reset(); this.kbc.reset(); this.cmos.reset(); this.ata.reset(); this.cdrom.busReset();
+    this.pic.reset(); this.pit.reset(); this.kbc.reset(); this.cmos.reset(); this.ide0.reset(); this.cdrom.busReset();
     this.fdc.reset(); this.uart.reset(); this.vga.reset(); this.lpt.reset();
     this.setLinearFb(false);
     if (this.hgc) this.hgc.reset();
@@ -383,11 +385,11 @@ export class Machine {
       if (size === 1) { const v = this.in8(port); this.spin.onRead(port, v); return v; }
       this.spin.onRead(port, -2);
       if (size === 2) {
-        if (port === 0x1F0) return this.ata.readData16();
+        if (port === 0x1F0) return this.ide0.readData16();
         if (port === 0x170) return this.cdrom.readData16();
         return this.in8(port) | (this.in8((port + 1) & 0xFFFF) << 8);
       }
-      if (port === 0x1F0) return (this.ata.readData16() | (this.ata.readData16() << 16)) >>> 0;
+      if (port === 0x1F0) return (this.ide0.readData16() | (this.ide0.readData16() << 16)) >>> 0;
       if (port === 0x170) return (this.cdrom.readData16() | (this.cdrom.readData16() << 16)) >>> 0;
       return (this.in8(port) | (this.in8(port + 1) << 8) | (this.in8(port + 2) << 16) | (this.in8(port + 3) << 24)) >>> 0;
     }
@@ -415,8 +417,8 @@ export class Machine {
       this.spin.onWrite();
       if (size === 1) { this.out8(port, v & 0xFF); return true; }
       if (port === 0x1F0) {
-        this.ata.writeData16(v & 0xFFFF);
-        if (size === 4) this.ata.writeData16((v >>> 16) & 0xFFFF);
+        this.ide0.writeData16(v & 0xFFFF);
+        if (size === 4) this.ide0.writeData16((v >>> 16) & 0xFFFF);
         return true;
       }
       if (port === 0x170) {
@@ -448,7 +450,7 @@ export class Machine {
         return (this.port61 & 3) | ((Math.floor(t / 15085) & 1) << 4) | (this.pit.out2() << 5);
       }
       case D_CMOS: return this.cmos.read(port);
-      case D_ATA: return this.ata.read(port);
+      case D_ATA: return this.ide0.read(port);
       case D_CD: return this.cdrom.read(port);
       case D_FDC: return this.fdc.read(port);
       case D_UART: return this.uart.read(port);
@@ -487,7 +489,7 @@ export class Machine {
       case D_KBC: this.kbc.write(port, v); return;
       case D_SYSB: this.port61 = v; this.pit.setGate2(v & 1); this.pit.speakerUpdate(); return;
       case D_CMOS: this.cmos.write(port, v); return;
-      case D_ATA: this.ata.write(port, v); return;
+      case D_ATA: this.ide0.write(port, v); return;
       case D_CD: this.cdrom.write(port, v); return;
       case D_FDC: this.fdc.write(port, v); return;
       case D_UART: this.uart.write(port, v); return;

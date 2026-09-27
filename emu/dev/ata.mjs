@@ -1,7 +1,8 @@
-// ATA primary master (hard disk C:), PIO, LBA28 and CHS.
-// Ports 0x1F0-0x1F7, 0x3F6. Commands complete instantly (BSY is never seen);
-// IRQ14 is raised when a sector is ready / a command completes, if nIEN (0x3F6
-// bit 1) is clear; reading 0x1F7 clears it.
+// ATA hard disks on the primary IDE channel, PIO, LBA28 and CHS: the master (C:) and an
+// optional slave (D:). Ports 0x1F0-0x1F7, 0x3F6. Commands complete instantly (BSY is never
+// seen); IRQ14 is raised when a sector is ready / a command completes, if nIEN (0x3F6 bit 1)
+// is clear; reading 0x1F7 clears it. As on real drives, both latch every task-file write and
+// the one that drive/head bit 4 selects answers (ATAChannel, below).
 //
 // Streaming (optional): ata.source = { ready(lba, n) -> bool, fetch(lba, n) -> Promise<bool>,
 // wrote?(lba) }. A READ touching sectors the source doesn't have yet keeps BSY set (DRQ
@@ -22,8 +23,10 @@ function geometry(sectors) {
 }
 
 export class ATA {
-  constructor(m, image) {
+  constructor(m, image, unit = 0) {
     this.m = m;                    // machine: pic, diskActivity(drive,lba,count,write)
+    this.unit = unit;              // 0 master, 1 slave
+    this.drive = 0x80 + unit;      // (the BIOS number, for the machine's disk activity callbacks)
     this.buf = new Uint8Array(512);
     this.source = null;            // optional streaming sector source (see above)
     this.waitToken = 0;
@@ -46,7 +49,7 @@ export class ATA {
     this.m.pic.lower(14);
   }
   get waiting() { return this.mode === 4; }
-  present() { return this.img && (this.dh & 0x10) === 0; }
+  present() { return !!this.img && ((this.dh >> 4) & 1) === this.unit; }
   irq() { if (!this.nIEN) this.m.pic.raise(14); }
 
   curLBA() {
@@ -80,12 +83,12 @@ export class ATA {
           Promise.resolve(this.source.fetch(l, n)).then((ok) => ok, () => false).then((ok) => {
             if (token !== this.waitToken || this.mode !== 4) return;
             if (!ok) { this.err = UNC; this.status = DRDY | DSC | ERR; this.mode = 0; this.irq(); return; }
-            this.mode = 1; this.m.diskActivity(0x80, l, n, false); this.loadSector();
+            this.mode = 1; this.m.diskActivity(this.drive, l, n, false); this.loadSector();
           });
           return;
         }
         this.mode = 1;
-        this.m.diskActivity(0x80, l, n, false);
+        this.m.diskActivity(this.drive, l, n, false);
         this.loadSector();
         return;
       }
@@ -93,7 +96,7 @@ export class ATA {
         const l = this.curLBA();
         if (l < 0 || l + n > this.sectors) { this.abort(IDNF); return; }
         this.cur = l; this.remain = n; this.mode = 2; this.pos = 0;
-        this.m.diskActivity(0x80, l, n, true);
+        this.m.diskActivity(this.drive, l, n, true);
         this.status = DRDY | DSC | DRQ;              // no IRQ before the first sector
         return;
       }
@@ -177,7 +180,7 @@ export class ATA {
   sectorDoneWrite() {
     this.img.set(this.buf, this.cur * 512);
     if (this.source && this.source.wrote) this.source.wrote(this.cur);
-    this.m.diskWritten(0x80, this.cur, 1);
+    this.m.diskWritten(this.drive, this.cur, 1);
     this.remain--; this.setLBA(this.cur); this.cur++; this.pos = 0;
     this.count = this.remain & 0xFF;
     if (this.remain > 0) { this.status = DRDY | DSC | DRQ; }
@@ -217,5 +220,23 @@ export class ATA {
         else if (this.srst) { this.srst = 0; this.reset(); this.nIEN = (v >>> 1) & 1; }
         return;
     }
+  }
+}
+
+/** The primary IDE channel: a master and an optional slave. Task-file and control writes reach
+ *  both drives (each keeps its own copy, as real drives do); commands, data and status go to the
+ *  selected one. With no slave, selecting it reads back 0 (no drive), as before. */
+export class ATAChannel {
+  constructor(master, slave = null) { this.master = master; this.slave = slave; }
+  get sel() { return this.slave && ((this.master.dh >> 4) & 1) ? this.slave : this.master; }
+  reset() { this.master.reset(); this.slave?.reset(); }
+  readData16() { return this.sel.readData16(); }
+  writeData16(v) { this.sel.writeData16(v); }
+  read(port) { return this.sel.read(port); }      // (no slave: the master answers, reporting status 0 while the slave is selected)
+  write(port, v) {
+    if (port === 0x1F0) { this.sel.writeData8(v); return; }
+    if (port === 0x1F7) { this.sel.write(port, v); return; }
+    this.master.write(port, v);
+    this.slave?.write(port, v);
   }
 }

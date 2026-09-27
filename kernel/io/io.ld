@@ -27,6 +27,7 @@ SECTIONS
     .init 0x90100 : AT(__res_file_end) {
         __init_start = .;
         *init_*.o(.text .text.* .rodata .rodata.* .data .data.*)
+        *(.init.text)                           /* boot-only code of the resident files (disk.c's disk_init) */
         . = ALIGN(4);
         __init_end = .;
     }

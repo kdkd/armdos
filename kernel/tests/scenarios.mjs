@@ -335,6 +335,35 @@ if (fs.existsSync(new URL('../../build/COMMAND.COM', import.meta.url))) scenario
   report: ({ log }) => log.find(l => l.startsWith('with')) || '',
 });
 
+// two hard disks (the web page's C: and D:): the second one's first DOS partition is D:, and
+// COMMAND.COM reads, writes and lists it; the BIOS counts two hard disks
+if (fs.existsSync(new URL('../../build/COMMAND.COM', import.meta.url))) scenarios.push({
+  name: 'two-disks',
+  withCommand: true,
+  config: '',
+  hd2: (dir, build) => {
+    fs.writeFileSync(path.join(dir, 'second.txt'), 'from the second disk\r\n');
+    return build({ format: 'hd', sizeMB: 16, heads: 16, sectorsPerTrack: 63, label: 'SECOND', date: '1988-06-17 12:00:00',
+                   files: [{ src: path.relative(path.resolve(dir, '../../../..'), path.join(dir, 'second.txt')), dst: 'HELLO.TXT' }] });
+  },
+  async run({ pc, fail }) {
+    if (!pc.waitText('Enter new date', { timeoutMs: 30000 })) return fail('no date prompt\n' + pc.screen());
+    pc.type('\r'); pc.waitText('Enter new time', { timeoutMs: 10000 }); pc.type('\r');
+    if (!pc.waitText('C>', { timeoutMs: 10000 })) return fail('no prompt\n' + pc.screen());
+    if (pc.machine.cpu.m8[0x475] !== 2) fail(`BIOS hard disk count ${pc.machine.cpu.m8[0x475]}, want 2`);
+    const cmd = (c, want) => { pc.type(c + '\r'); if (!pc.waitText(want, { timeoutMs: 15000 })) fail(`${c}: no "${want}"\n` + pc.screen()); };
+    cmd('dir d:\\', 'Volume in drive D is SECOND');
+    if (!/HELLO +TXT/.test(pc.screen())) fail('dir d: does not list HELLO.TXT\n' + pc.screen());
+    cmd('type d:\\hello.txt', 'from the second disk');
+    cmd('copy \\T\\K_HELLO.EXE d:\\copied.exe', '1 File(s) copied');
+    cmd('dir c:\\', 'Volume in drive C is KTEST');
+    const { FatReader } = await import('../../disk/mkimage.mjs');
+    const has = (img, name) => { try { return !!new FatReader(Buffer.from(img)).lookup(name); } catch { return false; } };
+    if (!has(pc.machine.ata1.img, 'COPIED.EXE')) fail('COPIED.EXE is not on the second disk');
+    if (has(pc.machine.ata.img, 'COPIED.EXE')) fail('COPIED.EXE landed on C:');
+  },
+});
+
 scenarios.push({
   name: 'tracks',
   script: 'pause\nK_MISC TRACKS\nexit 0\n',

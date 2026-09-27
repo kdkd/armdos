@@ -17,6 +17,7 @@ const suites = [
   ['VGA mode 62h: 640x480x256 linear frame buffer', ['machine/vga62.mjs']],
   ['VGA planar/unchained model, window, renderer', ['machine/vga-planar.mjs']],
   ['ATA streaming sector source', ['machine/ata-stream.mjs']],
+  ['ATA master + slave (C: and D:)', ['machine/ata-slave.mjs']],
   ['ATAPI CD-ROM + CD audio', ['machine/atapi.mjs']],
   ['Sound Blaster 16 / DMA / OPL3', ['machine/sb16.mjs']],
   ['COM2 16550A + modem + phone exchange', ['machine/modem.mjs']],

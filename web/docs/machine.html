@@ -115,7 +115,7 @@
   <tr><td><code>60h</code>, <code>64h</code></td><td>8042 keyboard controller, scan code set 1, with a PS/2 mouse</td></tr>
   <tr><td><code>70h</code>, <code>71h</code></td><td>CMOS clock and battery RAM (kept in your browser) for BIOS SETUP</td></tr>
   <tr><td><code>00h</code>-<code>0Fh</code>, <code>C0h</code>-<code>DFh</code></td><td>the AT's pair of 8237 DMA controllers, with page registers</td></tr>
-  <tr><td><code>1F0h</code>, <code>170h</code></td><td>IDE: the hard disk (ATA) and the CD-ROM drive (ATAPI)</td></tr>
+  <tr><td><code>1F0h</code>, <code>170h</code></td><td>IDE: the hard disks (ATA, master and slave) and the CD-ROM drive (ATAPI)</td></tr>
   <tr><td><code>300h</code>-<code>307h</code></td><td>the floppy controller: a simplified ARM-PC design with its own DMA, on the port range of IBM's old prototype card</td></tr>
   <tr><td><code>3C0h</code>-<code>3DFh</code></td><td>VGA (or a Hercules card at <code>3B0h</code>-<code>3BFh</code>)</td></tr>
   <tr><td><code>220h</code>, <code>388h</code></td><td>Sound Blaster 16 with its OPL3 FM chip</td></tr>
@@ -171,9 +171,10 @@
 <h2 id="disks"><span class="num">8</span>Disks</h2>
 
 <ul>
-  <li><strong>Drive C:</strong> a 128 MB ATA hard disk with a partition table and a FAT16 partition. The site cuts the disk image into 256 KB chunks named by their content hash, and the disk fetches each chunk the first time DOS reads from it. While a chunk is on its way the drive simply stays busy. About 0.4 MB is enough to reach the <code>C:\&gt;</code> prompt. Sectors that DOS writes are kept in your browser's IndexedDB.</li>
+  <li><strong>Drive C:</strong> a 128 MB ATA hard disk with a partition table and a FAT16 partition. The site cuts the disk image into 256 KB chunks named by their content hash, and the disk fetches each chunk the first time DOS reads from it. While a chunk is on its way the drive simply stays busy. About 0.4 MB is enough to reach the <code>C:\&gt;</code> prompt. Sectors that DOS writes are kept in your browser's IndexedDB, until a new version of the C: image replaces them.</li>
+  <li><strong>Drive D:</strong> a second 128 MB ATA hard disk, the primary IDE slave: yours to keep. The page makes it the first time, formatted and empty but for a README, from the few sectors that aren't blank (under 2 KB of download), and stores every sector DOS writes in an IndexedDB database of its own that no update, new C: image or new build of D: ever touches. Back up, Restore and Erase work on the whole drive.</li>
   <li><strong>Drive A:</strong> 1.44 MB diskettes, FAT12, with the DOS 4 boot sector layout.</li>
-  <li><strong>Drive D:</strong> a double-speed ATAPI CD-ROM drive on the secondary IDE channel, with CD audio mixed into the Sound Blaster's CD input, a headphone jack and a volume knob. DOS reaches it through <code>ARMCD.SYS</code> and <code>ARMCDEX</code>, ARM-DOS's own CD-ROM extensions. The drive takes the Multimedia Sampler '93 disc or any ISO image you drop onto the page, read from your computer on demand.</li>
+  <li><strong>Drive E:</strong> a double-speed ATAPI CD-ROM drive on the secondary IDE channel, with CD audio mixed into the Sound Blaster's CD input, a headphone jack and a volume knob. DOS reaches it through <code>ARMCD.SYS</code> and <code>ARMCDEX</code>, ARM-DOS's own CD-ROM extensions. The drive takes the Multimedia Sampler '93 disc or any ISO image you drop onto the page, read from your computer on demand.</li>
 </ul>
 
 <h2 id="page"><span class="num">9</span>The page around it</h2>

@@ -29,7 +29,12 @@ $(BUILD)/floppy-%.img: $(BUILD)/manifests/floppy-%.json $(DISK_IN) $(APP_TREES)
 	$(MKIMAGE) build $< -o $@
 
 .PHONY: images disk-test setup-floppy-test
-images: $(BUILD)/hd.img $(BUILD)/floppy-boot.img $(BUILD)/floppy-games.img $(BUILD)/floppy-utils.img
+# D:, the drive that is the user's to keep (web/js/keepdisk.js): formatted, with only a README
+$(BUILD)/d.img: disk/d.json disk/d/README.TXT disk/mkimage.mjs
+	@mkdir -p $(dir $@)
+	$(MKIMAGE) build disk/d.json -o $@
+
+images: $(BUILD)/hd.img $(BUILD)/d.img $(BUILD)/floppy-boot.img $(BUILD)/floppy-games.img $(BUILD)/floppy-utils.img
 all: images
 
 disk-test: $(ARMDOS_TEST_BINS)

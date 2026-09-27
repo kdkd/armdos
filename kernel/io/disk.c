@@ -408,13 +408,17 @@ static void disk_interrupt(void)
 
 /* ------------------------------------------------------------- init */
 
-static void add_fixed(uint8_t type, uint32_t start, uint32_t size, unsigned spt, unsigned heads)
+/* Used only while booting: in the SYSINIT image (kernel/io/io.ld), which is dropped afterwards -
+   the resident kernel stays as small as it can (DOOM needs every byte of conventional memory). */
+#define INIT_CODE __attribute__((section(".init.text"), noinline))
+
+static INIT_CODE void add_fixed(uint8_t drive, uint8_t type, uint32_t start, uint32_t size, unsigned spt, unsigned heads)
 {
     if (nunits >= MAXUNITS || !size) return;
     int n = nunits;
     struct unit *u = &units[n];
     memset(u, 0, sizeof *u);
-    u->bios = 0x80;
+    u->bios = drive;
     u->removable = 0;
     u->devtype = 5;
     u->ptype = type;
@@ -430,7 +434,43 @@ static void add_fixed(uint8_t type, uint32_t start, uint32_t size, unsigned spt,
 
 int disk_boot_unit(void) { return boot_unit; }
 
-int disk_init(int bootdrive, struct bpb **bpbs_out)
+/* One hard disk's partitions: pass 0 its first DOS partition (a primary one), pass 1 the
+   logical drives of its extended partition. */
+static INIT_CODE void scan_fixed(uint8_t drive, int pass)
+{
+    uint8_t *sec = scratch;
+    if (bios_rw(drive, 0, 0, 1, sec) != 0 || sec[510] != 0x55 || sec[511] != 0xAA) return;
+    uint8_t table[64];
+    memcpy(table, sec + 0x1BE, 64);
+    struct armregs r = { 0 };
+    r.r0 = 0x0800;
+    r.r3 = drive;
+    kint(0x13, &r);
+    unsigned spt = r.r2 & 0x3F, heads = ((r.r3 >> 8) & 0xFF) + 1;
+    if (!spt) { spt = 63; heads = 16; }
+    for (int p = 0; p < 4; p++) {
+        const uint8_t *e = table + p * 16;
+        if (pass == 0 && (e[4] == 0x01 || e[4] == 0x04 || e[4] == 0x06)) {
+            add_fixed(drive, e[4], rd32(e + 8), rd32(e + 12), spt, heads);
+            return;
+        }
+        if (pass == 1 && e[4] == 0x05) {
+            uint32_t ext = rd32(e + 8), ebr = ext;
+            for (int guard = 0; guard < 24 && nunits < MAXUNITS; guard++) {
+                if (bios_rw(drive, 0, ebr, 1, sec) || sec[510] != 0x55 || sec[511] != 0xAA) break;
+                uint8_t l[32];
+                memcpy(l, sec + 0x1BE, 32);
+                if (l[4] == 0x01 || l[4] == 0x04 || l[4] == 0x06)
+                    add_fixed(drive, l[4], ebr + rd32(l + 8), rd32(l + 12), spt, heads);
+                if (l[16 + 4] != 0x05) break;
+                ebr = ext + rd32(l + 16 + 8);
+            }
+            return;
+        }
+    }
+}
+
+INIT_CODE int disk_init(int bootdrive, struct bpb **bpbs_out)
 {
     (void)bpbs_out;
     disk_boot_bios = bootdrive;
@@ -449,41 +489,11 @@ int disk_init(int bootdrive, struct bpb **bpbs_out)
     fd_owner = 0;
     BDA8(0x104) = 0;
 
-    /* C: - the first DOS partition in the MBR; then D:, E:, ... - the
-       logical drives of the extended partition, in chain order (DOS 4) */
-    uint8_t *sec = scratch;
-    if (BDA8(0x75) && bios_rw(0x80, 0, 0, 1, sec) == 0 && sec[510] == 0x55 && sec[511] == 0xAA) {
-        uint8_t table[64];
-        memcpy(table, sec + 0x1BE, 64);
-        struct armregs r = { 0 };
-        r.r0 = 0x0800;
-        r.r3 = 0x80;
-        kint(0x13, &r);
-        unsigned spt = r.r2 & 0x3F, heads = ((r.r3 >> 8) & 0xFF) + 1;
-        if (!spt) { spt = 63; heads = 16; }
-        for (int p = 0; p < 4; p++) {
-            const uint8_t *e = table + p * 16;
-            if (e[4] == 0x01 || e[4] == 0x04 || e[4] == 0x06) {
-                add_fixed(e[4], rd32(e + 8), rd32(e + 12), spt, heads);
-                break;
-            }
-        }
-        for (int p = 0; p < 4; p++) {
-            const uint8_t *e = table + p * 16;
-            if (e[4] != 0x05) continue;
-            uint32_t ext = rd32(e + 8), ebr = ext;
-            for (int guard = 0; guard < 24 && nunits < MAXUNITS; guard++) {
-                if (bios_rw(0x80, 0, ebr, 1, sec) || sec[510] != 0x55 || sec[511] != 0xAA) break;
-                uint8_t l[32];
-                memcpy(l, sec + 0x1BE, 32);
-                if (l[4] == 0x01 || l[4] == 0x04 || l[4] == 0x06)
-                    add_fixed(l[4], ebr + rd32(l + 8), rd32(l + 12), spt, heads);
-                if (l[16 + 4] != 0x05) break;
-                ebr = ext + rd32(l + 16 + 8);
-            }
-            break;
-        }
-    }
+    /* The hard disks' drive letters, as DOS 4 gives them: the first DOS partition of each
+       disk (C: on 80h, D: on 81h), then the logical drives of each disk's extended partition,
+       in chain order. */
+    for (int pass = 0; pass < 2; pass++)
+        for (int d = 0; d < BDA8(0x75) && d < 2; d++) scan_fixed(0x80 + d, pass);
     disk_dev.name[0] = nunits;
     boot_unit = bootdrive == 0x80 ? 2 : 0;
     if (bootdrive != 0x80) floppy_geometry(&units[0]);

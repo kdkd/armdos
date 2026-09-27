@@ -11,13 +11,13 @@ static void pick_colours(void)
     else { C_BG = 0x1F; C_LABEL = 0x1E; C_VALUE = 0x1F; C_SEL = 0x70; C_TITLE = 0x3F; C_HELP = 0x1B; C_BOX = 0x4F; C_BOXQ = 0x4E; }
 }
 
-enum { IT_DATE, IT_TIME, IT_FDA, IT_FDB, IT_HD, IT_BOOT, IT_QUICK, IT_BEEP, IT_NUM, IT_COUNT };
+enum { IT_DATE, IT_TIME, IT_FDA, IT_FDB, IT_HD, IT_HD2, IT_BOOT, IT_QUICK, IT_BEEP, IT_NUM, IT_COUNT };
 
 static const char *const labels[IT_COUNT] = {
-    "Date (mm/dd/yyyy)", "Time (hh:mm:ss)", "Floppy Drive A:", "Floppy Drive B:", "Hard Disk C:",
+    "Date (mm/dd/yyyy)", "Time (hh:mm:ss)", "Floppy Drive A:", "Floppy Drive B:", "Hard Disk C:", "Hard Disk D:",
     "Boot Sequence", "Quick Power On Self Test", "POST Beep", "Boot Up NumLock Status",
 };
-static const int item_row[IT_COUNT] = { 3, 4, 6, 7, 8, 10, 11, 12, 13 };
+static const int item_row[IT_COUNT] = { 3, 4, 6, 7, 8, 9, 11, 12, 13, 14 };
 
 static int boot_seq, quick, beep_on, num_on;
 static int yr, mo, dy, hh, mi, ss;
@@ -65,6 +65,10 @@ static void value_text(int it, char *b, int n)
         if (hd_sectors()) snprintf(b, n, "Auto (%u MB, LBA)", hd_sectors() / 2048);
         else snprintf(b, n, "Not Installed");
         break;
+    case IT_HD2:
+        if (hd_sectors_of(1)) snprintf(b, n, "Auto (%u MB, LBA)", hd_sectors_of(1) / 2048);
+        else snprintf(b, n, "Not Installed");
+        break;
     case IT_BOOT: snprintf(b, n, "%s", bootn[boot_seq]); break;
     case IT_QUICK: snprintf(b, n, "%s", quick ? "Enabled" : "Disabled"); break;
     case IT_BEEP: snprintf(b, n, "%s", beep_on ? "Enabled" : "Disabled"); break;
@@ -100,7 +104,7 @@ static void draw_items(int cur)
         video_write_at(r, 3, labels[i], C_LABEL);
         video_write_at(r, 28, ":", C_LABEL);
         value_text(i, b, sizeof b);
-        int editable = !(i == IT_FDA || i == IT_FDB || i == IT_HD);
+        int editable = !(i == IT_FDA || i == IT_FDB || i == IT_HD || i == IT_HD2);
         video_write_at(r, 30, b, (i == cur && editable) ? C_VALUE : C_VALUE);
         if (i == cur) {
             if (i == IT_DATE) {
@@ -180,8 +184,8 @@ void setup_utility(void)
         }
         int sc = k >> 8, ch = k & 0xFF;
         if (ch == 0xE0) ch = 0;
-        if (sc == 0x48 && !ch) { do cur = (cur + IT_COUNT - 1) % IT_COUNT; while (cur == IT_FDA || cur == IT_FDB || cur == IT_HD); sub = 0; }
-        else if (sc == 0x50 && !ch) { do cur = (cur + 1) % IT_COUNT; while (cur == IT_FDA || cur == IT_FDB || cur == IT_HD); sub = 0; }
+        if (sc == 0x48 && !ch) { do cur = (cur + IT_COUNT - 1) % IT_COUNT; while (cur == IT_FDA || cur == IT_FDB || cur == IT_HD || cur == IT_HD2); sub = 0; }
+        else if (sc == 0x50 && !ch) { do cur = (cur + 1) % IT_COUNT; while (cur == IT_FDA || cur == IT_FDB || cur == IT_HD || cur == IT_HD2); sub = 0; }
         else if (sc == 0x4B && !ch) { if (sub > 0) sub--; }
         else if (sc == 0x4D && !ch) { if ((cur == IT_DATE || cur == IT_TIME) && sub < 2) sub++; }
         else if ((sc == 0x49 && !ch) || ch == '+') modify(cur, 1);

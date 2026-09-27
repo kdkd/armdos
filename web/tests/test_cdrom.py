@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Playwright check of the CD-ROM drive on the page (web/js/cdrom.js + emu/dev/atapi.mjs):
 the drive and the disc box are drawn; clicking the jewel case puts the Multimedia Sampler '93
-in the drive; with ARMCD.SYS and ARMCDEX from the factory CONFIG.SYS/AUTOEXEC.BAT, DIR D: lists the
+in the drive; with ARMCD.SYS and ARMCDEX from the factory CONFIG.SYS/AUTOEXEC.BAT (the CD is E:, after the two hard disks), DIR E: lists the
 disc; CDPLAY plays track 2, whose Opus is fetched and decoded only then, and the machine's
 audio output (the stream the Sound Blaster worklet plays) carries it; the tray button ejects
-the disc and DIR D: then says "Not ready reading drive D".
+the disc and DIR E: then says "Not ready reading drive E".
 
 Stages its own copy of the site in build/cd-web/site (so it does not disturb build/site).
 Needs build/hd.img with C:\\DOS\\ARMCD.SYS, ARMCDEX.EXE and CDPLAY.EXE, and make cdrom-disc.
@@ -60,10 +60,10 @@ def main():
 
             page.click('#powerBtn')
             check('boots to C:\\>', wait_for(page, f"{SCREEN}.includes('C:\\\\>')", 60))
-            # the factory CONFIG.SYS loads ARMCD.SYS and AUTOEXEC.BAT runs ARMCDEX (drive D: with no disc yet)
+            # the factory CONFIG.SYS loads ARMCD.SYS and AUTOEXEC.BAT runs ARMCDEX (drive E: with no disc yet)
             s = page.evaluate(SCREEN)
-            check('the factory boot loads ARMCD.SYS + ARMCDEX: Drive D: = Driver ARMCD001 unit 0',
-                  'Device name: ARMCD001' in s and 'Drive D: = Driver ARMCD001 unit 0' in s, s)
+            check('the factory boot loads ARMCD.SYS + ARMCDEX: Drive E: = Driver ARMCD001 unit 0',
+                  'Device name: ARMCD001' in s and 'Drive E: = Driver ARMCD001 unit 0' in s, s)
             page.click('.jewel')
             check('the disc goes in (click on the jewel case)', wait_for(page, f"{CD}.disc && !{CD}.trayOpen", 5))
             check('the jewel case shows "in the drive"', page.locator('.jewel.in-drive').count() == 1)
@@ -80,9 +80,9 @@ def main():
             ok = cmd('ARMCDEX /D:ARMCD001', 'ARM CD-ROM Extensions already installed')
             check('ARMCDEX again: already installed', ok, page.evaluate(SCREEN)[:400])
             cmd('CLS')
-            ok = cmd('DIR D: /W', 'File(s)', 30)
+            ok = cmd('DIR E: /W', 'File(s)', 30)
             s = page.evaluate(SCREEN)
-            check('DIR D: lists the disc', ok and 'Volume in drive D is SAMPLER93' in s and 'README   TXT' in s, s[:300])
+            check('DIR E: lists the disc', ok and 'Volume in drive E is SAMPLER93' in s and 'README   TXT' in s, s[:300])
             check('the busy LED blinked for the data reads', page.evaluate("armdos.cd.reads > 0"), f"{page.evaluate('armdos.cd.reads')} activity callbacks")
 
             # CDPLAY: 2 plays track 2
@@ -136,14 +136,14 @@ def main():
                 check('Esc leaves CDPLAY with the music playing', wait_for(page, f"/^C:\\\\[^>]*>$/.test({LAST}.trim())", 10)
                       and page.evaluate(f"{CD}.state().playing"))
 
-            # the tray button: eject, then DIR D: is not ready
+            # the tray button: eject, then DIR E: is not ready
             page.click('#cdEject')
             check('the tray opens (button)', wait_for(page, f"{CD}.trayOpen && document.querySelector('#cdDrive').classList.contains('open')", 3))
             page.locator('#case').screenshot(path=os.path.join(OUT, 'test-case-open.png'))
             cmd('CLS')
-            ok = cmd('DIR D:', 'Abort, Retry, Fail?', 20)
+            ok = cmd('DIR E:', 'Abort, Retry, Fail?', 20)
             s = page.evaluate(SCREEN)
-            check('DIR D: with the tray open -> Not ready reading drive D', ok and 'Not ready reading drive D' in s, s[:300])
+            check('DIR E: with the tray open -> Not ready reading drive E', ok and 'Not ready reading drive E' in s, s[:300])
             for _ in range(4):          # DIR asks for the label search and again for the directory search
                 if 'Abort, Retry, Fail?' not in page.evaluate(LAST): break
                 page.evaluate("armdos.machine.typeText('F')")
@@ -154,8 +154,8 @@ def main():
             check('the tray closes with the disc', wait_for(page, f"!{CD}.trayOpen && {CD}.disc", 3))
             time.sleep(1.5)
             cmd('CLS')
-            ok = cmd('DIR D: /W', 'File(s)', 30)
-            check('DIR D: works again after the media change', ok and 'SAMPLER93' in page.evaluate(SCREEN), page.evaluate(SCREEN)[:500])
+            ok = cmd('DIR E: /W', 'File(s)', 30)
+            check('DIR E: works again after the media change', ok and 'SAMPLER93' in page.evaluate(SCREEN), page.evaluate(SCREEN)[:500])
             check('no page errors', not errors, '; '.join(errors[:3]))
             b.close()
     finally:

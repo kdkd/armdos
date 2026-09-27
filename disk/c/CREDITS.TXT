@@ -292,7 +292,7 @@ Second Reality (C:\ELBOW\DEMOS\SECOND)
 "ARM-DOS 4.00: the demo" (C:\DEMO)
   Code and music written for ARM-DOS.
 
-The Multimedia Sampler '93 disc (drive D:)
+The Multimedia Sampler '93 disc (drive E:)
   Music by Kevin MacLeod (incompetech.com), licensed under Creative
   Commons: By Attribution 4.0 License,
   http://creativecommons.org/licenses/by/4.0/ :

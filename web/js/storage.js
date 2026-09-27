@@ -1,19 +1,23 @@
-// Persistence: the hard disk's changed sectors in IndexedDB (keyed by the
-// factory image's hash, so a new release never mixes with stale sectors) and
-// the CMOS battery RAM in localStorage.
+// Persistence: a hard disk's changed sectors in IndexedDB and the CMOS battery RAM in
+// localStorage. C:'s sectors are keyed by its factory image's hash (so a new C: never mixes
+// with stale sectors; restoring drops the old ones); D:'s live in a database of their own
+// (web/js/keepdisk.js), which nothing C: does can reach.
 
 const DB_NAME = 'armdos', STORE = 'hdsectors', SECTOR = 512;
 
 function req(r) { return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
 
 export class DiskStore {
-  constructor(version) {
+  constructor(version, { dbName = DB_NAME, delay = 700 } = {}) {
     this.version = version;
+    this.dbName = dbName;
+    this.delay = delay;          // ms after the last write before the sectors are stored
     this.db = null;
     this.dirty = new Set();
     this.timer = 0;
     this.image = null;           // the live image to copy sectors from
     this.saved = 0;              // sectors currently stored for this version
+    this.dropped = 0;            // sectors of other versions restore() found and deleted (a new C:)
     this.error = null;           // why the last save failed (null: saving works)
     this.failures = 0;           // consecutive failed saves (for the retry backoff)
     this.onChange = () => {};
@@ -22,12 +26,12 @@ export class DiskStore {
     if (this.db) return this.db;
     try {
       if (typeof indexedDB === 'undefined') throw new Error('this browser has no IndexedDB');
-      const r = indexedDB.open(DB_NAME, 1);
+      const r = indexedDB.open(this.dbName, 1);
       r.onupgradeneeded = () => { r.result.createObjectStore(STORE); };
       this.db = await req(r);
       this.db.onclose = () => { this.db = null; };        // (the browser may close it: reopen next time)
     } catch (e) {
-      console.warn('IndexedDB unavailable; C: will not persist', e);
+      console.warn(`IndexedDB unavailable; ${this.dbName} will not persist`, e);
       this.db = null;
       this.fail(e && (e.name || e.message) || 'unavailable');
     }
@@ -54,8 +58,8 @@ export class DiskStore {
         const c = cur.result;
         if (!c) return res();
         const [ver, lba] = c.key;
-        if (ver !== this.version) c.delete();
-        else if ((lba + 1) * SECTOR <= img.length) { img.set(new Uint8Array(c.value), lba * SECTOR); n++; if (onSector) onSector(lba); }
+        if (ver !== this.version) { c.delete(); this.dropped++; }
+        else if (lba >= 0 && (lba + 1) * SECTOR <= img.length) { img.set(new Uint8Array(c.value), lba * SECTOR); n++; if (onSector) onSector(lba); }
         c.continue();
       };
       cur.onerror = () => rej(cur.error);
@@ -67,7 +71,7 @@ export class DiskStore {
   markDirty(lba, count) {
     for (let k = 0; k < count; k++) this.dirty.add(lba + k);
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.flush(), 700);
+    this.timer = setTimeout(() => this.flush(), this.delay);
   }
   async flush() {
     clearTimeout(this.timer);

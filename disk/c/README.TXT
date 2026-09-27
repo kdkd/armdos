@@ -36,6 +36,7 @@ WHERE TO START
   HELP                      the "things to try" sheet (C:\DOS\TRYME.TXT)
   DOSSHELL                  the DOS 4.00 Shell, with menus and a mouse
   DIR C:\ /W                what is on the disk
+  TYPE D:\README.TXT        drive D:, the one that is yours to keep
   TYPE C:\CREDITS.TXT | MORE    who made what, and under which licence
 
   A quick tour of C:
@@ -76,8 +77,9 @@ THE HARDWARE
                220h, IRQ 7, DMA 1/5, with a YMF262 OPL3 FM chip; an MPU-401
                at 330h drives a General MIDI wavetable daughterboard. The PC
                speaker works too. An AdLib-only card can be fitted instead.
-  Disks        a 128 MB hard disk (C:), a 1.44 MB floppy drive (A:) and an
-               ATAPI CD-ROM drive (D:, through ARMCDEX)
+  Disks        two 128 MB hard disks: C: (ARM-DOS and its programs) and
+               D: (yours; see below), a 1.44 MB floppy drive (A:) and an
+               ATAPI CD-ROM drive (E:, through ARMCDEX)
   Modem        Hayes compatible on COM2: 2400, 14,400, 33,600 or 56K,
                picked with the switch on its front panel. You hear it dial,
                ring and shake hands.
@@ -100,6 +102,23 @@ THE HARDWARE
   cards (VGA or Hercules, Sound Blaster 16 or AdLib, the modem), add or
   take out SIMMs, the CD-ROM drive, the MIDI daughterboard and the mouse.
   Changes take effect the next time you switch on.
+
+
+YOUR FILES: DRIVE D:
+--------------------
+
+  C: and D: are both saved in your web browser, but not in the same way.
+
+  C: holds ARM-DOS and everything that comes with it. Your changes to C:
+  are kept only until a new version of the C: disk comes out (new
+  programs, fixes); C: then starts over, fresh from the factory, and what
+  you changed on it is gone. The web page says so when that happens.
+
+  D: is yours. Nothing on the page, and no new version of ARM-DOS, ever
+  touches it: whatever you save there stays until you delete it. Keep your
+  own programs, documents and saved games on D:. D:\README.TXT says more,
+  including how to keep a copy of the whole drive on your own computer
+  ("Back up D:" below the disk box).
 
 
 PHONE NUMBERS

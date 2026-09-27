@@ -6,7 +6,7 @@ The ARM/AT gets a double-speed ATAPI CD-ROM drive on the secondary IDE channel, 
 | file | what |
 |---|---|
 | `ARMCD.SYS` | the CD-ROM device driver (`drv/`), the "MSCDEX device driver" request set |
-| `ARMCDEX.EXE` | the CD-ROM extensions (`cdex/`): INT 2Fh AX=15xxh and the network-redirector hook that makes the disc drive D: |
+| `ARMCDEX.EXE` | the CD-ROM extensions (`cdex/`): INT 2Fh AX=15xxh and the network-redirector hook that makes the disc a drive (the first free letter: E: in the machine on the page, whose D: is the second hard disk; D: in the test harness, which has one) |
 | `CDPLAY.EXE` | the ARM-DOS CD Player (`cdplay/`): full screen, or resident with `/R` (Ctrl+Alt+C) |
 | `CDPLAY.INI` | CDPLAY's disc database (C:\DOS, made with the disc) |
 | the disc | "ARM-DOS Multimedia Sampler '93" (`disc/`, `tools/`), below |

@@ -42,6 +42,7 @@ js/printer.js         LPT1 -> green-bar paper, 8x8 font as ink dots, tear off = 
 js/diskbox.js         disks.json -> disk box, drive A:, drag and drop, downloads
 js/input.js           keyboard capture, pointer lock mouse, paste, phone keyboard + extra keys
 js/storage.js         HD sectors in IndexedDB, CMOS in localStorage
+js/keepdisk.js        drive D:, the user's to keep: made once, its own database; back up, restore, erase
 js/hdstream.js        the streamed hard disk: chunk index, demand fetch, background prefetch, write overlay
 js/fat.js             FAT12/16 reader + writer (port of disk/mkimage.mjs parts): list, read, write, 8.3 names
 js/pckeys.js          on-screen PC keyboard (sticky Shift/Ctrl/Alt, typematic repeat) and the game pad (its JOY switch)
@@ -177,15 +178,28 @@ releases, so browsers and the service worker keep them.
 
 * Drive C: only changed sectors are stored, in IndexedDB `armdos` / `hdsectors`,
   keyed `[imageHash, lba]`. `imageHash` is the sha256 prefix of build/hd.img from
-  `images.json`, so a new release starts clean (old versions' sectors are deleted).
-  "Reset C: to factory" clears them (and the CMOS).
+  `images.json`, so a new C: starts clean (old versions' sectors are deleted, and the
+  status line says so once). "Reset C: to factory" clears them (and the CMOS).
+* Drive D: (web/js/keepdisk.js; disk/d.json) is the user's to keep. Its sectors live in
+  a database of its own, IndexedDB `armdos-d`, which nothing else opens. The first time
+  (the database empty) it is made from the build's few non-zero sectors (`images.json`
+  `d`, a ~2 KB file) and all of them are stored at once; after that D: depends on
+  nothing but the browser's storage - no release, C: image or new build of D: reaches
+  it. A store that can't be read is an error (the machine runs without D:), never
+  "empty", so a blank D: can't replace one. Writes are stored 0.2 s after the last one.
+  At the first write the page asks the browser for persistent storage
+  (`navigator.storage.persist()`). "Back up D:" downloads the whole drive
+  (`armdos-d.img.gz`); "Restore D:" (confirmed) takes such a file or a raw `.img` of the
+  right size; "Erase D:" (asked twice) puts back the empty drive. Both write every
+  changed sector in one transaction and restart a running machine.
+  `web/tests/test_keepdisk.py` covers it all.
 * CMOS battery RAM: localStorage `armdos.cmos`. Preferences: `armdos.prefs`.
 * Floppies keep their contents for the session only (eject and re-insert keeps them);
   "Download A:" saves the current image.
 
 ## Host files (the Files panel)
 
-* Click a file in the A: or C: listing to download it (reads are always safe).
+* Click a file in the A:, C: or D: listing to download it (reads are always safe).
 * Drop files on the drive, on the listing, or use "Copy files in": they are written
   with `FatVolume.writeFile` (lowest free clusters, every FAT copy, directory grows
   if a subdirectory is full, `DiskFullError` before anything changes). Host names
@@ -194,8 +208,8 @@ releases, so browsers and the service worker keep them.
 * A: while the machine runs: the diskette is ejected, written and re-inserted
   (a media change DOS sees). With no diskette in the drive the blank one goes in.
   Write-protected diskettes are refused.
-* C: accepts files only while the machine is off; the written sectors go to the
-  IndexedDB store like any other change to C:.
+* C: and D: accept files only while the machine is off; the written sectors go to
+  their IndexedDB stores like any other change.
 * A dropped `.img`/`.ima`/... of an exact diskette size is still used as a diskette.
 
 ## Phones, tablets and the home-screen app

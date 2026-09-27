@@ -95,7 +95,8 @@ async function runScenario(sc) {
   if (sc.floppy) fd = sc.floppy(dir, (m) => buildImage(m, ROOT).img);
   // the BIOS would boot a diskette in A:, so it goes in after the shell said PAUSE
   let printed = '';
-  const pc = await boot({ rom: B('rom.bin'), hd: new Uint8Array(hd), fd: sc.bootFloppy && fd ? new Uint8Array(fd) : null,
+  const hd2 = sc.hd2 ? new Uint8Array(sc.hd2(dir, (m) => buildImage(m, ROOT).img)) : null;     // a second hard disk (primary slave, D:)
+  const pc = await boot({ rom: B('rom.bin'), hd: new Uint8Array(hd), hd2, fd: sc.bootFloppy && fd ? new Uint8Array(fd) : null,
                           fdWriteProtected: !!sc.fdWriteProtected, onPrint: (b) => { printed += String.fromCharCode(b); } });
   Object.defineProperty(pc, 'printer', { get: () => printed });
   if (fd && !sc.bootFloppy) {

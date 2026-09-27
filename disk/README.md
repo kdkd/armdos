@@ -3,7 +3,10 @@
 `disk/mkimage.mjs` (node, no dependencies) builds the floppy and hard-disk
 images from a manifest, and can list, read and check them.
 
-`make images` builds `build/hd.img` (drive C:, from `disk/hd.json`) and
+`make images` builds `build/hd.img` (drive C:, from `disk/hd.json`),
+`build/d.img` (drive D:, the user's own, from `disk/d.json`: formatted, only
+`disk/d/README.TXT` on it; the page ships just its non-zero sectors and makes
+the drive once per browser, so a new build never reaches an existing D:) and
 `build/floppy-boot.img` (drive A:, from `disk/floppy.json`). Files the
 manifests name that do not exist yet (IO.SYS, ARMDOS.SYS, COMMAND.COM, the
 boot sector) are skipped with a note, so the images build at every stage.

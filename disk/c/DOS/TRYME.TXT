@@ -7,6 +7,8 @@
   THE CLASSICS
     DIR, VER, MEM /PROGRAM     how DOS 4 sees this machine
     CHKDSK                     check the 128 MB hard disk
+    TYPE D:\README.TXT         drive D: is yours: what you save there stays
+                               through every update of ARM-DOS
     DOSSHELL                   the DOS 4.00 Shell, menus and all
     TREE C:\ /F | MORE         pipes and filters work as they should
     AC                         ARM Commander, a two-panel file manager

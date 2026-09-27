@@ -88,7 +88,7 @@ Only these exist; everything else reads `0xFF`, writes ignored.
 | `0x60,0x64` | **8042 keyboard controller** | 0x60 read = next byte (scan code **set 1**, XT codes incl. 0xE0 prefixes, break = make\|0x80). 0x64 read = status (bit0 output buffer full, bit5 = byte is from aux/mouse). Keyboard bytes raise IRQ1, mouse bytes IRQ12. Command 0xD4 to 0x64 then byte to 0x60 = send to mouse (0xF4 enable -> ack 0xFA). Mouse sends standard 3-byte PS/2 packets. |
 | `0x61` | **system control port B** | bit0 = PIT ch2 gate, bit1 = speaker data enable. Speaker sounds when both set, at ch2's frequency. |
 | `0x70,0x71` | **CMOS/RTC** (MC146818) | registers 0x00-0x09 time/date in **BCD** from the host clock (register 0x0B bit 2 = 0 -> BCD, bit1 = 1 -> 24h), 0x0A bit 7 update-in-progress (always 0), 0x32 century (BCD). Writes to time registers set an offset from host time (so DATE/TIME can set the clock). 0x0E-0x7F = 114 bytes of battery RAM (persisted by the page in localStorage) used by BIOS SETUP. |
-| `0x1F0-0x1F7`, `0x3F6` | **ATA primary master** = hard disk (drive C:) | a real enough ATA PIO device: LBA28, 0x1F2 sector count, 0x1F3-0x1F6 LBA (0x1F6 bit 6 = LBA, bits 0-3 = LBA 24-27), 0x1F7 command: `0x20` READ SECTORS, `0x30` WRITE SECTORS, `0xEC` IDENTIFY, `0xE7` flush. Status bits BSY 0x80, DRDY 0x40, DRQ 0x08, ERR 0x01. Data at 0x1F0 (16-bit reads/writes, or 8-bit which transfers one byte). No IRQ needed (BIOS polls); IRQ14 raised if nIEN (0x3F6 bit1) is clear. |
+| `0x1F0-0x1F7`, `0x3F6` | **ATA primary master** = hard disk (drive C:); optional **primary slave** = second hard disk (drive D:, the page's keep-forever disk) | 0x1F6 bit 4 selects the slave (both drives latch the task file; the selected one answers; with no slave its status reads 0). A real enough ATA PIO device: LBA28, 0x1F2 sector count, 0x1F3-0x1F6 LBA (0x1F6 bit 6 = LBA, bits 0-3 = LBA 24-27), 0x1F7 command: `0x20` READ SECTORS, `0x30` WRITE SECTORS, `0xEC` IDENTIFY, `0xE7` flush. Status bits BSY 0x80, DRDY 0x40, DRQ 0x08, ERR 0x01. Data at 0x1F0 (16-bit reads/writes, or 8-bit which transfers one byte). No IRQ needed (BIOS polls); IRQ14 raised if nIEN (0x3F6 bit1) is clear. |
 | `0x300-0x307` | **floppy controller** (drive A:, ARM-PC simplified FDC with DMA, on the old IBM "prototype card" port range) | NOT an NEC 765 — see §4.1 |
 | `0x3F8-0x3FF` | **COM1** 16550-ish UART | THR/RBR at 0x3F8, LSR at 0x3FD (bit5 THR empty always 1, bit0 data ready). In the browser the serial line is shown in a "serial console" panel; in node it goes to stdout. |
 | `0xE9` | **debug console** (the Bochs "port E9 hack") | a byte written here is logged to the host console immediately. |
@@ -553,6 +553,11 @@ extender.
   how IBM would have done it: the BPB must stay at offset 0x0B).
 * **C:** hard disk image, MBR partition table (FDISK-compatible), one primary FAT16
   partition (type 0x06), 128 MB (streamed to the page in 256 KB chunks as it is read).
+* **D:** (the page's second hard disk, primary slave; `disk/d.json`) the same layout, empty but
+  for `README.TXT`. It is the user's to keep: the page makes it once, in a browser database of
+  its own, and no later release, C: image or D: build changes it (web/js/keepdisk.js). DOS
+  letters: each disk's first DOS partition in turn (C:, D:), then the logical drives; the
+  CD-ROM (ARMCDEX, first free letter) is E: on the page, D: in single-disk test machines.
 * Images are built by `disk/mkimage.mjs` from a directory tree + a manifest.
 
 ## 12. Build

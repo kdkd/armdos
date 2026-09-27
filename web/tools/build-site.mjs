@@ -130,6 +130,18 @@ const images = {
   rom: stageImage(need(join(BUILD, 'rom.bin'))),
   hd: stageChunked(need(join(BUILD, 'hd.img'))),
 };
+// D:, the user's own drive (disk/d.json; web/js/keepdisk.js): only its non-zero sectors, as
+// [lba u32 LE][512 bytes] records, gzipped - a few KB, fetched once, when a browser first makes D:
+if (existsSync(join(BUILD, 'd.img'))) {
+  const raw = readFileSync(join(BUILD, 'd.img')), parts = [];
+  for (let lba = 0; lba < raw.length / 512; lba++) {
+    const sec = raw.subarray(lba * 512, lba * 512 + 512);
+    if (sec.some((b) => b)) { const h = Buffer.alloc(4); h.writeUInt32LE(lba); parts.push(h, sec); }
+  }
+  const recs = Buffer.concat(parts), h = sha(recs), name = `d.sectors.${h}.gz`;
+  writeFileSync(join(imgDir, name), gzipSync(recs, { level: 9 }));
+  images.d = { file: 'images/' + name, size: recs.length, sha: h, sectors: raw.length / 512 };
+}
 // the ARM Pit BBS's hard disk (docs/MODEM.md; built by apps/bbs), booted in a worker on demand
 if (existsSync(join(BUILD, 'bbs.img'))) images.bbs = stageImage(join(BUILD, 'bbs.img'));
 // the General MIDI sound set (apps/midi/sf, GeneralUser GS derived; emu/dev/gmsynth.mjs): fetched by

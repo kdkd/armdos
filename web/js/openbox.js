@@ -544,6 +544,7 @@ export class OpenBox {
       ['Display', this.video === 'vga' ? 'VGA, colour monitor' : `Hercules, ${({ green: 'green', amber: 'amber', white: 'paper-white' })[this.state.monitor] || ''} monitor`],
       ['Sound', sound + (c.sound === 'sb16' && this.midi ? ' + GS wavetable' : '')],
       ['Modem', c.modem ? `internal, ${SPEED_NAME[this.speed]} (COM2)` : 'none'],
+      ['Hard disks', 'C: and D:, 128 MB each, primary IDE'],
       ['CD-ROM', c.cdrom ? 'ATAPI drive, secondary IDE' : 'none'],
       ['Mouse', c.mouse ? 'PS/2' : 'none'],
       ['Game port', { sb16: '201h on the Sound Blaster 16', io: '201h on the multi-I/O card', none: 'none' }[this.gamePort]],
@@ -718,7 +719,10 @@ export class OpenBox {
     s += `<path d="M900 508H1178" stroke="#8c9195" stroke-width="2.6"/>`;
     // 3.5" floppy + hard disk (behind the 5.25" bay)
     s += `<rect x="928" y="312" width="226" height="88" rx="3" fill="url(#obSteelDark)" filter="url(#obCardShadow)"/><rect x="936" y="320" width="210" height="72" rx="2" fill="url(#obSteel)"/>` + paper(1000, 336, 96, 36, ['3½" FLOPPY DRIVE', '1.44 MB · DRIVE A:'], 6);
-    s += `<rect x="928" y="410" width="226" height="90" rx="3" fill="#8f9398" filter="url(#obCardShadow)"/><rect x="934" y="416" width="214" height="78" rx="2" fill="url(#obAlu)"/>` + paper(958, 426, 150, 58, ['ARM-PC FIXED DISK', '128 MB · 261 CYL · 16 HD · 63 SEC', 'LBA · ATA · 3600 RPM', 'DO NOT OPEN · WARRANTY VOID'], 6.2);
+    // two hard disks in the cage, on the primary IDE cable: C: (master) and D: (slave, the user's own)
+    for (const [y, who] of [[410, 'C: · PRIMARY MASTER'], [456, 'D: · PRIMARY SLAVE']])
+      s += `<rect x="928" y="${y}" width="226" height="42" rx="3" fill="#8f9398" filter="url(#obCardShadow)"/><rect x="934" y="${y + 4}" width="214" height="34" rx="2" fill="url(#obAlu)"/>` +
+        paper(958, y + 7, 150, 28, ['ARM-PC FIXED DISK · 128 MB', who, 'LBA · ATA · 3600 RPM'], 5.6);
     s += `<g class="ob-bay525" data-part="cd-bay"><rect class="ob-drop" x="896" y="512" width="286" height="288" fill="transparent"/>`;
     if (c.cdrom) {
       s += `<g class="ob-cd" data-part="cdrom" tabindex="0" role="button" aria-label="The CD-ROM drive: click to take it out">

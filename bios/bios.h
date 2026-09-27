@@ -184,8 +184,9 @@ int  disk_read_lba(int drive, uint32_t lba, int count, void *buf);
 int  disk_write_lba(int drive, uint32_t lba, int count, const void *buf);
 int  floppy_present(void);
 int  floppy_media(void);
-uint32_t hd_sectors(void);
-extern char hd_model[41];
+uint32_t hd_sectors(void);                 /* the master's (C:); 0 = none */
+uint32_t hd_sectors_of(int unit);          /* 0 master, 1 slave (D:) */
+extern char hd_model[2][41];
 
 /* post.c / setup.c */
 void bios_main(void);

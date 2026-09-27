@@ -14,7 +14,7 @@ $(BUILD)/floppy-blank.img: disk/mkimage.mjs
 	@mkdir -p $(BUILD)/web-empty
 	$(NODE) disk/mkimage.mjs build --format fd1440 --dir $(BUILD)/web-empty --label "NO NAME" -o $@
 
-$(SITE)/index.html: $(WEB_SRC) $(EMU_SRC) $(BUILD)/rom.bin $(BUILD)/hd.img $(BUILD)/floppy-boot.img $(BUILD)/floppy-blank.img $(wildcard $(BUILD)/floppy-*.img) $(wildcard $(BUILD)/bbs.img) $(BUILD)/cdrom/sampler93/disc.json
+$(SITE)/index.html: $(WEB_SRC) $(EMU_SRC) $(BUILD)/rom.bin $(BUILD)/hd.img $(BUILD)/d.img $(BUILD)/floppy-boot.img $(BUILD)/floppy-blank.img $(wildcard $(BUILD)/floppy-*.img) $(wildcard $(BUILD)/bbs.img) $(BUILD)/cdrom/sampler93/disc.json
 	$(NODE) web/tools/build-site.mjs --out $(SITE)
 
 # the disk box's blank diskette is part of the site (build.sh stages it into public_html/)
@@ -35,6 +35,7 @@ web-test: site
 	$(WEB_PY) web/tests/test_keyb.py
 	$(WEB_PY) web/tests/test_kbdnudge.py
 	$(WEB_PY) web/tests/test_persist.py
+	$(WEB_PY) web/tests/test_keepdisk.py
 	$(WEB_PY) web/tests/test_sw_update.py
 	$(WEB_PY) web/tests/test_bbs_retry.py
 

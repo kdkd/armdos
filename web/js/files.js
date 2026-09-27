@@ -1,9 +1,10 @@
-// The Files panel: browse drive A: (the diskette in the drive) and C:, click a
-// file to download it, drop host files to copy them in (web/js/fat.js).
+// The Files panel: browse drive A: (the diskette in the drive), C: and D: (the user's own
+// drive, web/js/keepdisk.js), click a file to download it, drop host files to copy them in
+// (web/js/fat.js).
 //
 // DOS caches disk sectors, so the page never writes under a running DOS:
 // the diskette is popped out, written and pushed back in (a media change DOS
-// notices), and C: only takes files while the machine is switched off.
+// notices), and the hard disks only take files while the machine is switched off.
 
 import { $, el, download } from './util.js';
 import { FatVolume, DiskFullError, fmtStamp } from './fat.js';
@@ -14,7 +15,7 @@ export function looksLikeImage(f) { return IMAGE_SIZES.has(f.size) && /\.(img|im
 
 export class Files {
   constructor(o) {
-    this.o = o;   // { floppy(), ensureFloppy(), hd(), powered(), machine(), sound, onFloppyWritten(), onHdWritten(lbas) }
+    this.o = o;   // { floppy(), ensureFloppy(), hd(), hd2(), powered(), machine(), sound, onFloppyWritten(), onHdWritten(lbas, 'C'|'D') }
     this.drive = 'A'; this.path = [];     // path: directory entries from the root
     this.list = $('filesList'); this.foot = $('filesFoot');
     for (const t of document.querySelectorAll('.ftab')) t.onclick = () => this.setDrive(t.dataset.drive);
@@ -41,7 +42,7 @@ export class Files {
   /** The disks changed (a write, an insert, an eject): redraw soon. */
   changed() { clearTimeout(this.timer); this.timer = setTimeout(() => this.render(), 250); }
 
-  image(drive = this.drive) { return drive === 'A' ? this.o.floppy()?.data || null : this.o.hd(); }
+  image(drive = this.drive) { return drive === 'A' ? this.o.floppy()?.data || null : drive === 'D' ? this.o.hd2?.() || null : this.o.hd(); }
   volume(drive = this.drive) {
     const img = this.image(drive);
     if (!img) return null;
@@ -66,7 +67,7 @@ export class Files {
   }
   render() {
     const drive = this.drive;
-    $('filesAddLbl').hidden = drive === 'C' && this.o.powered();
+    $('filesAddLbl').hidden = drive !== 'A' && this.o.powered();
     if (drive === 'C' && this.stream() && this.cMeta !== this.stream()) {
       this.showEmpty('Reading C:…');
       this.prepareC().then(() => this.render(), (e) => this.showEmpty(`C: can't be read right now (${e.message}).`));
@@ -75,7 +76,7 @@ export class Files {
     let v;
     try { v = this.volume(); }
     catch (e) { this.showEmpty(`This diskette has no DOS file system (${e.message}).`); return; }
-    if (!v) { this.showEmpty(drive === 'A' ? 'Drive A: is empty. Put a diskette in, or drop files here and I will use the blank one.' : 'Drive C: is still loading.'); return; }
+    if (!v) { this.showEmpty(drive === 'A' ? 'Drive A: is empty. Put a diskette in, or drop files here and I will use the blank one.' : `Drive ${drive}: is still loading.`); return; }
     // re-find the directory path (entries move when directories grow)
     let dir = null; const names = [];
     try {
@@ -104,7 +105,7 @@ export class Files {
     if (!this.statusUntil || performance.now() > this.statusUntil) {
       const files = ents.filter((e) => !(e.attr & 0x10));
       const bytes = files.reduce((s, e) => s + e.size, 0);
-      const ro = drive === 'C' && this.o.powered() ? '   (read-only while the machine is on)' : this.o.floppy()?.writeProtected && drive === 'A' ? '   (write-protected)' : '';
+      const ro = drive !== 'A' && this.o.powered() ? '   (read-only while the machine is on)' : this.o.floppy()?.writeProtected && drive === 'A' ? '   (write-protected)' : '';
       this.status(`${files.length} file(s) ${bytes.toLocaleString('en-US')} bytes   ${v.freeBytes.toLocaleString('en-US')} bytes free${ro}`);
     }
   }
@@ -118,10 +119,10 @@ export class Files {
     if (!this.statusUntil || performance.now() > this.statusUntil) this.status('');
   }
 
-  /** Copy host files onto A: or C: (current directory when it is the drive on show). */
+  /** Copy host files onto A:, C: or D: (current directory when it is the drive on show). */
   async copyIn(fileList, drive) {
-    if (drive === 'C' && this.o.powered()) {
-      this.status('C: is in use. Switch the machine off to copy files onto it (downloading works any time).', 'err'); return;
+    if (drive !== 'A' && this.o.powered()) {
+      this.status(`${drive}: is in use. Switch the machine off to copy files onto it (downloading works any time).`, 'err'); return;
     }
     if (drive === 'A' && !this.o.floppy()) await this.o.ensureFloppy();
     const disk = drive === 'A' ? this.o.floppy() : null;
@@ -150,7 +151,7 @@ export class Files {
     if (drive === 'A') {
       if (lbas.length) this.o.onFloppyWritten();
       if (m) await new Promise((r) => setTimeout(() => { m.insertFloppy(img, !!disk.writeProtected); this.o.sound.fdInsert(); r(); }, 450));
-    } else if (lbas.length) this.o.onHdWritten(lbas);
+    } else if (lbas.length) this.o.onHdWritten(lbas, drive);
     const renamed = done.filter(([a, b]) => a.toUpperCase() !== b);
     let msg = done.length ? `Copied ${done.length} file(s) to ${drive}:` + (renamed.length ? ` (${renamed.slice(0, 3).map(([a, b]) => `${a} → ${b}`).join(', ')}${renamed.length > 3 ? ', …' : ''})` : '') + '.' : '';
     if (errors.length) msg += (msg ? ' ' : '') + errors.join(' ');

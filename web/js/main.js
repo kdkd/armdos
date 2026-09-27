@@ -4,7 +4,7 @@
 
 import { Machine } from '../emu/machine.js';
 import { renderScreen } from '../emu/render.js';
-import { $, fetchBinary, download, prefs } from './util.js';
+import { $, el, fetchBinary, download, prefs } from './util.js';
 import { Display, textImage, PHOSPHOR } from './display.js';
 import { Sound } from './audio.js';
 import { SbAudio } from './audio-sb.js';
@@ -13,6 +13,7 @@ import { SevenSeg } from './sevenseg.js';
 import './altled.js';
 import { DiskStore, cmosStore } from './storage.js';
 import { StreamedDisk } from './hdstream.js';
+import { KeepDisk } from './keepdisk.js';
 import { Driver, Debugger } from './debug.js';
 import { Inspector } from './inspector.js';
 import { MemMapPanel } from './memmap-panel.js';
@@ -181,6 +182,10 @@ const loading = (async () => {
   // C: is streamed in chunks (web/js/hdstream.js) when images.json describes it that way
   const stream = images.hd.chunks ? new StreamedDisk(images.hd, { onProgress: updateHdStatus, onWait: (on) => $('hdLed').classList.toggle('net', on) }) : null;
   state.hdStream = stream;
+  // D:, the user's own drive (web/js/keepdisk.js): made the first time, then only ever theirs.
+  // If its store can't be read, the machine runs without it rather than with a blank one.
+  const keep = images.d ? (state.keep = new KeepDisk(images.d, { onChange: updateDStatus })) : null;
+  const keepP = keep ? keep.open().catch((e) => { console.error('D:', e); state.keepError = e; updateDStatus(); return null; }) : null;
   const [rom, hd, font] = await Promise.all([
     fetchBinary(images.rom.file, null, images.rom),
     stream ? stream.img : fetchBinary(images.hd.file, null, images.hd),
@@ -191,6 +196,7 @@ const loading = (async () => {
   state.store.onChange = updateHdStatus;
   await state.store.restore(hd, stream ? (lba) => stream.wrote(lba) : null);
   state.hd = hd;
+  state.hd2 = await keepP;
   return true;
 })();
 loading.catch((e) => { console.error(e); state.loadError = e; });
@@ -199,43 +205,68 @@ const files = new Files({
   floppy: () => disks.inDrive,
   ensureFloppy: async () => { const d = disks.disks.find((x) => x.id === 'blank' && !x.missing) || disks.disks.find((x) => !x.missing && !x.writeProtected); if (d) await disks.insert(d); },
   hd: () => state.hd,
+  hd2: () => state.hd2,
   hdStream: () => state.hdStream,
   powered: () => state.powered,
   machine: () => (state.powered ? state.machine : null),
   sound,
   onFloppyWritten: () => disks.markWritten(),
-  onHdWritten: (lbas) => { for (const l of lbas) { state.hdStream?.wrote(l); state.store.markDirty(l, 1); } state.store.flush(); },
+  onHdWritten: (lbas, drive) => {
+    if (drive === 'D') { state.keep.wrote(lbas); state.keep.store.flush(); return; }
+    for (const l of lbas) { state.hdStream?.wrote(l); state.store.markDirty(l, 1); }
+    state.store.flush();
+  },
 });
 loading.then(() => files.changed(), () => {});
 
+function notSavingTag() { $('hdBay').classList.toggle('not-saving', !!(state.store?.error || state.keep?.store.error)); }
 function updateHdStatus() {
   const s = state.store; if (!s) return;
   // a failed save stays on show (here and on the disk bay) until one works again
   $('hdStatus').classList.toggle('warn', !!s.error);
-  $('hdBay').classList.toggle('not-saving', !!s.error);
+  notSavingTag();
   if (s.error) {
     $('hdStatus').textContent = `Drive C: your changes are NOT being saved: this browser refused to store them (${s.error}). ` +
       'They are kept while this page stays open, and the page keeps trying. Download C: keeps a copy.';
     return;
   }
-  $('hdStatus').textContent = s.saved
-    ? `Drive C: remembers your changes in this browser (${(s.saved / 2).toLocaleString('en-US')} KB changed since it left the factory).`
-    : 'Drive C: is exactly as it left the factory. Anything you save to it will still be here next time.';
+  const fresh = s.dropped ? 'C: has been updated to a new version since your last visit, so it starts over: your earlier changes to C: are gone (D: keeps its own). ' : '';
+  $('hdStatus').textContent = fresh + (s.saved
+    ? `Drive C: remembers your changes in this browser (${(s.saved / 2).toLocaleString('en-US')} KB changed since it left the factory) until C: gets a new version. Keep what matters on drive D: instead.`
+    : 'Drive C: is exactly as it left the factory. Changes you make to it last until C: gets a new version, so keep what matters on drive D: instead.');
   const d = state.hdStream;
   if (d && !d.complete) $('hdStatus').textContent += ` C: ${Math.floor(d.progress * 100)}% cached; the rest arrives as it is needed.`;
+}
+
+function updateDStatus() {
+  const k = state.keep, st = $('dStatus');
+  if (!st) return;
+  notSavingTag();
+  const err = k?.store.error;
+  st.classList.toggle('warn', !!(err || state.keepError));
+  if (state.keepError) { st.textContent = `Drive D: could not be read from this browser's storage (${state.keepError.message || state.keepError}), so the machine runs without it this time. Nothing on it has been changed.`; return; }
+  if (!k || !k.img) { st.textContent = 'Drive D: is yours to keep, in this browser, through every update.'; return; }
+  if (err) { st.textContent = `Drive D: your changes are NOT being saved: this browser refused to store them (${err}). They are kept while this page stays open, and the page keeps trying. Back up D: keeps a copy.`; return; }
+  st.textContent = `Drive D: is yours: ${(k.store.saved / 2).toLocaleString('en-US')} KB kept in this browser, through every update of ARM-DOS and C:.` +
+    (k.kept === false ? ' Back it up now and then: a browser may clear a site\'s data when it runs short of space.' : '');
 }
 
 // ------------------------------------------------------------------ the machine
 function createMachine() {
   const m = new Machine({
-    rom: state.rom, hd: state.hd,
+    rom: state.rom, hd: state.hd, hd2: state.hd2 || null,
     fd: disks.inDrive?.data || null, fdWriteProtected: !!disks.inDrive?.writeProtected,
     turbo: state.turbo, jit: q.get('jit') !== '0',
     cmos: cmosStore.load(),
     onSerial: serialOut, onDebug: (b) => { if (q.has('debug')) serialOut(b); },
     onSpeaker: (on, f) => sound.speaker(on, f, m.timeMs()),
     onDiskActivity: diskActivity,
-    onDiskWrite: (drive, lba, count) => { if (drive === 0x80) state.store.markDirty(lba, count); else disks.markWritten(); files.changed(); },
+    onDiskWrite: (drive, lba, count) => {
+      if (drive === 0x80) state.store.markDirty(lba, count);
+      else if (drive === 0x81) state.keep.wrote(Array.from({ length: count }, (_, k) => lba + k));
+      else disks.markWritten();
+      files.changed();
+    },
     onCmosWrite: (ram) => cmosStore.save(ram),
     onLeds: (bits) => input.setLeds(bits),
     onPrint: (b) => printer.enqueue(b),
@@ -273,7 +304,7 @@ function createMachine() {
 
 let hdPrevCyl = 0;
 function diskActivity(drive, lba, count, isWrite, cyl, prevCyl) {
-  if (drive === 0x80) {
+  if (drive >= 0x80) {                                    // (one DISK lamp for both hard disks, as on a real front panel)
     blink('hdLed', 60);
     const c = Math.floor(lba / 1008);
     sound.hdAccess(c, hdPrevCyl, isWrite);
@@ -541,6 +572,54 @@ hdReset.onclick = async () => {
   files.changed();
 };
 
+// ------------------------------------------------------------------ D:: back up, restore, erase
+function restartIfOn() {       // (the disk changed under DOS: start it afresh, as Reset C: does)
+  if (state.powered && state.machine) { state.machine.stopped = false; state.machine.powerCycle(); if (!state.driver.running) { state.dbg.prepareResume(); state.driver.start(); } }
+}
+function dSay(msg, warn = false, ...buttons) {
+  const st = $('dStatus');
+  st.textContent = msg; st.classList.toggle('warn', warn);
+  for (const b of buttons) st.append(' ', b);
+}
+$('dBackup').onclick = async () => {
+  try { await loading; } catch { return; }
+  if (!state.keep?.img) return;
+  const btn = $('dBackup');
+  btn.disabled = true; btn.textContent = 'Packing D:…';
+  try { const { data, name } = await state.keep.backup(); download(data, name); }
+  catch (e) { dSay(`Back up D: failed (${e.message}).`, true); }
+  finally { btn.disabled = false; btn.textContent = 'Back up D:'; }
+};
+$('dRestore').onchange = async (e) => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try { await loading; } catch { return; }
+  if (!state.keep?.img) return;
+  const go = el('button', { class: 'btn small danger', text: 'Replace D:' }), no = el('button', { class: 'btn small', text: 'Cancel' });
+  dSay(`Replace everything on D: with ${f.name}?${state.powered ? ' The machine restarts.' : ''}`, true, go, no);
+  no.onclick = () => updateDStatus();
+  go.onclick = async () => {
+    dSay(`Restoring D: from ${f.name}…`);
+    try { await state.keep.restore(f); } catch (err) { dSay(`D: is unchanged: ${err.message}.`, true); return; }
+    restartIfOn(); updateDStatus(); files.changed();
+  };
+};
+const dErase = $('dErase');
+let dEraseArmed = 0;
+dErase.onclick = async () => {
+  if (!dEraseArmed) {
+    dErase.classList.add('armed'); dErase.textContent = 'Erase everything on D:?';
+    dEraseArmed = setTimeout(() => { dEraseArmed = 0; dErase.classList.remove('armed'); dErase.textContent = 'Erase D:'; }, 4000);
+    return;
+  }
+  clearTimeout(dEraseArmed); dEraseArmed = 0;
+  dErase.classList.remove('armed'); dErase.textContent = 'Erase D:';
+  try { await loading; } catch { return; }
+  if (!state.keep?.img) return;
+  try { await state.keep.erase(); } catch (err) { dSay(`D: could not be erased: ${err.message}.`, true); return; }
+  restartIfOn(); updateDStatus(); files.changed();
+};
+
 // flush the disk when the page goes away
-addEventListener('pagehide', () => state.store?.flush());
+addEventListener('pagehide', () => { state.store?.flush(); state.keep?.store.flush(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) state.store?.flush(); });

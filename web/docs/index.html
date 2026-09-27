@@ -199,18 +199,21 @@ Type DOSSHELL for the ARM-DOS Shell, or HELP for things to try.
 
 <p>The <strong>Monitor</strong> selector swaps the display card: a VGA with the colour monitor, or a Hercules Graphics Card with a green, amber or paper-white monochrome monitor. Like swapping a real card, the change takes effect the next time you switch on.</p>
 
-<h2 id="disks"><span class="num">7</span>Diskettes, drive C: and your files</h2>
+<h2 id="disks"><span class="num">7</span>Diskettes, drives C: and D:, and your files</h2>
 
 <p>The <strong>disk box</strong> holds diskettes. Click one, or drag it onto drive A:, to put it in the drive; the eject button takes it out. You can also drop a 1.44 MB <code>.img</code> file of your own onto the drive.</p>
 
 <p>The red-labelled <strong>ARM-DOS 4.00 Startup</strong> diskette is a system disk with DOS on it, like the setup disk that came with a new PC. Boot from it and you can wipe the hard disk the way people did in 1988: <code>FORMAT C: /S</code> (it asks for the drive's current volume label, <code>ARM-DOS</code>, before it erases anything), then <code>INSTALL</code> copies DOS across. Take the diskette out, press Ctrl+Alt+Del, and you have a brand new, empty ARM-DOS.</p>
-<p>Drive C: is a 128 MB hard disk, and <strong>whatever you change on it is saved in your browser</strong>, so your files are still there next time. <strong>Reset C: to factory</strong> puts the disk back the way it shipped. <strong>Download A:</strong> and <strong>Download C:</strong> save disk images to your computer.</p>
+<p>The machine has two 128 MB hard disks, and both are saved in your browser, but not in the same way.</p>
+<p><strong>Drive C:</strong> holds ARM-DOS and everything that comes with it. What you change on it is kept, but only until C: gets a new version (new programs, fixes). Then C: starts over, fresh from the factory, and your changes to it are gone; the page tells you when that has happened. <strong>Reset C: to factory</strong> does the same whenever you like.</p>
+<p><strong>Drive D: is yours.</strong> It starts empty but for a <code>README.TXT</code>, and whatever you save on it stays until you delete it: no new version of ARM-DOS, and nothing else on the page, ever touches it. Keep your own programs, documents and saved games there. It costs your browser almost nothing until you fill it. <strong>Back up D:</strong> saves the whole drive to your computer as one file, <strong>Restore D:</strong> puts such a file back (in this browser or another one), and <strong>Erase D:</strong> starts it over, empty. D: lives in this browser only: another browser or computer has its own, and clearing this site's data in your browser's settings erases it, so keep a backup of anything that matters.</p>
+<p><strong>Download A:</strong> and <strong>Download C:</strong> save disk images to your computer.</p>
 
-<p>The <strong>Files</strong> panel copies files between your computer and the machine. Click a file to download it. Drop files from your computer onto the listing (or onto the drive) to copy them in; long names are cut down to DOS's 8.3. Drive C: accepts files only while the machine is switched off, and a diskette pops out and back in while it is written, so DOS notices the change.</p>
+<p>The <strong>Files</strong> panel copies files between your computer and the machine. Click a file to download it. Drop files from your computer onto the listing (or onto the drive) to copy them in; long names are cut down to DOS's 8.3. Drives C: and D: accept files only while the machine is switched off, and a diskette pops out and back in while it is written, so DOS notices the change.</p>
 
 <h2 id="cdrom"><span class="num">8</span>The CD-ROM drive</h2>
 
-<p>The machine has a double-speed ATAPI CD-ROM drive, which DOS calls D:. Click the <strong>Multimedia Sampler '93</strong> jewel case to load the disc, then try <code>DIR D:</code> or <code>CDPLAY</code> for its music. Drop any <code>.iso</code> file of your own onto the page and it becomes the disc in the drive (data discs only; nothing is uploaded anywhere). The drive's front has a headphone jack and a volume knob that work the way you would expect.</p>
+<p>The machine has a double-speed ATAPI CD-ROM drive, which DOS calls E: (the letter after the two hard disks). Click the <strong>Multimedia Sampler '93</strong> jewel case to load the disc, then try <code>DIR E:</code> or <code>CDPLAY</code> for its music. Drop any <code>.iso</code> file of your own onto the page and it becomes the disc in the drive (data discs only; nothing is uploaded anywhere). The drive's front has a headphone jack and a volume knob that work the way you would expect.</p>
 
 <h2 id="modem"><span class="num">9</span>The modem and the phone book</h2>
 

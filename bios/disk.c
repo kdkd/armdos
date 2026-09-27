@@ -22,9 +22,10 @@
 #define ST_DRQ 0x08
 #define ST_ERR 0x01
 
-char hd_model[41];
-static uint32_t hd_total;
-static int hd_present, hd_cyls, hd_heads = 16, hd_spt = 63;
+/* the primary IDE channel's master (80h, C:) and slave (81h, D:) */
+char hd_model[2][41];
+static uint32_t hd_total[2];
+static int hd_present[2], hd_cyls[2], hd_heads = 16, hd_spt = 63;
 
 static const struct { uint8_t cyls, heads, spt, type; } fd_geom[5] = {
     { 0, 0, 0, 0 }, { 40, 2, 9, 1 }, { 80, 2, 15, 2 }, { 80, 2, 9, 3 }, { 80, 2, 18, 4 },
@@ -117,23 +118,24 @@ static int ata_wait(int want_drq)
     return 0x80;
 }
 
-static void ata_select(uint32_t lba, int count)
+static void ata_select(int unit, uint32_t lba, int count)
 {
-    outb(ATA_DRIVE, 0xE0 | ((lba >> 24) & 0x0F));
+    outb(ATA_DRIVE, 0xE0 | (unit << 4) | ((lba >> 24) & 0x0F));
     outb(ATA_COUNT, count);
     outb(ATA_LBA0, lba);
     outb(ATA_LBA1, lba >> 8);
     outb(ATA_LBA2, lba >> 16);
 }
 
-static int ata_xfer(int write, uint32_t lba, int count, void *buf)
+static int ata_xfer(int unit, int write, uint32_t lba, int count, void *buf)
 {
     uint8_t *p = buf;
+    outb(ATA_DRIVE, 0xE0 | (unit << 4));    /* the status below is the selected drive's */
     while (count > 0) {
         int n = count > 255 ? 255 : count;
         int e = ata_wait(0);
         if (e) return e;
-        ata_select(lba, n);
+        ata_select(unit, lba, n);
         outb(ATA_CMD, write ? 0x30 : 0x20);
         for (int s = 0; s < n; s++) {
             if ((e = ata_wait(1))) return e;
@@ -159,33 +161,43 @@ static int ata_xfer(int write, uint32_t lba, int count, void *buf)
     return 0;
 }
 
-static void ata_identify(void)
+static void ata_identify(int unit)
 {
-    uint8_t st = inb(ATA_CMD);
-    if (st == 0xFF || st == 0x00) { hd_present = 0; return; }
+    hd_present[unit] = 0;
     outb(ATA_CTL, 0x02);                    /* nIEN: we poll */
-    outb(ATA_DRIVE, 0xA0);
+    outb(ATA_DRIVE, 0xA0 | (unit << 4));
+    uint8_t st = inb(ATA_CMD);
+    if (st == 0xFF || st == 0x00) return;   /* nothing there */
     outb(ATA_CMD, 0xEC);
-    if (ata_wait(1)) { hd_present = 0; return; }
+    if (ata_wait(1)) return;
     uint16_t id[256];
     for (int i = 0; i < 256; i++) id[i] = inw(ATA_DATA);
-    hd_total = id[60] | ((uint32_t)id[61] << 16);
-    for (int i = 0; i < 20; i++) { hd_model[i * 2] = id[27 + i] >> 8; hd_model[i * 2 + 1] = id[27 + i] & 0xFF; }
-    hd_model[40] = 0;
-    for (int i = 39; i >= 0 && hd_model[i] == ' '; i--) hd_model[i] = 0;
-    hd_heads = 16;
-    hd_spt = 63;
-    hd_cyls = hd_total / (hd_heads * hd_spt);
-    if (hd_cyls > 1024) hd_cyls = 1024;
-    hd_present = hd_total > 0;
+    char *model = hd_model[unit];
+    hd_total[unit] = id[60] | ((uint32_t)id[61] << 16);
+    for (int i = 0; i < 20; i++) { model[i * 2] = id[27 + i] >> 8; model[i * 2 + 1] = id[27 + i] & 0xFF; }
+    model[40] = 0;
+    for (int i = 39; i >= 0 && model[i] == ' '; i--) model[i] = 0;
+    hd_cyls[unit] = hd_total[unit] / (hd_heads * hd_spt);
+    if (hd_cyls[unit] > 1024) hd_cyls[unit] = 1024;
+    hd_present[unit] = hd_total[unit] > 0;
 }
 
-uint32_t hd_sectors(void) { return hd_present ? hd_total : 0; }
+uint32_t hd_sectors_of(int unit) { return hd_present[unit] ? hd_total[unit] : 0; }
+uint32_t hd_sectors(void) { return hd_sectors_of(0); }
+
+/* BIOS drive number -> unit (0 master, 1 slave), or -1: not a hard disk we have */
+static int hd_unit(int drive)
+{
+    int u = drive - 0x80;
+    return (u == 0 || u == 1) && hd_present[u] ? u : -1;
+}
 
 void disk_init(void)
 {
-    ata_identify();
-    BDA8(BDA_HDCOUNT) = hd_present ? 1 : 0;
+    ata_identify(0);
+    if (hd_present[0]) ata_identify(1);     /* (a slave only counts next to a master, as in a real PC) */
+    outb(ATA_DRIVE, 0xA0);
+    BDA8(BDA_HDCOUNT) = hd_present[0] + hd_present[1];
     BDA8(BDA_FDSTATUS) = 0;
     BDA8(BDA_HDSTATUS) = 0;
     IVT[0x1E] = (uint32_t)fd_params;
@@ -194,14 +206,14 @@ void disk_init(void)
 int disk_read_lba(int drive, uint32_t lba, int count, void *buf)
 {
     if (drive == 0) return fdc_xfer(0, lba, count, buf);
-    if (drive == 0x80 && hd_present) return ata_xfer(0, lba, count, buf);
+    if (hd_unit(drive) >= 0) return ata_xfer(hd_unit(drive), 0, lba, count, buf);
     return 0x80;
 }
 
 int disk_write_lba(int drive, uint32_t lba, int count, const void *buf)
 {
     if (drive == 0) return fdc_xfer(1, lba, count, (void *)buf);
-    if (drive == 0x80 && hd_present) return ata_xfer(1, lba, count, (void *)buf);
+    if (hd_unit(drive) >= 0) return ata_xfer(hd_unit(drive), 1, lba, count, (void *)buf);
     return 0x80;
 }
 
@@ -217,13 +229,14 @@ static void finish(struct armregs *f, int drive, int err)
 void int13_handler(struct armregs *f)
 {
     int drive = DL(f);
-    int fd = drive == 0, hd = drive == 0x80 && hd_present;
+    int unit = hd_unit(drive);
+    int fd = drive == 0, hd = unit >= 0;
     int cyls, heads, spt;
 
     if (fd) {
         int m = floppy_media();
         cyls = fd_geom[m].cyls; heads = fd_geom[m].heads; spt = fd_geom[m].spt;
-    } else { cyls = hd_cyls; heads = hd_heads; spt = hd_spt; }
+    } else { cyls = hd ? hd_cyls[unit] : 0; heads = hd_heads; spt = hd_spt; }
 
     switch (AH(f)) {
     case 0x00:
@@ -265,7 +278,7 @@ void int13_handler(struct armregs *f)
         } else if (hd) {
             int c = cyls - 1;
             f->r2 = ((c & 0xFF) << 8) | ((c >> 2) & 0xC0) | spt;
-            f->r3 = ((heads - 1) << 8) | 1;
+            f->r3 = ((heads - 1) << 8) | BDA8(BDA_HDCOUNT);     /* DL: how many hard disks */
             finish(f, drive, 0);
         } else {
             finish(f, drive, 0x01);
@@ -274,7 +287,7 @@ void int13_handler(struct armregs *f)
     case 0x15:
         set_cf(f, 0);
         if (drive == 0) set_ah(f, floppy_present() ? 0x02 : 0x00);
-        else if (hd) { set_ah(f, 0x03); f->r2 = hd_total >> 16; f->r3 = hd_total & 0xFFFF; }
+        else if (hd) { set_ah(f, 0x03); f->r2 = hd_total[unit] >> 16; f->r3 = hd_total[unit] & 0xFFFF; }
         else set_ah(f, 0);
         break;
     case 0x16:
@@ -310,10 +323,10 @@ void int13_handler(struct armregs *f)
         uint8_t *p = (uint8_t *)f->r4;
         memset(p + 2, 0, 24);
         p[0] = 26; p[1] = 0;
-        *(uint32_t *)(p + 4) = hd_cyls;
+        *(uint32_t *)(p + 4) = hd_cyls[unit];
         *(uint32_t *)(p + 8) = hd_heads;
         *(uint32_t *)(p + 12) = hd_spt;
-        *(uint32_t *)(p + 16) = hd_total;
+        *(uint32_t *)(p + 16) = hd_total[unit];
         p[24] = 0; p[25] = 2;   /* 512 bytes per sector */
         finish(f, drive, 0);
         break;

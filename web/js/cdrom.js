@@ -172,11 +172,11 @@ export class CdRom {
     this.led = this.bay.querySelector('#cdLed');
     this.box = el('div', { class: 'cdbox-wrap', id: 'cdBox' });
     this.box.innerHTML = `
-      <h2>CD-ROMs <span class="h2-sub">drive D: (with ARMCD.SYS + ARMCDEX)</span></h2>
+      <h2>CD-ROMs <span class="h2-sub">drive E: (with ARMCD.SYS + ARMCDEX)</span></h2>
       <div class="cdbox-shelf" id="cdShelf"></div>
       <p class="hint small cd-status" id="cdStatus" aria-live="polite">Click a disc to put it in the CD-ROM drive, or drag it there.</p>
       <div class="cd-own"><label class="btn small">Choose ISO&hellip;<input type="file" id="cdIsoFile" accept=".iso,application/x-iso9660-image" hidden></label>
-      <span class="hint small">Your own CD image (ISO 9660, data only) as drive D:. Drop an <code>.iso</code> on the drive or here. It is read from your disk as needed and never uploaded.</span></div>`;
+      <span class="hint small">Your own CD image (ISO 9660, data only) as drive E:. Drop an <code>.iso</code> on the drive or here. It is read from your disk as needed and never uploaded.</span></div>`;
   }
   mount(caseEl) {
     const bays = caseEl.querySelector('.bays');
@@ -238,7 +238,7 @@ export class CdRom {
     const back = el('div', { class: 'jewel-back' });
     back.innerHTML = `<div class="back-title">${esc(e.title)}</div>
       <ol class="back-tracks">
-        <li value="1"><span class="bt-t">Data <small>(ISO 9660: DIR D:, MENU)</small></span></li>
+        <li value="1"><span class="bt-t">Data <small>(ISO 9660: DIR E:, MENU)</small></span></li>
         ${audio.map((t) => `<li value="${t.number}"><span class="bt-t">${esc(t.title)}</span> <span class="bt-len">${mmss(t.frames ? t.frames / 44100 : t.seconds)}</span>
           <span class="bt-credit">&ldquo;${esc(t.title)}&rdquo; ${esc(t.artist)} (<a href="https://incompetech.com/" target="_blank" rel="noopener">incompetech.com</a>)<br>Licensed under Creative Commons: <a href="${esc(t.licenceUrl)}" target="_blank" rel="noopener license">By Attribution 4.0 License</a> &middot; <a href="${esc(t.source)}" target="_blank" rel="noopener">source</a></span></li>`).join('')}
       </ol>`;
@@ -306,7 +306,7 @@ export class CdRom {
   async insertIso(file) {
     let vol = null;
     try { vol = await isoVolumeId(file); } catch (e) { console.warn(e); }
-    if (!vol) { this.flash(`${file.name} isn't an ISO 9660 CD image. D: takes plain .iso files (a single data track); BIN/CUE and other formats aren't supported.`); return false; }
+    if (!vol) { this.flash(`${file.name} isn't an ISO 9660 CD image. The CD-ROM drive takes plain .iso files (a single data track); BIN/CUE and other formats aren't supported.`); return false; }
     if (file.size > 900 * 1048576) this.flash(`${file.name} is bigger than a CD (${Math.round(file.size / 1048576)} MB); trying anyway.`);
     const entry = { id: 'iso-' + Date.now(), title: `${file.name} (${vol})`, volumeId: vol, local: true,
       tracks: [{ number: 1, type: 'data', sectors: Math.ceil(file.size / 2048) }] };
@@ -370,7 +370,7 @@ export class CdRom {
       t = `In the drive: ${src.entry.title}.`;
       if (busy.length) t += ` Loading audio track ${busy.join(', ')}\u2026`;
       else if (m && v.playing) t += ` Playing track ${v.track}${v.paused ? ' (paused)' : ''}${this.headphones ? ', on the headphones' : ''}.`;
-      else if (!m) t += ' Switch the machine on; then DEVICE=C:\\DOS\\ARMCD.SYS in CONFIG.SYS and ARMCDEX make it drive D:.';
+      else if (!m) t += ' Switch the machine on; then DEVICE=C:\\DOS\\ARMCD.SYS in CONFIG.SYS and ARMCDEX make it drive E:.';
     }
     s.textContent = t;
   }

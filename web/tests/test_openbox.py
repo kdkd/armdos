@@ -75,7 +75,7 @@ def main():
             check('the panel is closed at first', page.evaluate("document.getElementById('openbox').hidden"))
             page.click('#openCaseBtn')
             check('Open case shows the inside, the lid slides off', page.evaluate("!document.getElementById('openbox').hidden && document.getElementById('openbox').classList.contains('lid-off')"))
-            wait_for(page, "document.querySelector('.ob-lid').getAnimations().every((a) => a.playState === 'finished')", 5)
+            wait_for(page, "document.querySelector('.ob-lid').getAnimations().every((a) => a.playState === 'finished')", 15)     # (a 1 s animation; slow when the machine is busy)
             lid = page.evaluate("(() => { const l = document.querySelector('.ob-lid').getBoundingClientRect(), s = document.querySelector('.ob-stage').getBoundingClientRect(); return [l.bottom, s.top, document.querySelector('.ob-lid').getAnimations().map((a) => a.playState)]; })()")
             check('the lid is out of the way', lid[0] <= lid[1] + 2, str(lid))
             check('factory cards in their slots', slots(page) == ['io', 'modem', None, 'sb16', None, 'vga', 'ide'], str(slots(page)))

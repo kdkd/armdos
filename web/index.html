@@ -107,7 +107,7 @@
             </div>
           </div>
           <div class="bay blank" aria-hidden="true">
-            <div class="blank-plate" id="hdBay"><span>FIXED DISK 128 MB</span><b class="not-saving-tag" title="Changes to C: are not being saved in this browser (see below the disk box)">NOT SAVING</b></div>
+            <div class="blank-plate" id="hdBay"><span>FIXED DISKS 2 &times; 128 MB</span><b class="not-saving-tag" title="Changes to a hard disk are not being saved in this browser (see below the disk box)">NOT SAVING</b></div>
           </div>
         </div>
 
@@ -255,13 +255,20 @@
       <button class="btn" id="hdDownload">Download C:</button>
       <button class="btn danger" id="hdReset">Reset C: to factory</button>
     </div>
-    <p class="hint small" id="hdStatus">Drive C: is saved in this browser.</p>
+    <p class="hint small" id="hdStatus">Drive C: remembers your changes in this browser until C: gets a new version.</p>
+    <div class="disk-actions">
+      <button class="btn" id="dBackup">Back up D:</button>
+      <label class="btn" id="dRestoreLbl">Restore D:&hellip;<input type="file" id="dRestore" accept=".img,.gz" hidden></label>
+      <button class="btn danger" id="dErase">Erase D:</button>
+    </div>
+    <p class="hint small" id="dStatus">Drive D: is yours to keep, in this browser, through every update.</p>
 
     <div class="files" id="files">
       <div class="files-head">
         <span class="files-tabs" role="tablist">
           <button role="tab" class="ftab" data-drive="A" aria-selected="true">A:</button>
           <button role="tab" class="ftab" data-drive="C" aria-selected="false">C:</button>
+          <button role="tab" class="ftab" data-drive="D" aria-selected="false">D:</button>
         </span>
         <span class="files-path" id="filesPath">A:\</span>
         <label class="btn small" id="filesAddLbl">Copy files in&hellip;<input type="file" id="filesAdd" multiple hidden></label>
@@ -269,7 +276,7 @@
       <div class="files-list" id="filesList" aria-live="polite"></div>
       <div class="files-foot" id="filesFoot"></div>
     </div>
-    <p class="hint small">Click a file to download it. Drop files from your computer on this list or on the drive to copy them in; long names are cut down to DOS&rsquo;s 8.3. The diskette pops out and back in while it is written, so DOS notices the change. C: accepts files only while the machine is switched off.</p>
+    <p class="hint small">Click a file to download it. Drop files from your computer on this list or on the drive to copy them in; long names are cut down to DOS&rsquo;s 8.3. The diskette pops out and back in while it is written, so DOS notices the change. C: and D: accept files only while the machine is switched off.</p>
   </div>
 
   <div class="printer-wrap">

@@ -176,7 +176,10 @@ if (want('command')) {
     const { pc, out } = await session('command', ['U', 'Q'], { args: 'C:\\T\\COMMAND.COM', files: [{ src: 'build/COMMAND.COM', dst: 'T\\COMMAND.COM' }] });
     const u = reply(out, 'U') || '';
     const lines = u.split('\r\n').filter(Boolean);
-    check(lines.length >= 8 && lines.every((l) => /^[0-9A-F]{8} [0-9A-F]{8} {7}[a-z]/.test(l)) && !u.includes('.word'), 'U: COMMAND.COM\'s entry point is ARM code', u);
+    // crt0's entry: ldr r3 / add sp / mov fp / mov lr / bl main / b . , then its literal (shown as .word
+    // or as whatever instruction its value happens to encode, which moves with the load address)
+    const ops = lines.slice(0, 6).map((l) => (/^[0-9A-F]{8} [0-9A-F]{8} {7}([a-z]+)/.exec(l) || [])[1]);
+    check(lines.length >= 8 && ops.join(' ') === 'ldr add mov mov bl b', 'U: COMMAND.COM\'s entry point is ARM code', u);
     check(exitLogged(pc), 'Q');
   }
 }
